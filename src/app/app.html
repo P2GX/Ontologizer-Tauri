@@ -1,0 +1,66 @@
+<mat-sidenav-container class="sidenav-container">
+
+  <!-- Sidebar Navigation -->
+  <mat-sidenav #drawer class="sidenav" fixedInViewport="true" mode="side" [opened]="true">
+
+    <!-- Header in Sidebar -->
+    <div class="sidenav-header" style="display:flex; justify-content: space-between;">
+      <img src="assets/icons/ontology.svg" alt="onto" />
+      <h2>Ontologizer</h2>
+    </div>
+
+    <!-- Navigation Menu -->
+    <mat-nav-list>
+      <a mat-list-item routerLink="/setup" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item">
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>Setup</span>
+      </a>
+      <a mat-list-item routerLink="/settings" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item">
+        <mat-icon matListItemIcon>settings</mat-icon>
+        <span matListItemTitle>Settings</span>
+      </a>
+
+      <a mat-list-item routerLink="/analysis" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item">
+        <mat-icon matListItemIcon>analytics</mat-icon>
+        <span matListItemTitle>Analysis</span>
+      </a>
+      <mat-divider></mat-divider>
+      <a mat-list-item routerLink="/about" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item">
+        <mat-icon matListItemIcon>info</mat-icon>
+        <span matListItemTitle>About</span>
+      </a>
+
+      <a mat-list-item routerLink="/contact" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item">
+        <mat-icon matListItemIcon>contact_mail</mat-icon>
+        <span matListItemTitle>Contact</span>
+      </a>
+    </mat-nav-list>
+
+  </mat-sidenav>
+
+  <!-- Main Content Area -->
+  <mat-sidenav-content class="main-content">
+
+    <!-- Top Toolbar -->
+    <mat-toolbar color="primary" class="toolbar">
+      <!-- Menu Button to open and close the sidenav -->
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()" class="menu-button">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+
+
+    </mat-toolbar>
+
+    <!-- Page Content -->
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

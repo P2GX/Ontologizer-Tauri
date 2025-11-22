@@ -1,0 +1,84 @@
+.dropdown-container {
+    margin: 1em;
+}
+
+.settings-menu {
+    position: relative;
+    padding: 0em 0.5em 0 0.5em;
+    background-color: #cbc7f7;
+    border-radius: 0.5rem;
+    width: 12rem;
+
+
+}
+
+.settings-menu li {
+    list-style: none;
+    display: flex;
+}
+
+p {
+    margin: 0.5em 0;
+}
+
+.settings-menu img.down {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+li.settings-menu-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    /* Elemente links und rechts verteilen */
+    align-items: center;
+}
+
+.settings-submenu li {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3em 0.2em 0.3em 0.2em;
+    color: white;
+    border-radius: 0.5rem;
+    transition: background-color .2s ease;
+}
+
+.settings-submenu.open li:hover {
+    background-color: #535071;
+
+}
+
+h4 {
+    margin: 0;
+    font-weight: 500;
+}
+
+.settings-submenu {
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    background-color: rgb(43, 43, 43);
+    border-radius: 0.5rem;
+    transition: all .2s ease;
+    pointer-events: none;
+    cursor: pointer;
+    padding: 0.7rem;
+    font-weight: 300;
+    min-width: 100%;
+    box-sizing: border-box;
+
+}
+
+.settings-submenu.open {
+    opacity: 1;
+    top: 100%;
+    pointer-events: all;
+
+}
+
+.settings-menu li:hover .settings-submenu {
+    display: block;
+}

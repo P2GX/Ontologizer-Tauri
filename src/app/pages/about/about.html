@@ -1,0 +1,56 @@
+<div class="page-header">
+    <h1 class="page-title">About</h1>
+    <div style="margin-left:2rem; display:flex; gap:2em;">
+        <h2 class="sub-title">Learn more about how the Ontologizer works</h2>
+    </div>
+</div>
+<div class="about-body">
+    <div class="about-wrapper">
+        <div class="tabs-container">
+            <button class="tab-button" [class.active]="selectedTab === 'introduction'"
+                (click)="selectTab('introduction')">Introduction</button>
+            <mat-divider class="vertical" [vertical]="true"></mat-divider>
+            <button class="tab-button" [class.active]="selectedTab === 'table'" (click)="selectTab('table')">File
+                Input</button>
+            <mat-divider class="vertical" [vertical]="true"></mat-divider>
+            <button class="tab-button" [class.active]="selectedTab === 'go-graph'"
+                (click)="selectTab('go-graph')">Statistics & Methods</button>
+            <mat-divider class="vertical" [vertical]="true"></mat-divider>
+            <button class="tab-button" [class.active]="selectedTab === 'bar-plot'"
+                (click)="selectTab('bar-plot')">Output
+            </button>
+        </div>
+
+        <p>
+            A number of methods have been developed to analyze microarray and other high-throughput data derived from
+            measurements of hundreds or thousands of genes or proteins. Depending on the method, the results of analysis
+            consist of a list of many differentially regulated genes or a partitioning of many or all of the genes in
+            the
+            data set into clusters (groups) that putatively share some functionally relevant characteristic. Among the
+            many
+            uses to which the Gene Ontology (GO) has been put is to provide a summary of such lists of genes/proteins
+            according to functional role, biochemical reaction, or location of the gene product in the cell. This kind
+            of
+            analysis is also known as GO term enrichment analysis
+        </p>
+        <img src="assets/icons/about_ontologizer2.svg" alt="onto" />
+        <mat-divider class="horizontal"  style="width: 100%;margin: 2rem 0;"></mat-divider>
+        <p>
+            Ontologizer a is versatile application for the GO term enrichment analysis that comes in different flavours
+            depending on the user’s need. It is available with a user interface based on Eclipse’s Standard Widget
+            Toolkit,
+            a command line interface, and a Web interface sorely based on Javascript. Thus, it is directly executed on
+            the
+            users computer similar to the traditional desktop application.
+            <br><br>
+            Ontologizer supports not only the standard approach to GO term enrichment analysis but also our parent-child
+            method as described by Grossmann, topology based methods as described by Alexa and our more recent
+            model-based
+            approach.
+            <br><br>
+            The following pages present a brief introduction to the Gene Ontology, the standard “term-for-term” approach
+            to
+            statistical analysis, and the the parent child approach.
+        </p>
+    </div>
+</div>

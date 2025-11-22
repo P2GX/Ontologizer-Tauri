@@ -1,0 +1,129 @@
+.dashboard-body {
+    display: flex;
+    justify-content: center;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: row;
+    width: 80cqw;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid color(srgb 0.8313 0.8314 0.8315);
+    height: 30cqw;
+    max-height: 400px;
+    min-width: fit-content;
+    box-sizing: border-box;
+    max-width: 1400px;
+    min-height: 330px;
+    gap: 1rem;
+}
+
+.dashboard-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 1rem;
+    background-color: #ffffff;
+    gap: 0.5rem;
+    box-shadow: 0 0.13rem 0.3rem rgba(0, 0, 0, 0.1);
+}
+
+.DoughnutChartContainer,
+.BarPlotContainer {
+    padding: 1rem;
+    flex: 1 1 0;
+    cursor: pointer;
+    min-height: 0;
+    border: 1px solid #eee;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 0.13rem 0.3rem rgba(0, 0, 0, 0.1);
+}
+
+p {
+    margin: 0;
+}
+
+h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+#summary {
+    flex: 2 1 0;
+    min-width: 260px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.column-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+}
+
+.column-container#charts {
+    flex: 2 1 0;
+    min-width: 260px;
+}
+
+.column-container#term-info {
+    flex: 1 1 0;
+}
+
+#terms {
+    height: 100%;
+    flex: 1;
+}
+
+/* 
+@media (max-width: 1000px) {
+    .row-container {
+        flex-direction: column;
+        height: auto;
+        max-width: 100%;
+    }
+
+
+} */
+
+.help-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+    margin-left: 1em;
+    border-radius: 50%;
+    font-size: 1rem;
+    background-color: #9383e9;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.help-icon:hover {
+    background-color: #7b68ee;
+    transition: background-color 0.2s ease;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

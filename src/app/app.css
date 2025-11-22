@@ -1,0 +1,168 @@
+.sidenav-container {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.sidenav {
+  background-color: #1b1918;
+  overflow-x: hidden;
+  overflow-y: hidden;
+
+}
+
+.sidenav-header {
+  padding: 1.5rem;
+  background: #1b1918;
+  color: white;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidenav-header h2 {
+  margin: 0;
+  font-weight: 300;
+  font-size: 1.5rem;
+}
+
+.nav-item {
+  margin: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  color: #cbd5e1;
+}
+
+.nav-item:hover {
+  background-color: rgba(191, 195, 201, 0.057);
+  transform: translateX(0.2em);
+}
+
+
+.mat-sidenav {
+  width: 13rem;
+}
+
+.nav-item mat-icon {
+  color: #afb6bf;
+  margin-right: 12px;
+  font-size: 20px;
+  align-content: center;
+}
+
+.nav-item span[matListItemTitle] {
+  color: rgb(208, 208, 208);
+  font-weight: 200;
+}
+
+.nav-item.active-link {
+  background: linear-gradient(90deg, rgb(57, 56, 56) 0%, rgb(33, 32, 30) 69%);
+  border-radius: 2em;
+  transform: translateX(0.2em);
+  color: white;
+  transition: all 0.6s ease;
+}
+
+.mdc-list {
+  padding: 0.5em;
+}
+
+a.nav-item {
+  width: auto;
+  border-radius: 2em;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fafafa;
+}
+
+.toolbar-title {
+  margin-left: 16px;
+  font-weight: 300;
+  color: #1e293b;
+}
+
+::ng-deep.mat-drawer-inner-container {
+  overflow: hidden !important;
+  max-width: 100%;
+}
+
+.menu-button {
+  color: #1e293b;
+}
+
+.content {
+  flex: 1;
+  background-color: rgb(242, 243, 245);
+  container-type: inline-size;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.content-analysis {
+  padding: 12px !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  background-color: red !important;
+  height: 100vh;
+}
+
+/* 
+@media (max-width: 768px) {
+  .menu-button {
+    display: block;
+  }
+
+  .sidenav {
+    width: 280px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+} */
+
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+::ng-deep h1 {
+  margin: 2rem;
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: color(srgb 0.195 0.2559 0.39);
+}
+
+.mat-divider {
+  margin: 1rem 0.5rem;
+  color: color(srgb 0.16 0.1541 0.1512);
+}
+
+::ng-deep.mat-mdc-button .mat-mdc-button-persistent-ripple::before {
+  color: color(srgb 0.9 0.9 0.9);
+}
+
+::ng-deep.mat-snack-bar-container.mat-snack-bar-container-animations-enabled {
+  background-color: white !important;
+  opacity: 0.95 !important;
+
+}
+
+::ng-deep.mat-snack-bar-container-animations-enabled {
+  background-color: white !important;
+  opacity: 0.95 !important;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0.13rem 0.3rem;
+}
