@@ -2,6 +2,13 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.3.
 
+## Prerequisites
+
+1. [Tauri](https://v2.tauri.app/start/prerequisites/#nodejs)
+2. [Rust](https://rust-lang.org/learn/get-started/)
+3. [Node.js](https://nodejs.org/en)
+4. [Angular](https://v17.angular.io/guide/setup-local)
+
 ## Development server
 
 To start a local development server, run:
