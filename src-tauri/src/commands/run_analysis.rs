@@ -97,9 +97,6 @@ pub fn run_analysis(state: tauri::State<AppState>) -> Result<(), String> {
         .write()
         .map_err(|e| format!("Failed to lock analysis results for writing: {}", e))?;
 
-    println!("Results before storing: {:?}", results.results().len());
-    println!("first 100 pvalues: {:?}", &results.results().iter().take(100).map(|r| r.adj_pval()).collect::<Vec<_>>());
-
     *results_lock = Some(results);
 
     Ok(())

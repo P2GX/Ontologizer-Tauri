@@ -204,6 +204,7 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
         .analysis_results
         .read()
         .map_err(|e| format!("Failed to lock analysis results for reading: {}", e))?;
+
     let results_ref = results_read_lock
         .as_ref()
         .ok_or("No analysis results loaded")?
@@ -250,7 +251,6 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
             true,
         );
 
-        let mut visited: HashSet<TermId> = HashSet::new();
         traverse_term(
             &root,
             go_ref,
@@ -259,7 +259,6 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
             &tested_terms,
             &significant_terms,
             &root,
-            &mut visited,
             0,
         );
 
@@ -285,16 +284,8 @@ fn traverse_term(
     tested_terms: &HashMap<TermId, &GOTermResult>,
     significant_terms: &HashMap<TermId, &GOTermResult>,
     significant_parent: &TermId,
-    visited: &mut HashSet<TermId>,
     depth: usize,
 ) -> bool {
-    // Wenn schon besucht -> abbrechen, aber true zurückgeben (damit Kante trotzdem gesetzt wird)
-    if !visited.insert(term.clone()) {
-        // Term schon besucht
-        let term_str = term.to_string();
-        return nodes.significant.contains_key(&term_str)
-            || nodes.ancestors.contains_key(&term_str);
-    }
 
     let is_significant = significant_terms.contains_key(term);
     let mut keep = is_significant; // ob dieser Knoten oder ein Kind behalten wird
@@ -320,7 +311,6 @@ fn traverse_term(
             tested_terms,
             significant_terms,
             next_parent,
-            visited,
             depth + 1,
         );
 
@@ -356,7 +346,6 @@ fn traverse_term(
             nodes.add_node(term.to_string(), node_data, false);
         }
 
-        visited.insert(term.clone());
     }
 
     keep
