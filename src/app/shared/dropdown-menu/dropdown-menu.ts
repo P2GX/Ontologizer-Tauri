@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SettingsService } from '../../services/settingsService';
+import { AnalysisMethod } from '../../pages/settings/settings';
 
 
 @Component({
@@ -12,7 +13,7 @@ import { SettingsService } from '../../services/settingsService';
 })
 export class DropdownMenu {
   @Input() label = '';
-  @Input() options: string[] = [];
+  @Input() options: AnalysisMethod[] = [];
   @Input() selected = '';
   @Output() selectedChange = new EventEmitter<string>();
 

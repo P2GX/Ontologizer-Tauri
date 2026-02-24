@@ -7,7 +7,7 @@
 <div class="settings-content">
     <div class="analysis-settings">
         <div class="settings" id="analysisMethod">
-            <app-dropdown-menu [label]="'Analysis Method'" [options]="AnalysisMethods" [selected]="'TermForTerm'"
+            <app-dropdown-menu [label]="'Analysis Method'" [options]="analysisMethods" [selected]="'TermForTerm'"
                 (selectedChange)="SelectSetting($event, 'analysisMethod')"></app-dropdown-menu>
         </div>
         <mat-divider class="horizontal"></mat-divider>

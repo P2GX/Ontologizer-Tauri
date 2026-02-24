@@ -172,6 +172,7 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
 
     // create map of all significant results (TermId -> GOTermResult)
     let significant_terms: HashMap<TermId, &EnrichmentItem> = results
+    .items
         .iter()
         .filter(|&item| item.score <= 0.05)
         .map(|item| (item.id.parse::<TermId>().unwrap(), item))
@@ -179,6 +180,7 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
 
     // create map of all tested results (TermId -> GOTermResult)
     let tested_terms: HashMap<TermId, &EnrichmentItem> = results
+        .items
         .iter()
         .map(|item| (item.id.parse::<TermId>().unwrap(), item))
         .collect();
@@ -196,6 +198,7 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
         let mut edges = Edges::new();
 
         let root_info = results
+            .items
             .iter()
             .find(|&item| item.id == root.to_string())
             .unwrap();

@@ -9,7 +9,7 @@ use appstate::AppState;
 use std::sync::Mutex;
 
 mod commands;
-use crate::commands::config::MethodConfig;
+use crate::commands::config::{AnalysisMethod};
 use commands::{
     analysis::run_analysis,
     config::{save_settings, Config},
@@ -28,7 +28,7 @@ fn main() {
             study_genes: Mutex::new(None),
             pop_genes: Mutex::new(None),
             settings: Mutex::new(Some(Config {
-                method: MethodConfig::Frequentist,
+                method: AnalysisMethod::TermForTerm,
             })),
             results: RwLock::new(None),
         })

@@ -22,7 +22,7 @@ tauri-plugin-fs = "2"
 oboannotation = { git = "https://github.com/P2GX/oboannotation.git", tag = "v0.1.2" }
 tauri-plugin-dialog = "2"
 ontologizer = { path = "../../ontologizer" }
-# ontologizer = { git = "ssh://git@github.com/P2GX/ontologizer.git", branch = "develop" }
+#ontologizer = { git = "https://github.com/P2GX/ontologizer.git", branch = "develop" }
 
 tokio = { version = "1", features = ["full"] }
 

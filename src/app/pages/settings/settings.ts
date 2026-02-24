@@ -5,6 +5,15 @@ import { DropdownMenu } from '../../shared/dropdown-menu/dropdown-menu';
 import { SettingsService, AppSettings } from '../../services/settingsService';
 import { MatDividerModule } from '@angular/material/divider';
 
+
+export enum AnalysisMethod {
+  TermForTerm = 'TermForTerm',
+  ParentChildUnion = 'ParentChildUnion',
+  ParentChildIntersection = 'ParentChildIntersection',
+  MGSA = 'MGSA'
+}
+
+
 @Component({
   selector: 'app-settings',
   imports: [MatSelectModule, DropdownMenu, MatDividerModule],
@@ -16,12 +25,8 @@ export class Settings {
   // Inject the SettingsService
   constructor(private settingsService: SettingsService) { }
 
-  AnalysisMethods: string[] = [
-    'TermForTerm',
-    'ParentChildUnion',
-    'ParentChildIntersection',
-    'MGSA'
-  ];
+  readonly analysisMethods = Object.values(AnalysisMethod);
+  
   MtcMethods: string[] = [
     'Bonferroni',
     'BonferroniHolm',

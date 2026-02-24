@@ -11,12 +11,20 @@ pub enum MethodConfig {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum AnalysisMethod {
+    TermForTerm,
+    ParentChildUnion,
+    ParentChildIntersection,
+    MGSA,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
-    pub method: MethodConfig,
+    pub method: AnalysisMethod,
 }
 
 impl Config {
-    pub fn new(method: MethodConfig) -> Self {
+    pub fn new(method: AnalysisMethod) -> Self {
         Config { method }
     }
 }
@@ -24,10 +32,10 @@ impl Config {
 #[tauri::command]
 pub fn save_settings(
     state: tauri::State<AppState>,
-    method: MethodConfig,
+    analysis_method: AnalysisMethod,
 ) -> Result<String, String> {
     // 1. Create the settings object
-    let settings = Config::new(method);
+    let settings = Config::new(analysis_method);
 
     // 2. Lock the state and save it (Make sure the field name matches AppState,
     //    it might be `user_settings` instead of `settings` depending on your AppState definition)
