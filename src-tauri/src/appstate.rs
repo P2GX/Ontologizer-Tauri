@@ -1,15 +1,14 @@
-pub use ontologizer::gene_set::GeneSet;
-use ontologizer::annotations::AnnotationContainer;
-use ontologizer::ontology::Ontologizer;
-use ontologizer::calculation::results::AnalysisResults;
-use std::sync::{Mutex, RwLock}; 
-use crate::commands::user_settings::UserSettings;
+use ontologizer::{AnnotationIndex, EnrichmentResult, GeneSet};
+
+use crate::commands::config::Config;
+use ontolius::ontology::csr::FullCsrOntology;
+use std::sync::{Mutex, RwLock};
 
 pub struct AppState {
-    pub go: RwLock<Option<Ontologizer>>,
-    pub annotation_container: Mutex<Option<AnnotationContainer>>,
-    pub study: Mutex<Option<GeneSet>>,
-    pub population: Mutex<Option<GeneSet>>,
-    pub userSettings: Mutex<Option<UserSettings>>,
-    pub analysis_results: RwLock<Option<AnalysisResults>>, // Optional field to store analysis results
+    pub ontology: RwLock<Option<FullCsrOntology>>,
+    pub annotations: Mutex<Option<AnnotationIndex>>,
+    pub study_genes: Mutex<Option<GeneSet>>,
+    pub pop_genes: Mutex<Option<GeneSet>>,
+    pub settings: Mutex<Option<Config>>,
+    pub results: RwLock<Option<EnrichmentResult>>, // Optional field to store analysis results
 }

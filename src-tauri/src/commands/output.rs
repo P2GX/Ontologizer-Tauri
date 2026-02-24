@@ -5,7 +5,7 @@ use ontolius::{
     TermId,
 };
 
-use ontologizer::calculation::results::{GOTermResult, MethodEnum, MtcEnum};
+use ontologizer::EnrichmentItem;
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{HashMap, HashSet},
@@ -13,52 +13,19 @@ use std::{
     vec,
 };
 
-#[derive(Serialize)]
-struct AnalysisOutput {
-    results: Vec<GOTermResult>,
-    significant_count: usize,
-    mtc_method: MtcEnum,
-    analysis_method: MethodEnum,
-    results_length: usize,
-}
-impl AnalysisOutput {
-    pub fn new(
-        results: &Vec<GOTermResult>,
-        significant_count: usize,
-        mtc_method: &MtcEnum,
-        analysis_method: &MethodEnum,
-        results_length: usize,
-    ) -> Self {
-        Self {
-            results: results.clone(),
-            significant_count,
-            mtc_method: mtc_method.clone(),
-            analysis_method: analysis_method.clone(),
-            results_length,
-        }
-    }
-}
-
 // Retrieves the table analysis results from the shared app state and returns them as a JSON string.
 #[tauri::command]
 pub fn get_analysis_results(state: tauri::State<AppState>) -> Result<String, String> {
-    let results_read_lock = state
-        .analysis_results
+    let results_lock = state
+        .results
         .read()
         .map_err(|e| format!("Failed to lock analysis results for reading: {}", e))?;
-    let results_ref = results_read_lock
-        .as_ref()
-        .ok_or("No analysis results loaded")?;
 
-    let output = AnalysisOutput::new(
-        results_ref.results(),
-        results_ref.num_significant_results(),
-        results_ref.mtc_method(),
-        results_ref.analysis_method(),
-        results_ref.results().len(),
-    );
-    let results_json = serde_json::to_string(&output)
+    let results = results_lock.as_ref().ok_or("No analysis results loaded")?;
+
+    let results_json = serde_json::to_string(&results)
         .map_err(|e| format!("Failed to serialize results: {}", e))?;
+    println! {"Happily serialized results."}
     Ok(results_json)
 }
 
@@ -191,37 +158,31 @@ impl Eq for EdgeData {}
 #[tauri::command]
 pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, String> {
     // Acquire read locks on the GO ontology and analysis results
-    let go_read_lock = state
-        .go
+    let ontology_lock = state
+        .ontology
         .read()
         .map_err(|e| format!("Failed to lock GO for reading: {}", e))?;
-    let go_ref = go_read_lock
-        .as_ref()
-        .ok_or("No GO ontology loaded")?
-        .ontology();
+    let ontology = ontology_lock.as_ref().ok_or("No GO ontology loaded")?;
 
-    let results_read_lock = state
-        .analysis_results
+    let results_lock = state
+        .results
         .read()
         .map_err(|e| format!("Failed to lock analysis results for reading: {}", e))?;
-
-    let results_ref = results_read_lock
-        .as_ref()
-        .ok_or("No analysis results loaded")?
-        .results();
+    let results = results_lock.as_ref().ok_or("No analysis results loaded")?;
 
     // create map of all significant results (TermId -> GOTermResult)
-    let significant_terms: HashMap<TermId, &GOTermResult> = results_ref
+    let significant_terms: HashMap<TermId, &EnrichmentItem> = results
         .iter()
-        .filter(|r| r.adj_pval() <= 0.05)
-        .map(|r| (r.term_id().parse::<TermId>().unwrap(), r))
+        .filter(|&item| item.score <= 0.05)
+        .map(|item| (item.id.parse::<TermId>().unwrap(), item))
         .collect();
 
     // create map of all tested results (TermId -> GOTermResult)
-    let tested_terms: HashMap<TermId, &GOTermResult> = results_ref
+    let tested_terms: HashMap<TermId, &EnrichmentItem> = results
         .iter()
-        .map(|r| (r.term_id().parse::<TermId>().unwrap(), r))
+        .map(|item| (item.id.parse::<TermId>().unwrap(), item))
         .collect();
+
     let mut dot_data = DotData::new();
 
     // We want to create three separate graph data for the three categories of the Gene Ontology
@@ -234,31 +195,34 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
         let mut nodes = Nodes::new();
         let mut edges = Edges::new();
 
-        let root_info = results_ref
+        let root_info = results
             .iter()
-            .find(|r| r.term_id() == &root.to_string())
+            .find(|&item| item.id == root.to_string())
             .unwrap();
         nodes.add_node(
             root.to_string(),
             NodeData {
                 id: root.to_string(),
-                label: root_info.term_label().to_string().clone(),
-                study_count: root_info.counts().0,
-                population_count: root_info.counts().1,
+                label: root_info.id.clone(),
+                study_count: root_info.associated_genes.len() as u32,
+                population_count: root_info.associated_genes.len() as u32,
+                // todo!(this is currently just study gene count)
                 depth: 0,
-                adj_pval: root_info.adj_pval(),
+                adj_pval: root_info.score as f32,
             },
             true,
         );
 
+        let mut visited: HashSet<TermId> = HashSet::new();
         traverse_term(
             &root,
-            go_ref,
+            ontology,
             &mut nodes,
             &mut edges,
             &tested_terms,
             &significant_terms,
             &root,
+            &mut visited,
             0,
         );
 
@@ -281,11 +245,19 @@ fn traverse_term(
     go: &FullCsrOntology,
     nodes: &mut Nodes,
     edges: &mut Edges,
-    tested_terms: &HashMap<TermId, &GOTermResult>,
-    significant_terms: &HashMap<TermId, &GOTermResult>,
+    tested_terms: &HashMap<TermId, &EnrichmentItem>,
+    significant_terms: &HashMap<TermId, &EnrichmentItem>,
     significant_parent: &TermId,
+    visited: &mut HashSet<TermId>,
     depth: usize,
 ) -> bool {
+    // Wenn schon besucht -> abbrechen, aber true zurückgeben (damit Kante trotzdem gesetzt wird)
+    if !visited.insert(term.clone()) {
+        // Term schon besucht
+        let term_str = term.to_string();
+        return nodes.significant.contains_key(&term_str)
+            || nodes.ancestors.contains_key(&term_str);
+    }
 
     let is_significant = significant_terms.contains_key(term);
     let mut keep = is_significant; // ob dieser Knoten oder ein Kind behalten wird
@@ -311,6 +283,7 @@ fn traverse_term(
             tested_terms,
             significant_terms,
             next_parent,
+            visited,
             depth + 1,
         );
 
@@ -326,11 +299,11 @@ fn traverse_term(
         let node_result = tested_terms.get(term).unwrap(); // sichtbare sind getestet
         let node_data = NodeData {
             id: term.to_string(),
-            label: node_result.term_label().to_string(),
+            label: node_result.id.clone(),
             depth,
-            adj_pval: node_result.adj_pval(),
-            study_count: node_result.counts().0,
-            population_count: node_result.counts().1,
+            adj_pval: node_result.score as f32,
+            study_count: node_result.associated_genes.len() as u32,
+            population_count: node_result.associated_genes.len() as u32,
         };
 
         if is_significant {
@@ -346,6 +319,7 @@ fn traverse_term(
             nodes.add_node(term.to_string(), node_data, false);
         }
 
+        visited.insert(term.clone());
     }
 
     keep
