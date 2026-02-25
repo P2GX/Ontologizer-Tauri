@@ -13,7 +13,7 @@ import { AnalysisMethod } from '../../pages/settings/settings';
 })
 export class DropdownMenu {
   @Input() label = '';
-  @Input() options: AnalysisMethod[] = [];
+  @Input() options: string[] = [];
   @Input() selected = '';
   @Output() selectedChange = new EventEmitter<string>();
 

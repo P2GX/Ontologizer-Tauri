@@ -6,7 +6,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { AnalysisService, TransformedRowData } from '../../../services/analysis-service';
+import {AnalysisService, FrequentistRowData} from '../../../services/analysis-service';
 
 @Component({
   selector: 'app-analysis-result-table',
@@ -24,7 +24,7 @@ import { AnalysisService, TransformedRowData } from '../../../services/analysis-
   styleUrl: './analysis-result-table.css'
 })
 export class AnalysisResultTable implements OnChanges, AfterViewInit {
-  @Input() tableData!: TransformedRowData[];
+  @Input() tableData!: FrequentistRowData[];
 
   displayedColumns: string[] = [
     'term_label',
@@ -36,13 +36,13 @@ export class AnalysisResultTable implements OnChanges, AfterViewInit {
     'adj_pval'
   ];
   columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
-  expandedElement: TransformedRowData | null = null;
+  expandedElement: FrequentistRowData | null = null;
 
-  isExpanded(element: TransformedRowData) {
+  isExpanded(element: FrequentistRowData) {
     return this.expandedElement === element;
   }
 
-  toggle(element: TransformedRowData) {
+  toggle(element: FrequentistRowData) {
     this.expandedElement = this.isExpanded(element) ? null : element;
   }
 
@@ -50,7 +50,7 @@ export class AnalysisResultTable implements OnChanges, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   resultsLength = 0;
 
-  dataSource = new MatTableDataSource<TransformedRowData>();
+  dataSource = new MatTableDataSource<FrequentistRowData>();
 
 
   ngOnChanges(changes: SimpleChanges) {
@@ -69,7 +69,7 @@ export class AnalysisResultTable implements OnChanges, AfterViewInit {
       this.dataSource.sort = this.sort;
 
       this.dataSource.sortingDataAccessor = (
-        data: TransformedRowData,
+        data: FrequentistRowData,
         sortHeaderId: string
       ) => {
 
@@ -78,9 +78,9 @@ export class AnalysisResultTable implements OnChanges, AfterViewInit {
           case 'adj_pval':
           case 'nt':
           case 'mt':
-            return Number(data[sortHeaderId as keyof TransformedRowData]);
+            return Number(data[sortHeaderId as keyof FrequentistRowData]);
           default:
-            const value = data[sortHeaderId as keyof TransformedRowData];
+            const value = data[sortHeaderId as keyof FrequentistRowData];
             // if value is an array (annotated study genes of term), return empty, else return uppercased string
             return Array.isArray(value) ? '' : String(value).toUpperCase();
         }
@@ -108,9 +108,9 @@ export class AnalysisResultTable implements OnChanges, AfterViewInit {
     const inputElement = (keyupEvent.target as HTMLInputElement).value.toLowerCase();
     // only search in rows that are always shown, not in expanded details
     // filterPredicate defines how the filter is applied on each row
-    this.dataSource.filterPredicate = (data: TransformedRowData, inputElement: string) => {
-      return data.term_label.toLowerCase().includes(inputElement) ||
-              data.term_id.toLowerCase().includes(inputElement) ||
+    this.dataSource.filterPredicate = (data: FrequentistRowData, inputElement: string) => {
+      return data.label.toLowerCase().includes(inputElement) ||
+              data.id.toLowerCase().includes(inputElement) ||
               data.aspect.toLowerCase().includes(inputElement);
     };
 

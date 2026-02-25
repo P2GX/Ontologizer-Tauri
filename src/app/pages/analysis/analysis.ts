@@ -10,7 +10,7 @@ import { AnalysisBarChart } from './analysis-bar-chart/analysis-bar-chart';
 import { Dashboard } from './dashboard/dashboard';
 import { GoGraph } from './go-graph/go-graph';
 import { FilesService } from '../../services/files-service';
-import { AnalysisService, DotData, TransformedRowData, ProportionData } from '../../services/analysis-service';
+import { AnalysisService, DotData, FrequentistRowData, ProportionData } from '../../services/analysis-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -31,7 +31,7 @@ export class Analysis {
   resultsLength = 0;
   dotData: DotData | null = null;
 
-  tableData: TransformedRowData[] | null = null;
+  tableData: FrequentistRowData[] | null = null;
   successful: boolean = false;
 
   dashboardInfo: DashboardInfo = {

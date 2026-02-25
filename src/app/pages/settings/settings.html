@@ -12,7 +12,7 @@
         </div>
         <mat-divider class="horizontal"></mat-divider>
         <div class="settings" id="mtcMethod">
-            <app-dropdown-menu [label]="'Multiple Testing Correction Method'" [options]="MtcMethods"
+            <app-dropdown-menu [label]="'Multiple Testing Correction Method'" [options]="mtcMethod"
                 [selected]="'Bonferroni'" (selectedChange)="SelectSetting($event, 'mtcMethod')"></app-dropdown-menu>
         </div>
          <mat-divider class="horizontal"></mat-divider>

@@ -11,7 +11,7 @@ import * as d3 from 'd3';
 
 @Component({
   selector: 'app-go-graph',
-  imports: [MatDivider, CommonModule, DropdownMenu, Legend, Tooltip],
+  imports: [CommonModule, DropdownMenu, Legend, Tooltip],
   templateUrl: './go-graph.html',
   styleUrl: './go-graph.css'
 })
@@ -67,8 +67,8 @@ export class GoGraph implements AfterViewInit, OnDestroy {
 
       // generate compressed dot string
       for (const node of significant_nodes) {
-        const [fillColor, fontColor] = this.pvalToColor(node.adj_pval);
-        compressed_dot += `"${node.id}" [label="${this.wrapLabel(node.label, 15)}", tooltip="${node.id} <br/> p.adj: ${this.formatPValue(node.adj_pval)}<br/> Study annotations: ${node.study_count}<br/> Population annotations: ${node.population_count}<br/> actual depth: ${node.depth}", fillcolor="${fillColor}", style=filled, fontname="Arial", fontcolor="${fontColor}", fixedsize=false, shape=box];\n`;
+        const [fillColor, fontColor] = this.pvalToColor(node.p_val);
+        compressed_dot += `"${node.id}" [label="${this.wrapLabel(node.label, 15)}", tooltip="${node.id} <br/> p.adj: ${this.formatPValue(node.p_val)}<br/> Study annotations: ${node.study_count}<br/> Population annotations: ${node.population_count}<br/> actual depth: ${node.depth}", fillcolor="${fillColor}", style=filled, fontname="Arial", fontcolor="${fontColor}", fixedsize=false, shape=box];\n`;
       }
 
       for (const edge of edges_compressed) {
@@ -80,8 +80,8 @@ export class GoGraph implements AfterViewInit, OnDestroy {
 
       // generate full dot string starting from most specific significant nodes
       for (const node of all_nodes) {
-        const [fillColor, fontColor] = this.pvalToColor(node.adj_pval);
-        full_dot += `"${node.id}" [label="${this.wrapLabel(node.label, 15)}", tooltip="${node.id} <br/> p.adj: ${this.formatPValue(node.adj_pval)}<br/> Study annotations: ${node.study_count}<br/> Population annotations: ${node.population_count}<br/> actual depth: ${node.depth}", fillcolor="${fillColor}", style=filled, fontname="Arial", fontcolor="${fontColor}", fixedsize=false, shape=box];\n`;
+        const [fillColor, fontColor] = this.pvalToColor(node.p_val);
+        full_dot += `"${node.id}" [label="${this.wrapLabel(node.label, 15)}", tooltip="${node.id} <br/> p.adj: ${this.formatPValue(node.p_val)}<br/> Study annotations: ${node.study_count}<br/> Population annotations: ${node.population_count}<br/> actual depth: ${node.depth}", fillcolor="${fillColor}", style=filled, fontname="Arial", fontcolor="${fontColor}", fixedsize=false, shape=box];\n`;
       }
 
       for (const edge of edges_full) {

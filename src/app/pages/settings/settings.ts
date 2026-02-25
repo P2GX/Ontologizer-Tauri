@@ -13,6 +13,12 @@ export enum AnalysisMethod {
   MGSA = 'MGSA'
 }
 
+export enum MtcMethod {
+  Bonferroni ='Bonferroni',
+  BonferroniHolm = 'BonferroniHolm',
+  BenjaminiHochberg = 'BenjaminiHochberg',
+  None = 'None'
+}
 
 @Component({
   selector: 'app-settings',
@@ -26,13 +32,8 @@ export class Settings {
   constructor(private settingsService: SettingsService) { }
 
   readonly analysisMethods = Object.values(AnalysisMethod);
-  
-  MtcMethods: string[] = [
-    'Bonferroni',
-    'BonferroniHolm',
-    'BenjaminiHochberg',
-    'None'
-  ];
+
+  readonly mtcMethod = Object.values(MtcMethod);
 
   // Function that updates user settings when a new option is selected
   async SelectSetting(newSetting: string, type: keyof AppSettings) {

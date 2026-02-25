@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { CommonModule } from '@angular/common';
-import { TransformedRowData } from '../../../services/analysis-service';
+import { FrequentistRowData } from '../../../services/analysis-service';
 import { Legend } from './legend/legend';
 import { DropdownMenu } from '../../../shared/dropdown-menu/dropdown-menu';
 
@@ -19,8 +19,8 @@ export class AnalysisBarChart implements AfterViewInit, OnChanges {
   @ViewChild('chartDiv') chartDiv!: ElementRef<HTMLDivElement>;
   chart?: Chart;
 
-  @Input() PlotData!: TransformedRowData[] | null;
-  significantData: TransformedRowData[] | null = null;
+  @Input() PlotData!: FrequentistRowData[] | null;
+  significantData: FrequentistRowData[] | null = null;
   viewInitialized = false;
   minAdjPval: number = 0;
   maxAdjPval: number = 0;
@@ -43,7 +43,7 @@ export class AnalysisBarChart implements AfterViewInit, OnChanges {
 
   ngAfterViewInit(): void {
     if (this.PlotData) {
-      this.significantData = this.PlotData?.filter(row => row.adj_pval <= 0.05) ?? [];
+      this.significantData = this.PlotData?.filter(row => row.p_val <= 0.05) ?? [];
       this.createChart();
     }
     this.viewInitialized = true;
@@ -52,7 +52,7 @@ export class AnalysisBarChart implements AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['PlotData'] && this.PlotData && this.viewInitialized) {
-      this.significantData = this.PlotData?.filter(row => row.adj_pval <= 0.05) ?? [];
+      this.significantData = this.PlotData?.filter(row => row.p_val <= 0.05) ?? [];
       this.createChart();
     }
   }
@@ -75,13 +75,13 @@ export class AnalysisBarChart implements AfterViewInit, OnChanges {
       return true;
     });
 
-    const labels = filteredData.map(row => row.term_label);
+    const labels = filteredData.map(row => row.label);
     console.log('labels count', labels.length);
-    const adj_pvals = filteredData.map(row => row.adj_pval);
-    const go_ids = filteredData.map(row => row.term_id);
-    const backgroundColors = filteredData.map(row => this.pvalToColor(row.adj_pval));
+    const adj_pvals = filteredData.map(row => row.p_val);
+    const go_ids = filteredData.map(row => row.id);
+    const backgroundColors = filteredData.map(row => this.pvalToColor(row.p_val));
 
-    const yValues: { [key: string]: number[] } = { '-Log10(p.adj)': adj_pvals.map(p => -Math.log10(p)), 'Study counts': filteredData.map(row => row.nt), 'Enrichment ratio': filteredData.map(row => (row.nt / row.n) / (row.mt / row.m)) };
+    const yValues: { [key: string]: number[] } = { '-Log10(p.adj)': adj_pvals.map(p => -Math.log10(p)), 'Study counts': filteredData.map(row => row.k), 'Enrichment ratio': filteredData.map(row => (row.k / row.n) / (row.K / row.N)) };
 
     this.chart = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
