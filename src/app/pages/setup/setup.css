@@ -215,3 +215,41 @@ nav ul li.upload-success {
     background-color: #4e4a8c;
     transition: background-color 0.2s ease;
 }
+
+/* Styles for the new Process button */
+#process-btn {
+    position: absolute;
+    top: 12rem;
+    right: 5rem;
+    z-index: 4;
+    transform: translateY(-50%);
+    background-color: rgb(190, 190, 190); /* Grey color initially */
+    color: white;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: not-allowed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, filter 0.2s ease;
+}
+
+/* Active color state when all files are uploaded but processing hasn't finished */
+#process-btn.ready {
+    background-color: #635ca4; /* Purple */
+    cursor: pointer;
+}
+
+#process-btn.ready:hover:not([disabled]) {
+    filter: brightness(0.9); /* Slight hover effect */
+}
+
+/* Finished state when build_annotation_index is done */
+#process-btn.finished {
+    background-color: color(srgb 0.1367 0.6367 0.2266); /* Success Green */
+    cursor: default;
+}

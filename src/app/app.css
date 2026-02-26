@@ -10,18 +10,17 @@ body {
 }
 
 .sidenav {
-  background-color: #1b1918;
+  background-color: var(--sidebar-bg);
   overflow-x: hidden;
   overflow-y: hidden;
-
 }
 
 .sidenav-header {
   padding: 1.5rem;
-  background: #1b1918;
-  color: white;
+  background: var(--sidebar-bg);
+  color: var(--bg-main); /* Reusing white from style.css */
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--shadow-header); /* Reusing shadow from style.css */
 }
 
 .sidenav-header h2 {
@@ -34,36 +33,35 @@ body {
   margin: 4px 8px;
   border-radius: 8px;
   transition: all 0.2s ease;
-  color: #cbd5e1;
+  color: var(--sidebar-text);
 }
 
 .nav-item:hover {
-  background-color: rgba(191, 195, 201, 0.057);
+  background-color: var(--sidebar-hover-bg);
   transform: translateX(0.2em);
 }
-
 
 .mat-sidenav {
   width: 13rem;
 }
 
 .nav-item mat-icon {
-  color: #afb6bf;
+  color: var(--sidebar-icon);
   margin-right: 12px;
   font-size: 20px;
   align-content: center;
 }
 
 .nav-item span[matListItemTitle] {
-  color: rgb(208, 208, 208);
+  color: var(--sidebar-text-light);
   font-weight: 200;
 }
 
 .nav-item.active-link {
-  background: linear-gradient(90deg, rgb(57, 56, 56) 0%, rgb(33, 32, 30) 69%);
+  background: var(--sidebar-active-bg);
   border-radius: 2em;
   transform: translateX(0.2em);
-  color: white;
+  color: var(--bg-main); /* Reusing white */
   transition: all 0.6s ease;
 }
 
@@ -85,14 +83,14 @@ a.nav-item {
   position: sticky;
   top: 0;
   z-index: 2;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #fafafa;
+  box-shadow: 0 2px 4px var(--shadow-header);
+  background-color: var(--bg-card); /* Reusing #fafafa from style.css */
 }
 
 .toolbar-title {
   margin-left: 16px;
   font-weight: 300;
-  color: #1e293b;
+  color: var(--text-toolbar);
 }
 
 ::ng-deep.mat-drawer-inner-container {
@@ -101,12 +99,12 @@ a.nav-item {
 }
 
 .menu-button {
-  color: #1e293b;
+  color: var(--text-toolbar);
 }
 
 .content {
   flex: 1;
-  background-color: rgb(242, 243, 245);
+  background-color: var(--bg-app);
   container-type: inline-size;
   overflow-x: hidden;
   height: 100%;
@@ -116,12 +114,11 @@ a.nav-item {
   padding: 12px !important;
   overflow-x: auto !important;
   overflow-y: auto !important;
-  background-color: red !important;
+  background-color: red !important; /* Note: Left this hardcoded as it looks like a debug value */
   height: 100vh;
 }
 
-/* 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .menu-button {
     display: block;
   }
@@ -143,26 +140,25 @@ a.nav-item {
   margin: 2rem;
   font-size: 2.5rem;
   font-weight: 400;
-  color: color(srgb 0.195 0.2559 0.39);
+  color: var(--text-header);
 }
 
 .mat-divider {
   margin: 1rem 0.5rem;
-  color: color(srgb 0.16 0.1541 0.1512);
+  color: var(--divider-dark);
 }
 
 ::ng-deep.mat-mdc-button .mat-mdc-button-persistent-ripple::before {
-  color: color(srgb 0.9 0.9 0.9);
+  color: var(--ripple-color);
 }
 
 ::ng-deep.mat-snack-bar-container.mat-snack-bar-container-animations-enabled {
-  background-color: white !important;
+  background-color: var(--bg-main) !important;
   opacity: 0.95 !important;
-
 }
 
 ::ng-deep.mat-snack-bar-container-animations-enabled {
-  background-color: white !important;
+  background-color: var(--bg-main) !important;
   opacity: 0.95 !important;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0.13rem 0.3rem;
 }

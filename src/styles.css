@@ -2,3 +2,46 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+:root {
+    /* Theme Colors */
+    --theme-primary: #635ca4;
+    --theme-primary-hover-border: #a199ee;
+    --theme-primary-hover-bg: #f8f7ff;
+    --theme-primary-active-bg: #f3f2fa;
+    --theme-primary-shadow: rgba(99, 92, 164, 0.15);
+    --theme-primary-divider: #d1ccfa;
+
+    /* Basic UI Colors */
+    --bg-main: white;
+    --bg-card: #fafafa;
+    --text-primary: #262f42;
+    --text-secondary: #555;
+    --border-color: #e0e0e0;
+
+    /* Shadows */
+    --shadow-base: rgba(0, 0, 0, 0.05);
+    --shadow-header: rgba(0, 0, 0, 0.1);
+
+    /* Info Box Colors */
+    --info-bg: #e8f4fd;
+    --info-accent: #4a90e2;
+    --info-text: #333;
+
+    /* Misc */
+    --divider-color: #d4d4d4;
+
+    /* App Shell / Layout Colors */
+    --sidebar-bg: #1b1918;
+    --sidebar-hover-bg: rgba(191, 195, 201, 0.057);
+    --sidebar-active-bg: linear-gradient(90deg, rgb(57, 56, 56) 0%, rgb(33, 32, 30) 69%);
+    --sidebar-text: #cbd5e1;
+    --sidebar-text-light: rgb(208, 208, 208);
+    --sidebar-icon: #afb6bf;
+
+    --bg-app: rgb(242, 243, 245);
+    --text-toolbar: #1e293b;
+    --text-header: color(srgb 0.195 0.2559 0.39);
+    --divider-dark: color(srgb 0.16 0.1541 0.1512);
+    --ripple-color: color(srgb 0.9 0.9 0.9);
+}

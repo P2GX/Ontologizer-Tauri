@@ -1,20 +1,62 @@
 <div class="page-header">
     <h1 class="page-title">Settings</h1>
     <div style="margin-left:2rem; display:flex; gap:2em;">
-        <h2 class="sub-title">Adjust settings or use default settings.</h2>
+        <h2 class="sub-title">Select your statistical approach and analysis methods.</h2>
     </div>
 </div>
+
 <div class="settings-content">
     <div class="analysis-settings">
-        <div class="settings" id="analysisMethod">
-            <app-dropdown-menu [label]="'Analysis Method'" [options]="analysisMethods" [selected]="'TermForTerm'"
-                (selectedChange)="SelectSetting($event, 'analysisMethod')"></app-dropdown-menu>
+
+        <!-- Category Selection Cards -->
+        <div class="category-cards">
+            <!-- Frequentist Card -->
+            <div class="method-card"
+                 [class.active]="selectedCategory === 'Frequentist'"
+                 (click)="setCategory('Frequentist')">
+                <span class="material-symbols-outlined card-icon">calculate</span>
+                <h3>Frequentist</h3>
+                <p>Standard statistical tests evaluating each term individually.</p>
+
+                <!-- Nested Dropdowns for Frequentist -->
+                <div class="nested-settings" *ngIf="selectedCategory === 'Frequentist'" (click)="$event.stopPropagation()">
+                    <div class="settings" id="analysisMethod">
+                        <app-dropdown-menu
+                                [label]="'Method'"
+                                [options]="frequentistMethods"
+                                [selected]="currentFrequentistMethod"
+                                (selectedChange)="SelectSetting($event, 'analysisMethod')">
+                        </app-dropdown-menu>
+                    </div>
+
+                    <div class="settings" id="mtcMethod">
+                        <app-dropdown-menu
+                                [label]="'Multiple Testing Correction'"
+                                [options]="mtcMethod"
+                                [selected]="currentMtcMethod"
+                                (selectedChange)="SelectSetting($event, 'mtcMethod')">
+                        </app-dropdown-menu>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bayesian Card -->
+            <div class="method-card"
+                 [class.active]="selectedCategory === 'Bayesian'"
+                 (click)="setCategory('Bayesian')">
+                <span class="material-symbols-outlined card-icon">model_training</span>
+                <h3>Bayesian (MGSA)</h3>
+                <p>Model-based inference considering term overlaps jointly.</p>
+
+                <!-- Nested Info for Bayesian -->
+                <div class="nested-settings bayesian-info" *ngIf="selectedCategory === 'Bayesian'">
+                    <div class="settings info-box">
+                        <span class="material-symbols-outlined">info</span>
+                        <p><strong>Model-Based Gene Set Analysis (MGSA)</strong> is selected. Multiple Testing Correction is not required as the Bayesian model analyzes all terms simultaneously.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <mat-divider class="horizontal"></mat-divider>
-        <div class="settings" id="mtcMethod">
-            <app-dropdown-menu [label]="'Multiple Testing Correction Method'" [options]="mtcMethod"
-                [selected]="'Bonferroni'" (selectedChange)="SelectSetting($event, 'mtcMethod')"></app-dropdown-menu>
-        </div>
-         <mat-divider class="horizontal"></mat-divider>
+
     </div>
 </div>

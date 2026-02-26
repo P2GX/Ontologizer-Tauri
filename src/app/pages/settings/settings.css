@@ -1,65 +1,123 @@
 .analysis-settings {
     border-radius: 1rem;
     width: 80cqw;
-    height: 20rem;
     box-sizing: border-box;
     animation: mymove 0.5s;
     position: relative;
+    background: white;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-
 
 @keyframes mymove {
-    from {
-        top: -1rem;
-    }
-
-    to {
-        top: 0rem;
-    }
+    from { top: -1rem; opacity: 0; }
+    to { top: 0rem; opacity: 1; }
 }
 
-
-.settings {
+/* Selectable Cards Styles */
+.category-cards {
     display: flex;
-    flex-direction: row;
-    padding: 1rem;
-    gap: 1rem;
-
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
+.method-card {
+    flex: 1;
+    border: 2px solid #e0e0e0;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.method-card:hover {
+    border-color: #a199ee;
+    background-color: #f8f7ff;
+}
+
+.method-card.active {
+    border-color: #635ca4; /* Your theme purple */
+    background-color: #f3f2fa;
+    box-shadow: 0 4px 8px rgba(99, 92, 164, 0.15);
+}
+
+.card-icon {
+    font-size: 2rem;
+    color: #635ca4;
+    margin-bottom: 0.5rem;
+}
+
+.method-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    color: #262f42;
+}
+
+.method-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.4;
+}
+
+/* Nested Settings Inside Cards */
+.nested-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    width: 100%;
+    animation: fadeIn 0.3s;
+}
+
+.method-card.active .nested-settings {
+    border-top-color: #d1ccfa; /* Subtle purple divider when active */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Info box for Bayesian state */
+.info-box {
+    background-color: #e8f4fd;
+    border-left: 4px solid #4a90e2;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    align-items: center;
+    color: #333;
+}
+
+.info-box .material-symbols-outlined {
+    color: #4a90e2;
+    font-size: 1.5rem;
+}
+
+.info-box p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Remove old detailed-settings and dividers if they existed */
 .mat-divider {
     color: #d4d4d4;
 }
 
 .settings#analysisMethod {
-    margin: 0 1rem;
     z-index: 1000;
     position: relative;
 }
 
 .settings#mtcMethod {
-    margin: 0 1rem;
     z-index: 2;
     position: relative;
-}
-
-
-.header {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    background-color: #262f42;
-    border-radius: 1rem 1rem 0 0;
-    color: white;
-}
-
-.header img {
-    margin-right: 8px;
-}
-
-
-h1.page-title {
-    margin-bottom: 1rem;
 }
 
 .page-header {
@@ -77,14 +135,12 @@ h1.page-title {
     margin: 1rem;
     display: flex;
     justify-content: center;
-
 }
 
-h2 {
+h2.sub-title {
     font-weight: 200;
     margin-bottom: 0.5rem;
     margin-top: 0;
-    max-width: 27rem;
     font-size: 1.3rem;
 }
 

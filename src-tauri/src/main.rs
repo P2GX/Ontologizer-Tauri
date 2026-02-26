@@ -13,7 +13,7 @@ use crate::commands::config::{AnalysisMethod};
 use commands::{
     analysis::run_analysis,
     config::{save_settings, Config},
-    loaders::{process_gaf_file, process_gene_file, process_go_file},
+    loaders::{process_gaf_file, process_gene_file, process_go_file, build_annotation_index},
     output::{build_go_graph_data, get_analysis_results},
 };
 
@@ -24,6 +24,7 @@ fn main() {
         .manage(AppState {
             // shared state across the application that can be accessed from different commands
             ontology: RwLock::new(None),
+            raw_annotations: Mutex::new(None),
             annotations: Mutex::new(None),
             study_genes: Mutex::new(None),
             pop_genes: Mutex::new(None),
@@ -37,6 +38,7 @@ fn main() {
             process_go_file,
             process_gaf_file,
             process_gene_file,
+            build_annotation_index,
             save_settings,
             run_analysis,
             get_analysis_results,
