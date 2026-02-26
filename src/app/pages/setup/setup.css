@@ -27,9 +27,9 @@ h1.page-title {
     flex-direction: column;
     align-items: left;
     padding-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow-header);
     margin-bottom: 2rem;
-    background-color: color(srgb 1 1 1);
+    background-color: var(--md-sys-color-surface);
     padding-left: 5vw;
 }
 
@@ -71,30 +71,30 @@ h1.page-title {
 }
 
 nav ul li.active {
-    background-color: #635ca4;
+    background-color: var(--md-sys-color-primary);
     color: white !important;
-    border-color: #a199ee;
+    border-color: var(--md-sys-color-inverse-primary);
     transition: 0.2s ease;
 
 }
 
 nav ul li.green-active {
-    background-color: color(srgb 0.1367 0.6367 0.2266) !important;
+    background-color: var(--md-sys-color-success) !important;
     color: white !important;
-    border-color: color(srgb 0.1367 0.6367 0.2266) !important;
+    border-color: var(--md-sys-color-success) !important;
     transition: 0.2s ease;
 
 }
 
 .circle.active {
-    background-color: white !important;
-    color: #635ca4;
+    background-color: var(--md-sys-color-surface) !important;
+    color: var(--md-sys-color-primary);
     transition: 0.2s ease;
 }
 
 .circle.green-active {
-    background-color: white !important;
-    color: color(srgb 0.1367 0.6367 0.2266) !important;
+    background-color: var(--md-sys-color-surface) !important;
+    color: var(--md-sys-color-success) !important;
     transition: 0.2s ease;
 }
 
@@ -134,15 +134,15 @@ ul.upload-step-ul li {
 }
 
 .circle.upload-success {
-    background-color: color(srgb 0.1367 0.6367 0.2266);
+    background-color: var(--md-sys-color-success);
     color: white;
     transition: 0.2s ease;
 }
 
 nav ul li.upload-success {
 
-    color: color(srgb 0.1367 0.6367 0.2266);
-    border-color: color(srgb 0.1367 0.6367 0.2266);
+    color: var(--md-sys-color-success);
+    border-color: var(--md-sys-color-success);
     transition: 0.2s ease;
 
 }
@@ -193,7 +193,7 @@ nav ul li.upload-success {
     left: 7rem;
     z-index: 4;
     transform: translateY(-50%);
-    background-color: #635ca4;
+    background-color: var(--md-sys-color-primary);
     color: white;
     border: none;
     border-radius: 50%;
@@ -212,7 +212,7 @@ nav ul li.upload-success {
 }
 
 #next:hover, #prev:hover {
-    background-color: #4e4a8c;
+    background-color: var(--theme-nav-hover);
     transition: background-color 0.2s ease;
 }
 
@@ -240,7 +240,7 @@ nav ul li.upload-success {
 
 /* Active color state when all files are uploaded but processing hasn't finished */
 #process-btn.ready {
-    background-color: #635ca4; /* Purple */
+    background-color: var(--md-sys-color-primary); /* Purple */
     cursor: pointer;
 }
 
@@ -250,6 +250,6 @@ nav ul li.upload-success {
 
 /* Finished state when build_annotation_index is done */
 #process-btn.finished {
-    background-color: color(srgb 0.1367 0.6367 0.2266); /* Success Green */
+    background-color: var(--md-sys-color-success); /* Success Green */
     cursor: default;
 }

@@ -1,6 +1,6 @@
 .tooltip {
     position: absolute;
-    background-color: #333;
+    background-color: var(--md-sys-color-on-secondary-container);
     color: #fff;
     padding: 0.5em;
     border-radius: 4px;

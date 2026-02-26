@@ -5,7 +5,7 @@
 .settings-menu {
     position: relative;
     padding: 0em 0.5em 0 0.5em;
-    background-color: #cbc7f7;
+    background-color: var(--theme-primary-light);
     border-radius: 0.5rem;
     width: 12rem;
 

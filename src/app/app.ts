@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
     MatToolbarModule,
     MatListModule,
     MatIconModule,
-    MatButtonModule, 
+    MatButtonModule,
     MatDivider
   ],
   templateUrl: './app.html',
@@ -31,6 +31,6 @@ export class App {
   navigateTo(route: string): void {
     this.router.navigate([route]);
   }
-  
+
 
 }

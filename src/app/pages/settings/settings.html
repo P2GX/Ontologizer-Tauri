@@ -16,13 +16,34 @@
                  (click)="setCategory('Frequentist')">
                 <span class="material-symbols-outlined card-icon">calculate</span>
                 <h3>Frequentist</h3>
-                <p>Standard statistical tests evaluating each term individually.</p>
+                <p>Evaluates terms using hypergeometric tests, defining specific topological backgrounds to reduce hierarchy bias.</p>
+
+                <!-- Gaussian Distribution SVG (Always Visible) -->
+                <div class="illustration-container">
+                    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <clipPath id="p-value-clip">
+                                <rect x="115" y="0" width="45" height="80" />
+                            </clipPath>
+                        </defs>
+                        <!-- Baseline -->
+                        <!-- <line x1="5" y1="70" x2="155" y2="70" stroke="var(--text-secondary)" stroke-width="1.5" /> -->
+
+                        <!-- Shaded Area (upper tail) -->
+                        <path d="M 10 70 C 40 70, 55 10, 80 10 C 105 10, 120 70, 150 70 L 150 70 L 10 70 Z"
+                              fill="var(--theme-primary)" opacity="0.3" clip-path="url(#p-value-clip)" />
+
+                        <!-- Gaussian Curve Line -->
+                        <path d="M 10 70 C 40 70, 55 10, 80 10 C 105 10, 120 70, 150 70"
+                              fill="none" stroke="var(--theme-primary)" stroke-width="2.5" />
+                    </svg>
+                </div>
 
                 <!-- Nested Dropdowns for Frequentist -->
                 <div class="nested-settings" *ngIf="selectedCategory === 'Frequentist'" (click)="$event.stopPropagation()">
                     <div class="settings" id="analysisMethod">
                         <app-dropdown-menu
-                                [label]="'Method'"
+                                [label]="'Background Model'"
                                 [options]="frequentistMethods"
                                 [selected]="currentFrequentistMethod"
                                 (selectedChange)="SelectSetting($event, 'analysisMethod')">
@@ -31,7 +52,7 @@
 
                     <div class="settings" id="mtcMethod">
                         <app-dropdown-menu
-                                [label]="'Multiple Testing Correction'"
+                                [label]="'Multiple Testing Correction Method'"
                                 [options]="mtcMethod"
                                 [selected]="currentMtcMethod"
                                 (selectedChange)="SelectSetting($event, 'mtcMethod')">
@@ -48,12 +69,39 @@
                 <h3>Bayesian (MGSA)</h3>
                 <p>Model-based inference considering term overlaps jointly.</p>
 
-                <!-- Nested Info for Bayesian -->
-                <div class="nested-settings bayesian-info" *ngIf="selectedCategory === 'Bayesian'">
-                    <div class="settings info-box">
-                        <span class="material-symbols-outlined">info</span>
-                        <p><strong>Model-Based Gene Set Analysis (MGSA)</strong> is selected. Multiple Testing Correction is not required as the Bayesian model analyzes all terms simultaneously.</p>
-                    </div>
+                <!-- Inline SVG depicting Bayesian Network (Always Visible) -->
+                <div class="illustration-container">
+                    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Edges Layer 1 to Layer 2 -->
+                        <line x1="20" y1="10" x2="80" y2="20" />
+                        <line x1="20" y1="10" x2="80" y2="40" />
+                        <line x1="20" y1="30" x2="80" y2="20" />
+                        <line x1="20" y1="50" x2="80" y2="40" />
+                        <line x1="20" y1="50" x2="80" y2="60" />
+                        <line x1="20" y1="70" x2="80" y2="60" />
+
+                        <!-- Edges Layer 2 to Layer 3 (One-to-one) -->
+                        <line x1="80" y1="20" x2="140" y2="20" />
+                        <line x1="80" y1="40" x2="140" y2="40" />
+                        <line x1="80" y1="60" x2="140" y2="60" />
+
+                        <!-- Layer 1 Nodes (4) -->
+                        <!-- Layer 1 Nodes (4) - Rotated Rectangles -->
+                        <circle cx="20" cy="10" r="6" />
+                        <circle cx="20" cy="30" r="6" />
+                        <circle cx="20" cy="50" r="6" />
+                        <circle cx="20" cy="70" r="6" />
+
+                        <!-- Layer 2 Nodes (3) -->
+                        <circle cx="80" cy="20" r="6" />
+                        <circle cx="80" cy="40" r="6" />
+                        <circle cx="80" cy="60" r="6" />
+
+                        <!-- Layer 3 Nodes (3) -->
+                        <circle cx="140" cy="20" r="6" />
+                        <circle cx="140" cy="40" r="6" />
+                        <circle cx="140" cy="60" r="6" />
+                    </svg>
                 </div>
             </div>
         </div>

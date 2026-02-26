@@ -4,44 +4,73 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 :root {
-    /* Theme Colors */
-    --theme-primary: #635ca4;
-    --theme-primary-hover-border: #a199ee;
-    --theme-primary-hover-bg: #f8f7ff;
-    --theme-primary-active-bg: #f3f2fa;
-    --theme-primary-shadow: rgba(99, 92, 164, 0.15);
-    --theme-primary-divider: #d1ccfa;
+    /* === Material Design 3 Color System === */
 
-    /* Basic UI Colors */
-    --bg-main: white;
-    --bg-card: #fafafa;
-    --text-primary: #262f42;
-    --text-secondary: #555;
-    --border-color: #e0e0e0;
+    /* Accent: Primary (Derived from #635ca4) */
+    --md-sys-color-primary: #5c38b5;
+    --md-sys-color-primary-hover: #7e55e8;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #e5e4f1;
+    --md-sys-color-on-primary-container: #262f42;
 
-    /* Shadows */
-    --shadow-base: rgba(0, 0, 0, 0.05);
-    --shadow-header: rgba(0, 0, 0, 0.1);
+    /* Accent: Secondary (Derived from info-accent / badges) */
+    --md-sys-color-secondary: #4a90e2;
+    --md-sys-color-on-secondary: #ffffff;
+    --md-sys-color-secondary-container: #e8f4fd;
+    --md-sys-color-on-secondary-container: #333333;
 
-    /* Info Box Colors */
-    --info-bg: #e8f4fd;
-    --info-accent: #4a90e2;
-    --info-text: #333;
+    /* Semantic: Error & Success */
+    --md-sys-color-error: #ba1a1a;
+    --md-sys-color-on-error: #ffffff;
+    --md-sys-color-success: #22a239;
+    --md-sys-color-on-success: #ffffff;
 
-    /* Misc */
-    --divider-color: #d4d4d4;
+    /* Neutrals: Background & Surface */
+    --md-sys-color-background: #f2f3f5;
+    --md-sys-color-on-background: #262f42;
 
-    /* App Shell / Layout Colors */
-    --sidebar-bg: #1b1918;
+    --md-sys-color-surface: #ffffff;
+    --md-sys-color-on-surface: #262f42;
+
+    --md-sys-color-surface-variant: #f5f5f5;
+    --md-sys-color-on-surface-variant: #555555;
+
+    /* Boundaries: Outlines & Dividers */
+    --md-sys-color-outline: #d4d4d4;
+    --md-sys-color-outline-variant: #eeeeee;
+
+    /* Inverse: Standout elements (Sidebar) */
+    --md-sys-color-inverse-surface: #1b1918;
+    --md-sys-color-inverse-on-surface: #cbd5e1;
+    --md-sys-color-inverse-primary: #a199ee;
+
+    /* === App Shell (outside M3 spec) === */
     --sidebar-hover-bg: rgba(191, 195, 201, 0.057);
     --sidebar-active-bg: linear-gradient(90deg, rgb(57, 56, 56) 0%, rgb(33, 32, 30) 69%);
-    --sidebar-text: #cbd5e1;
     --sidebar-text-light: rgb(208, 208, 208);
     --sidebar-icon: #afb6bf;
-
-    --bg-app: rgb(242, 243, 245);
     --text-toolbar: #1e293b;
     --text-header: color(srgb 0.195 0.2559 0.39);
     --divider-dark: color(srgb 0.16 0.1541 0.1512);
     --ripple-color: color(srgb 0.9 0.9 0.9);
+
+    /* === Supplementary Theme Tokens === */
+    --theme-primary-light: #cbc7f7;
+    --theme-primary-hover-bg: #f8f7ff;
+    --theme-primary-shadow: rgba(99, 92, 164, 0.15);
+    --theme-primary-divider: #d1ccfa;
+    --theme-badge: #9383e9;
+    --theme-badge-hover: #7b68ee;
+    --theme-nav-hover: #4e4a8c;
+
+    /* === Shadows === */
+    --shadow-base: rgba(0, 0, 0, 0.05);
+    --shadow-header: rgba(0, 0, 0, 0.1);
+
+    /* === Table Specifics === */
+    --table-header-bg: #e9eaff;
+    --table-row-alt-hover: #edeef4;
+
+    /* === Text === */
+    --text-muted: color(srgb 0.6 0.6 0.6);
 }

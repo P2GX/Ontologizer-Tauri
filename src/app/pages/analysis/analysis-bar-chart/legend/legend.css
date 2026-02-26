@@ -20,5 +20,5 @@ div.legend-container {
 
 .legend-text {
   font-size: 0.875rem;
-  color: #333;
+  color: var(--md-sys-color-on-secondary-container);
 }

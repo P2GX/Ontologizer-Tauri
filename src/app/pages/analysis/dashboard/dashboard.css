@@ -9,7 +9,7 @@
     width: 80cqw;
     padding: 1.5rem;
     border-radius: 1rem;
-    border: 1px solid color(srgb 0.8313 0.8314 0.8315);
+    border: 1px solid var(--md-sys-color-outline);
     height: 30cqw;
     max-height: 400px;
     min-width: fit-content;
@@ -23,11 +23,11 @@
     display: flex;
     flex-direction: column;
     padding: 1rem;
-    border: 1px solid #eee;
+    border: 1px solid var(--md-sys-color-outline-variant);
     border-radius: 1rem;
-    background-color: #ffffff;
+    background-color: var(--md-sys-color-surface);
     gap: 0.5rem;
-    box-shadow: 0 0.13rem 0.3rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
 }
 
 .DoughnutChartContainer,
@@ -36,10 +36,10 @@
     flex: 1 1 0;
     cursor: pointer;
     min-height: 0;
-    border: 1px solid #eee;
-    background-color: #ffffff;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    background-color: var(--md-sys-color-surface);
     border-radius: 1rem;
-    box-shadow: 0 0.13rem 0.3rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
 }
 
 p {
@@ -55,7 +55,7 @@ h3 {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .summary-item:last-child {
@@ -109,7 +109,7 @@ h3 {
     margin-left: 1em;
     border-radius: 50%;
     font-size: 1rem;
-    background-color: #9383e9;
+    background-color: var(--theme-badge);
     color: white;
     display: flex;
     align-items: center;
@@ -118,7 +118,7 @@ h3 {
 }
 
 .help-icon:hover {
-    background-color: #7b68ee;
+    background-color: var(--theme-badge-hover);
     transition: background-color 0.2s ease;
 }
 

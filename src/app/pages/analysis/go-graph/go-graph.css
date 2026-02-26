@@ -7,7 +7,7 @@ div.go-graph-container {
     max-width: 1400px;
     border-radius: 1rem;
     height: 50cqw;
-    border: 1px solid #d4d4d4;
+    border: 1px solid var(--md-sys-color-outline);
     padding: 1.5rem;
     gap: 1rem;
     max-height: 800px;
@@ -27,9 +27,9 @@ div.go-graph-container {
     height: 100%;
     overflow: auto;
     flex: 1;
-    background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 0.13rem 0.3rem;
-    background-color: white;
+    background-color: var(--md-sys-color-surface);
+    box-shadow: var(--shadow-header) 0px 0.13rem 0.3rem;
+    background-color: var(--md-sys-color-surface);
     border-radius: 1rem;
     cursor: pointer;
     max-height: 40cqw;
@@ -54,7 +54,7 @@ div.go-graph-container {
 
 .mat-divider.vertical {
     width: 1px;
-    color: #e6e6e6;
+    color: var(--md-sys-color-outline-variant);
     margin-top: 0.5em;
     margin-bottom: 0.5em;
 }
@@ -88,7 +88,7 @@ button.tab-button {
     margin-left: 1em;
     border-radius: 50%;
     font-size: 1rem;
-    background-color: #9383e9;
+    background-color: var(--theme-badge);
     color: white;
     display: flex;
     align-items: center;
@@ -97,17 +97,17 @@ button.tab-button {
 }
 
 .help-icon:hover {
-    background-color: #7b68ee;
+    background-color: var(--theme-badge-hover);
     transition: background-color 0.2s ease;
 }
 
 button.tab-button.active {
-    background-color: #cbc7f7;
+    background-color: var(--theme-primary-light);
     color: black;
 }
 
 button.tab-button:hover {
-    background-color: #e5e4f1;
+    background-color: var(--md-sys-color-primary-container);
 }
 
 .invisible {

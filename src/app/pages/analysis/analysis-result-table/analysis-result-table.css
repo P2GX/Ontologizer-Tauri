@@ -9,20 +9,20 @@
 
 .mat-mdc-row:nth-child(4n),
 .mat-mdc-row:nth-child(4n+1) {
-    background-color: white;
+    background-color: var(--md-sys-color-surface);
 }
 
 .mat-mdc-row:nth-child(4n):hover{
-    background-color: color(srgb 0.975 0.9761 1);
+    background-color: var(--theme-primary-hover-bg);
 }
 
 .mat-mdc-row:nth-child(4n+2),
 .mat-mdc-row:nth-child(4n+3) {
-    background-color: #f5f5f5;
+    background-color: var(--md-sys-color-surface-variant);
 }
 
 .mat-mdc-row:nth-child(4n+2):hover{
-    background-color: #edeef4;
+    background-color: var(--table-row-alt-hover);
 }
 
 
@@ -51,8 +51,8 @@
     box-sizing: border-box;
     border-radius: 1rem;
     padding: 1.5rem;
-    background-color: white;
-    box-shadow: 0 0.13rem 0.3rem rgba(0, 0, 0, 0.1);
+    background-color: var(--md-sys-color-surface);
+    box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
 }
 
 .results-table .mat-mdc-header-row,
@@ -65,7 +65,7 @@
     position: sticky;
     top: 0 !important;
     z-index: 100;
-    background-color: #e9eaff !important;
+    background-color: var(--table-header-bg) !important;
 }
 
 .table-container h3 {
@@ -127,7 +127,7 @@ h3 {
 }
 
 ::ng-deep .mat-mdc-select-panel {
-    background-color: white !important;
+    background-color: var(--md-sys-color-surface) !important;
 }
 
 ::ng-deep .mdc-notched-outline {

@@ -1,12 +1,41 @@
+:host {
+    /* Theme Colors */
+    --theme-primary: #635ca4;
+    --theme-primary-hover-border: #a199ee;
+    --theme-primary-hover-bg: #f8f7ff;
+    --theme-primary-active-bg: #f3f2fa;
+    --theme-primary-shadow: rgba(99, 92, 164, 0.15);
+    --theme-primary-divider: #d1ccfa;
+
+    /* Basic UI Colors */
+    --bg-main: white;
+    --bg-card: #fafafa;
+    --text-primary: #262f42;
+    --text-secondary: #555;
+    --border-color: #e0e0e0;
+
+    /* Shadows */
+    --shadow-base: rgba(0, 0, 0, 0.05);
+    --shadow-header: rgba(0, 0, 0, 0.1);
+
+    /* Info Box Colors */
+    --info-bg: #e8f4fd;
+    --info-accent: #4a90e2;
+    --info-text: #333;
+
+    /* Misc */
+    --divider-color: #d4d4d4;
+}
+
 .analysis-settings {
     border-radius: 1rem;
     width: 80cqw;
     box-sizing: border-box;
     animation: mymove 0.5s;
     position: relative;
-    background: white;
+    background: var(--bg-main);
     padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px var(--shadow-base);
 }
 
 @keyframes mymove {
@@ -23,45 +52,75 @@
 
 .method-card {
     flex: 1;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-color);
     border-radius: 1rem;
     padding: 1.5rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    background-color: #fafafa;
+    background-color: var(--bg-card);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
 .method-card:hover {
-    border-color: #a199ee;
-    background-color: #f8f7ff;
+    border-color: var(--theme-primary-hover-border);
+    background-color: var(--theme-primary-hover-bg);
 }
 
 .method-card.active {
-    border-color: #635ca4; /* Your theme purple */
-    background-color: #f3f2fa;
-    box-shadow: 0 4px 8px rgba(99, 92, 164, 0.15);
+    border-color: var(--theme-primary);
+    background-color: var(--theme-primary-active-bg);
+    box-shadow: 0 4px 8px var(--theme-primary-shadow);
 }
 
 .card-icon {
     font-size: 2rem;
-    color: #635ca4;
+    color: var(--theme-primary);
     margin-bottom: 0.5rem;
 }
 
 .method-card h3 {
     margin: 0 0 0.5rem 0;
     font-size: 1.2rem;
-    color: #262f42;
+    color: var(--text-primary);
 }
 
 .method-card p {
     margin: 0;
     font-size: 0.9rem;
-    color: #555;
+    color: var(--text-secondary);
     line-height: 1.4;
+}
+
+/* Unified Layout for Both SVG Illustrations */
+.illustration-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.illustration-container svg {
+    height: 85px; /* Fixed height ensures they scale proportionally together */
+    width: auto;
+    max-width: 100%;
+}
+
+/* Dynamic line/circle coloring for Bayesian SVG */
+.illustration-container line {
+    stroke: var(--theme-primary-divider);
+    stroke-width: 2;
+    transition: stroke 0.3s ease;
+}
+
+.illustration-container circle {
+    fill: var(--theme-primary);
+    stroke: var(--bg-main);
+    stroke-width: 2;
+    transition: fill 0.3s ease;
 }
 
 /* Nested Settings Inside Cards */
@@ -71,13 +130,13 @@
     gap: 1rem;
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--border-color);
     width: 100%;
     animation: fadeIn 0.3s;
 }
 
 .method-card.active .nested-settings {
-    border-top-color: #d1ccfa; /* Subtle purple divider when active */
+    border-top-color: var(--theme-primary-divider);
 }
 
 @keyframes fadeIn {
@@ -85,29 +144,8 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Info box for Bayesian state */
-.info-box {
-    background-color: #e8f4fd;
-    border-left: 4px solid #4a90e2;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    align-items: center;
-    color: #333;
-}
-
-.info-box .material-symbols-outlined {
-    color: #4a90e2;
-    font-size: 1.5rem;
-}
-
-.info-box p {
-    margin: 0;
-    font-size: 0.95rem;
-}
-
-/* Remove old detailed-settings and dividers if they existed */
 .mat-divider {
-    color: #d4d4d4;
+    color: var(--divider-color);
 }
 
 .settings#analysisMethod {
@@ -125,9 +163,9 @@
     flex-direction: column;
     align-items: left;
     padding-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow-header);
     margin-bottom: 2rem;
-    background-color: color(srgb 1 1 1);
+    background-color: var(--bg-main);
     padding-left: 5vw;
 }
 
