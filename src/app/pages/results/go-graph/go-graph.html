@@ -1,0 +1,45 @@
+<div class="go-graph-container">
+    <div class="control-panel">
+        <div class="tabs-container">
+            <app-dropdown-menu [label]="'Displayed Subgraph'" [options]="subgraphs" [selected]="'Molecular Function'"
+                (selectedChange)="selectChart($event)"></app-dropdown-menu>
+        </div>
+        <button class="expand-graph" (click)="toggleExpanded()">
+            <span class="material-symbols-outlined icon">
+                open_in_full
+            </span>
+        </button>
+        <div style="display:flex; flex-direction: column; gap:0.5rem;">
+            <span class="chart-title">Adjusted P-Value</span>
+            <app-legend></app-legend>
+        </div>
+        <div class="help-icon" (mouseover)="showTooltip = true" (mouseout)="showTooltip = false">?</div>
+    </div>
+
+    <div #MFgraphvizContainer class="graphviz-container" [hidden]="(selectedChart !== 'MF') || showNonSignificant">
+    </div>
+    <div class="hover-node-tooltip" id="MFTooltip">
+    </div>
+    <div #BPgraphvizContainer class="graphviz-container" [hidden]="(selectedChart !== 'BP') || showNonSignificant">
+    </div>
+    <div class="hover-node-tooltip" id="BPTooltip">
+    </div>
+    <div #CCgraphvizContainer class="graphviz-container" [hidden]="(selectedChart !== 'CC') || showNonSignificant ">
+    </div>
+    <div class="hover-node-tooltip" id="CCTooltip">
+    </div>
+    <div #MFgraphvizContainerFull class="graphviz-container" [hidden]="(selectedChart !== 'MF') || !showNonSignificant">
+    </div>
+    <div class="hover-node-tooltip" id="MFTooltipFull">
+    </div>
+    <div #BPgraphvizContainerFull class="graphviz-container" [hidden]="(selectedChart !== 'BP') || !showNonSignificant">
+    </div>
+    <div class="hover-node-tooltip" id="BPTooltipFull">
+    </div>
+    <div #CCgraphvizContainerFull class="graphviz-container" [hidden]="(selectedChart !== 'CC' ) || !showNonSignificant">
+    </div>
+    <div class="hover-node-tooltip" id="CCTooltipFull">
+    </div>
+    <app-tooltip *ngIf="showTooltip === true" type="goGraphInfo"></app-tooltip>
+
+</div>

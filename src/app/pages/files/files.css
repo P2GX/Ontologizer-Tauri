@@ -1,0 +1,242 @@
+.setup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    margin-bottom: 2rem;
+    min-width: 700px;
+
+}
+
+
+.progress-bars-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 1rem;
+    justify-content: left;
+    margin-bottom: 1rem;
+    max-width: 50%;
+}
+
+
+.bar {
+    max-width: 20rem;
+    min-width: 1rem;
+    height: 2px;
+    background-color: rgb(190, 190, 190);
+}
+
+.progress-bar {
+    flex: 1 1 0%;
+    height: 5px;
+    min-width: 6rem;
+    background-color: #455780ff;
+    opacity: 0.2;
+}
+
+.progress-percentage-value {
+    font-size: 2rem;
+    font-weight: 600;
+    color: rgb(47, 47, 47);
+}
+
+.progress-percentage-text {
+    font-weight: 200;
+}
+
+.progress-percentage {
+    margin-left: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+}
+
+.progress-bar.active {
+    opacity: 1;
+}
+
+nav ul li.active {
+    background-color: var(--md-sys-color-primary);
+    color: white !important;
+    border-color: var(--md-sys-color-inverse-primary);
+    transition: 0.2s ease;
+
+}
+
+nav ul li.green-active {
+    background-color: var(--md-sys-color-success) !important;
+    color: white !important;
+    border-color: var(--md-sys-color-success) !important;
+    transition: 0.2s ease;
+
+}
+
+.circle.active {
+    background-color: var(--md-sys-color-surface) !important;
+    color: var(--md-sys-color-primary);
+    transition: 0.2s ease;
+}
+
+.circle.green-active {
+    background-color: var(--md-sys-color-surface) !important;
+    color: var(--md-sys-color-success) !important;
+    transition: 0.2s ease;
+}
+
+ul.upload-step-ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+
+}
+
+ul.upload-step-ul li {
+    cursor: pointer;
+    border-radius: 2rem;
+    border: 2px solid rgb(190, 190, 190);
+    color: rgb(190, 190, 190);
+    display: flex;
+    padding: 0.5rem;
+    padding-right: 1rem;
+    align-items: center;
+    gap: 0.8rem;
+
+}
+
+.circle {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    min-height: 24px;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-weight: bold;
+    color: white;
+    background-color: rgb(190, 190, 190);
+    user-select: none;
+}
+
+.circle.upload-success {
+    background-color: var(--md-sys-color-success);
+    color: white;
+    transition: 0.2s ease;
+}
+
+nav ul li.upload-success {
+
+    color: var(--md-sys-color-success);
+    border-color: var(--md-sys-color-success);
+    transition: 0.2s ease;
+
+}
+
+@media (max-width: 1000px) {
+    .setup-container {
+        margin-left: 0;
+        flex-direction: row;
+        margin-left: 2rem;
+        align-items: start;
+    }
+
+    ul.upload-step-ul {
+        flex-direction: column;
+        align-items: left;
+        gap: 1rem;
+    }
+
+    .bar {
+        display: none;
+    }
+
+    .slider-item {
+        margin-left: 1.5rem;
+        left: 0;
+    }
+
+}
+
+.upload-card-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.slider-item {
+    position: absolute;
+    transition: 0.4s;
+    top: 3rem;
+    left: calc(50% - 16rem);
+    /* center the item horizontally */
+}
+
+#next:not([hidden]), #prev:not([hidden]) {
+    position: absolute;
+    top: 12rem;
+    left: 7rem;
+    z-index: 4;
+    transform: translateY(-50%);
+    background-color: var(--md-sys-color-primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+#next:not([hidden]) {
+    left: unset;
+    right: 7rem;
+}
+
+#next:hover, #prev:hover {
+    background-color: var(--theme-nav-hover);
+    transition: background-color 0.2s ease;
+}
+
+/* Styles for the new Process button */
+#process-btn {
+    position: absolute;
+    top: 12rem;
+    right: 5rem;
+    z-index: 4;
+    transform: translateY(-50%);
+    background-color: rgb(190, 190, 190); /* Grey color initially */
+    color: white;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: not-allowed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, filter 0.2s ease;
+}
+
+/* Active color state when all files are uploaded but processing hasn't finished */
+#process-btn.ready {
+    background-color: var(--md-sys-color-primary); /* Purple */
+    cursor: pointer;
+}
+
+#process-btn.ready:hover:not([disabled]) {
+    filter: brightness(0.9); /* Slight hover effect */
+}
+
+/* Finished state when build_annotation_index is done */
+#process-btn.finished {
+    background-color: var(--md-sys-color-success); /* Success Green */
+    cursor: default;
+}

@@ -1,0 +1,51 @@
+<div class="page-header">
+    <h1 class="page-title">Results</h1>
+</div>
+<div class="analysis-body">
+
+    <div class="control-header" *ngIf="successful">
+        <div class="tabs-container">
+            <button class="tab-button" [class.active]="selectedChart === 'dashboard'"
+                (click)="selectTab('dashboard')"><span class="material-symbols-outlined tab-icon">
+                    dashboard
+                </span>Dashboard</button>
+            <mat-divider class="vertical" [vertical]="true"></mat-divider>
+            <button class="tab-button" [class.active]="selectedChart === 'table'" (click)="selectTab('table')"><span
+                    class="material-symbols-outlined tab-icon">
+                    data_table
+                </span>Table</button>
+            <mat-divider class="vertical" [vertical]="true"></mat-divider>
+            <button class="tab-button" [class.active]="selectedChart === 'go-graph'"
+                (click)="selectTab('go-graph')"><span class="material-symbols-outlined tab-icon">
+                    graph_4
+                </span>GO-Graph</button>
+            <mat-divider class="vertical" [vertical]="true"></mat-divider>
+            <button class="tab-button" [class.active]="selectedChart === 'bar-plot'"
+                (click)="selectTab('bar-plot')"><span class="material-symbols-outlined tab-icon">
+                    finance
+                </span>Bar Plot
+            </button>
+        </div>
+    </div>
+
+    <app-dashboard [dashboardInfo]="dashboardInfo" *ngIf="successful"
+        [hidden]="selectedChart !== 'dashboard'" [visible]="selectedChart === 'dashboard'"></app-dashboard>
+
+    <app-analysis-result-table *ngIf="tableDataLoaded && tableData && successful" [hidden]="selectedChart !== 'table'"
+        [tableData]="tableData"></app-analysis-result-table>
+    <app-go-graph *ngIf="dotData !== null" [hidden]="selectedChart !== 'go-graph'"
+        [visible]="selectedChart === 'go-graph'" [dotData]="dotData"></app-go-graph>
+    <app-analysis-bar-chart *ngIf="tableDataLoaded && tableData && successful" [hidden]="selectedChart !== 'bar-plot'"
+        [PlotData]="tableData"></app-analysis-bar-chart>
+
+    <div class="analyze-button-container" [class.hide]="selectedChart !== 'dashboard'">
+        <mat-divider class="horizontal"></mat-divider>
+        <button class="button" (click)="startAnalysis()">
+            {{buttonLabel}}
+            <span class="material-symbols-outlined icon" id="expand-icon">
+                expand_circle_right
+            </span>
+        </button>
+        <mat-divider class="horizontal"></mat-divider>
+    </div>
+</div>

@@ -1,7 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SettingsService } from '../../services/settingsService';
-import { AnalysisMethod } from '../../pages/analysis/analysis';
 
 
 @Component({
@@ -28,6 +26,5 @@ export class DropdownMenu {
     this.menuOpen = false;
     this.selectedChange.emit(option);
   }
-
 }
 

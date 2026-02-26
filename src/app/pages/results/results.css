@@ -1,23 +1,14 @@
-
-h2 {
-    font-weight: 200;
-    margin-bottom: 0.5rem;
-    margin-top: 0;
-    max-width: 27rem;
-    font-size: 1.3rem;
-}
-
-
-.about-wrapper {
+.all-results-container {
     display: flex;
     flex-direction: column;
-    width: 80cqw;
+    align-items: center;
+
 }
 
-.about-body {
+.analysis-body {
     display: flex;
-    padding: 0 1.5rem;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     margin-bottom: 2rem;
 }
 
@@ -49,13 +40,36 @@ h2 {
 
 }
 
+.button .icon {
+    transition: 0.5s;
+    width: 0;
+    position: relative;
+    right: -0.3em;
+    opacity: 0;
+    /* unsichtbar zu Beginn */
+}
+
+.button:hover .icon {
+    right: 0;
+    opacity: 1;
+    width: 1em;
+}
+
+h2 {
+    font-weight: 200;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+    font-size: 1.3rem;
+}
+
+
 button.tab-button {
     font-size: 1rem;
     padding: 0.5rem 1rem;
     border: none;
     background-color: transparent;
     cursor: pointer;
-    width: 15rem;
+    width: 10rem;
     transition: background-color 0.2s ease;
     margin: 0.3em;
     border-radius: 0.3rem;
@@ -83,7 +97,6 @@ button.tab-button:hover:not(.active) {
     position: relative;
     animation-timing-function: ease-in;
     animation: mymove 0.5s;
-    margin-bottom: 2rem;
 }
 
 @keyframes mymove {
@@ -96,6 +109,17 @@ button.tab-button:hover:not(.active) {
     }
 }
 
+.hide {
+    display: none !important;
+}
+
+/* .mat-divider.horizontal {
+    width: 90%;
+    margin: 0.5rem 0;
+    color: color(srgb 0.815 0.815 0.815);
+    margin: 1rem 0;
+} */
+
 .mat-divider.vertical {
     width: 1px;
     color: var(--md-sys-color-outline-variant);
@@ -103,12 +127,31 @@ button.tab-button:hover:not(.active) {
     margin-bottom: 0.5em;
 }
 
+.all-results-container {
+    width: 100%;
+}
 
 .material-symbols-outlined.tab-icon {
     color: rgb(50, 50, 50);
     font-size: 20px;
 }
 
+.analyze-button-container {
+    display: flex;
+    width: 80cqw;
+    margin-top: 3rem;
+    gap: 1.5rem;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    min-width: 700px;
+    max-width: 1400px;
+}
+
+.analyze-button-container.hide {
+    margin-top: 0;
+    transition: all 0.3s ease;
+}
 
 .mat-divider {
     width: 40%;
@@ -125,7 +168,3 @@ button.tab-button:hover:not(.active) {
     max-width: 1400px;
 }
 
-p {
-    font-weight: 300;
-    margin: 0;
-}

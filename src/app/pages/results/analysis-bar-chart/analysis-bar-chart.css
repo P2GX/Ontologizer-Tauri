@@ -1,0 +1,29 @@
+.chart-container {
+  height: 32rem;
+  width: 80cqw;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 700px;
+  max-width: 1400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 1rem;
+}
+
+.chart-title {
+  font-family: roboto;
+  margin-bottom: 1rem;
+}
+
+.control-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    gap: 1rem;
+    align-items: center;
+    z-index: 10;
+    width: 100%;
+}

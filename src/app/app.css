@@ -160,10 +160,23 @@ a.nav-item {
 }
 
 ::ng-deep h1 {
-  margin: 2rem;
-  font-size: 2.5rem;
+  margin: 1rem;
+  font-size: 2.0rem;
   font-weight: 400;
   color: var(--text-header);
+}
+
+::ng-deep .page-header {
+  display: flex;
+  flex-direction: column;
+  padding: 0 5vw 1rem 5vw;
+  box-shadow: 0 2px 4px var(--shadow-header);
+  margin-bottom: 2rem;
+  background-color: var(--md-sys-color-surface);
+}
+
+::ng-deep h1.page-title {
+  margin-bottom: 1rem;
 }
 
 .mat-divider {
