@@ -1,7 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet, Router, RouterModule } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule, MatDivider } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,7 +13,6 @@ import { CommonModule } from '@angular/common';
     RouterModule,
     CommonModule,
     MatSidenavModule,
-    MatToolbarModule,
     MatListModule,
     MatIconModule,
     MatButtonModule,
@@ -26,11 +24,17 @@ import { CommonModule } from '@angular/common';
 export class App {
   protected readonly title = signal('ontologizer');
 
+  // New signal to track if the sidebar is shrunken down to icons
+  isCollapsed = signal(false);
+
   constructor(private router: Router) { }
 
   navigateTo(route: string): void {
     this.router.navigate([route]);
   }
 
-
+  // Toggle function for the burger menu
+  toggleMenu(): void {
+    this.isCollapsed.set(!this.isCollapsed());
+  }
 }

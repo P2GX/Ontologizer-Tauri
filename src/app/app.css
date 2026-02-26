@@ -7,26 +7,44 @@
 html,
 body {
   height: 100%;
+  margin: 0;
 }
 
 .sidenav {
   background-color: var(--md-sys-color-inverse-surface);
   overflow-x: hidden;
   overflow-y: hidden;
+  width: 16rem;
+  transition: width 0.2s ease !important;
 }
 
 .sidenav-header {
-  padding: 1.5rem;
+  padding: 1rem;
   background: var(--md-sys-color-inverse-surface);
   color: var(--md-sys-color-surface); /* Reusing white from style.css */
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   box-shadow: 0 2px 4px var(--shadow-header); /* Reusing shadow from style.css */
+  overflow: hidden;
+}
+
+.logo-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap; /* Prevents wrapping during collapse */
+}
+
+.logo-icon {
+  width: 24px;
+  height: 24px;
 }
 
 .sidenav-header h2 {
   margin: 0;
   font-weight: 300;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .nav-item {
@@ -34,15 +52,13 @@ body {
   border-radius: 8px;
   transition: all 0.2s ease;
   color: var(--md-sys-color-inverse-on-surface);
+  white-space: nowrap; /* Prevents wrapping during collapse */
+  overflow: hidden;
 }
 
 .nav-item:hover {
   background-color: var(--sidebar-hover-bg);
   transform: translateX(0.2em);
-}
-
-.mat-sidenav {
-  width: 13rem;
 }
 
 .nav-item mat-icon {
@@ -74,32 +90,51 @@ a.nav-item {
   border-radius: 2em;
 }
 
+/* ==================================================== */
+/* Mini-sidebar state when class 'collapsed' is applied */
+/* ==================================================== */
+
+.sidenav.collapsed {
+  width: 4.5rem !important;
+}
+
+/* Hide text and logo inside the sidebar when collapsed */
+.sidenav.collapsed .logo-title,
+.sidenav.collapsed span[matListItemTitle] {
+  display: none !important;
+}
+
+/* Center elements in the collapsed sidebar */
+.sidenav.collapsed .sidenav-header {
+  padding: 1rem 0;
+  justify-content: center;
+}
+
+.sidenav.collapsed .nav-item {
+  width: 3.5rem;
+  margin: 4px auto;
+  padding: 0;
+  justify-content: center;
+}
+
+.sidenav.collapsed .nav-item mat-icon {
+  margin-right: 0;
+}
+
+/* ==================================================== */
+
 .main-content {
   display: flex;
   flex-direction: column;
 }
 
-.toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  box-shadow: 0 2px 4px var(--shadow-header);
-  background-color: var(--md-sys-color-surface-variant); /* Reusing #fafafa from style.css */
-}
-
-.toolbar-title {
-  margin-left: 16px;
-  font-weight: 300;
-  color: var(--text-toolbar);
+.menu-button {
+  color: var(--md-sys-color-surface);
 }
 
 ::ng-deep.mat-drawer-inner-container {
   overflow: hidden !important;
   max-width: 100%;
-}
-
-.menu-button {
-  color: var(--text-toolbar);
 }
 
 .content {
@@ -108,6 +143,8 @@ a.nav-item {
   container-type: inline-size;
   overflow-x: hidden;
   height: 100%;
+  /* Padding removed to allow content to naturally hit the top of the viewport */
+  padding-top: 0;
 }
 
 .content-analysis {
@@ -117,20 +154,6 @@ a.nav-item {
   background-color: red !important; /* Note: Left this hardcoded as it looks like a debug value */
   height: 100vh;
 }
-
-/* @media (max-width: 768px) {
-  .menu-button {
-    display: block;
-  }
-
-  .sidenav {
-    width: 280px;
-  }
-
-  .content {
-    padding: 16px;
-  }
-} */
 
 * {
   transition: all 0.2s ease-in-out;
