@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SettingsService } from '../../services/settingsService';
-import { AnalysisMethod } from '../../pages/settings/settings';
+import { AnalysisMethod } from '../../pages/analysis/analysis';
 
 
 @Component({

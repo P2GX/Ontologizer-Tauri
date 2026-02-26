@@ -17,7 +17,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         if (route.routeConfig && handle) {
             this.storedRoutes.set(route.routeConfig.path ?? '', handle);
         }
-        // Speichert die Route (Komponente, also z.B. Setup) mit ihrem Pfad als Schlüssel
+        // Speichert die Route (Komponente, also z.B. Files) mit ihrem Pfad als Schlüssel
     }
 
     // Diese Methode wird aufgerufen, wenn eine Route wiederverwendet werden soll
