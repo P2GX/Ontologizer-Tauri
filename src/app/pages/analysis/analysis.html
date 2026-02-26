@@ -34,7 +34,7 @@
     </div>
 
     <app-dashboard [dashboardInfo]="dashboardInfo" *ngIf="successful"
-        [hidden]="selectedChart !== 'dashboard'"></app-dashboard>
+        [hidden]="selectedChart !== 'dashboard'" [visible]="selectedChart === 'dashboard'"></app-dashboard>
 
     <app-analysis-result-table *ngIf="tableDataLoaded && tableData && successful" [hidden]="selectedChart !== 'table'"
         [tableData]="tableData"></app-analysis-result-table>

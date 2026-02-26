@@ -79,7 +79,7 @@ struct Edges {
 struct NodeData {
     id: String,    // GO-Term-ID
     label: String, // Term-Label
-    adj_pval: f32,
+    p_val: f32,
     study_count: u32,
     population_count: u32,
     depth: usize, // depth in the graph
@@ -211,7 +211,7 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
                 population_count: root_info.associated_genes.len() as u32,
                 // todo!(this is currently just study gene count)
                 depth: 0,
-                adj_pval: root_info.score as f32,
+                p_val: root_info.score as f32,
             },
             true,
         );
@@ -304,7 +304,7 @@ fn traverse_term(
             id: term.to_string(),
             label: node_result.id.clone(),
             depth,
-            adj_pval: node_result.score as f32,
+            p_val: node_result.score as f32,
             study_count: node_result.associated_genes.len() as u32,
             population_count: node_result.associated_genes.len() as u32,
         };

@@ -19,6 +19,7 @@ export class Dashboard implements OnChanges, AfterViewInit {
   chartB?: Chart;
 
   @Input() dashboardInfo!: DashboardInfo;
+  @Input() visible: boolean = false;
   viewInitialized: boolean = false;
   showTooltip: boolean = false;
 
@@ -46,14 +47,19 @@ export class Dashboard implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.time('RenderCharts doughnut')
+    if (!this.viewInitialized) return;
 
-    if (this.viewInitialized) {
+    if (changes['visible'] && this.visible) {
+      this.chartA?.resize();
+      this.chartB?.resize();
+      return;
+    }
+
+    if (changes['dashboardInfo']) {
       this.updateChartData();
       this.createChart('A', this.doughnutChartProperties.A.data);
       this.createChart('B', this.doughnutChartProperties.B.data);
     }
-    console.timeEnd('RenderCharts doughnut')
   }
 
 

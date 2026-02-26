@@ -27,13 +27,12 @@ export class AnalysisResultTable implements OnChanges, AfterViewInit {
   @Input() tableData!: FrequentistRowData[];
 
   displayedColumns: string[] = [
-    'term_label',
+    'label',
     'aspect',
-    'term_id',
-    'nt',
-    'mt',
+    'id',
+    'k',
+    'n',
     'p_val',
-    'adj_pval'
   ];
   columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
   expandedElement: FrequentistRowData | null = null;
@@ -75,9 +74,8 @@ export class AnalysisResultTable implements OnChanges, AfterViewInit {
 
         switch (sortHeaderId) {
           case 'p_val':
-          case 'adj_pval':
-          case 'nt':
-          case 'mt':
+          case 'k':
+          case 'n':
             return Number(data[sortHeaderId as keyof FrequentistRowData]);
           default:
             const value = data[sortHeaderId as keyof FrequentistRowData];

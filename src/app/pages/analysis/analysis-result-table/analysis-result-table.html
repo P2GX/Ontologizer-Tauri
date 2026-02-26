@@ -2,9 +2,9 @@
 
     <mat-table [dataSource]="dataSource" class="results-table" matSort multiTemplateDataRows>
 
-        <ng-container matColumnDef="term_label">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="term_label">Term Label</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{ row.term_label }}</mat-cell>
+        <ng-container matColumnDef="label">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="label">Term Label</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.label }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="aspect">
@@ -12,31 +12,26 @@
             <mat-cell *matCellDef="let row">{{ row.aspect }}</mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="term_id">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="term_id">GO-ID</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{ row.term_id }}</mat-cell>
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="id">GO-ID</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.id }}</mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="nt">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="nt">Study Hits</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{ row.nt }}</mat-cell>
+        <ng-container matColumnDef="k">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="k">Study Hits</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.k }}</mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="mt">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="mt">Pop Hits</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{ row.mt }}</mat-cell>
+        <ng-container matColumnDef="n">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="n">Pop Hits</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.n }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="p_val">
             <mat-header-cell *matHeaderCellDef mat-sort-header="p_val">P-Value</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{ formatPValue(row.p_val) }}</mat-cell>
+            <mat-cell *matCellDef="let row"><span [class.significant-pval]="isSignificant(row.p_val)">{{ formatPValue(row.p_val) }}</span></mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="adj_pval">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="adj_pval">Adj. P-Value</mat-header-cell>
-            <mat-cell *matCellDef="let row"><span [class.significant-pval]="isSignificant(row.adj_pval)">{{
-                    formatPValue(row.adj_pval) }}</span></mat-cell>
-        </ng-container>
         <ng-container matColumnDef="expand">
             <th mat-header-cell *matHeaderCellDef>&nbsp;</th>
             <td mat-cell *matCellDef="let row">
@@ -53,7 +48,7 @@
                         <strong>Annotated Genes in Study Set:</strong>
                         <div>
                             <ul class = "gene-list">
-                                <li *ngFor="let gene of row.study_annotations">{{ gene + ',' }}</li>
+                                <li *ngFor="let gene of row.associatedGenes">{{ gene + ',' }}</li>
                             </ul>
                         </div>
                         <ng-template #noAnnotations>No annotated genes in study set.</ng-template>

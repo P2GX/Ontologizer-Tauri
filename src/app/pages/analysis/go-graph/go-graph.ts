@@ -16,7 +16,7 @@ import * as d3 from 'd3';
   styleUrl: './go-graph.css'
 })
 
-export class GoGraph implements AfterViewInit, OnDestroy {
+export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   @Input() visible: boolean = false;
   @Input() dotData?: DotData | null = null;
   viewInitialized: boolean = false;
@@ -115,17 +115,25 @@ export class GoGraph implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-
     this.viewInitialized = true;
+    if (this.dotData) {
+      this.renderAll();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['dotData'] && this.dotData && this.viewInitialized) {
+      this.renderAll();
+    }
+  }
+
+  private renderAll(): void {
     this.generateDot('MF');
     this.generateDot('BP');
     this.generateDot('CC');
-
-    if (this.dotStrings) {
-      this.createGraphviz('MF');
-      this.createGraphviz('BP');
-      this.createGraphviz('CC');
-    }
+    this.createGraphviz('MF');
+    this.createGraphviz('BP');
+    this.createGraphviz('CC');
   }
 
   selectChart(chart: string) {
@@ -260,20 +268,5 @@ export class GoGraph implements AfterViewInit, OnDestroy {
     d3.select(this.BPgraphvizContainerFull.nativeElement).selectAll('*').remove();
     d3.select(this.CCgraphvizContainerFull.nativeElement).selectAll('*').remove();
   }
-
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   console.time('RenderCharts go graph')
-  //   if (changes['dotData'] && this.dotData && this.viewInitialized) {
-  //     console.log('on changes in go graph:');
-  //     this.BPdotData = this.dotData?.BP;
-  //     this.MFdotData = this.dotData?.MF;
-  //     this.CCdotData = this.dotData?.CC;
-
-  //     this.createGraphviz('BP', this.BPdotData);
-  //     this.createGraphviz('CC', this.CCdotData);
-  //   }
-  //   console.timeEnd('RenderCharts go graph');
-
-  // }
 
 }

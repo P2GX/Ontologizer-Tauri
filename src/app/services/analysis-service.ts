@@ -87,7 +87,7 @@ export class AnalysisService {
         label: item.Label,
         aspect: item.Aspect,
         p_val: item.Score,
-        associatedGenes: item['Associated Genes'] || [],
+        associatedGenes: item['Associated Genes'] ? item['Associated Genes'].split(', ') : [],
         diagnostics: item.Diagnostics,
         k,
         n,
