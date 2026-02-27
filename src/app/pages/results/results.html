@@ -38,14 +38,10 @@
     <app-analysis-bar-chart *ngIf="tableDataLoaded && tableData && successful" [hidden]="selectedChart !== 'bar-plot'"
         [PlotData]="tableData"></app-analysis-bar-chart>
 
-    <div class="analyze-button-container" [class.hide]="selectedChart !== 'dashboard'">
-        <mat-divider class="horizontal"></mat-divider>
-        <button class="button" (click)="startAnalysis()">
-            {{buttonLabel}}
-            <span class="material-symbols-outlined icon" id="expand-icon">
-                expand_circle_right
-            </span>
-        </button>
-        <mat-divider class="horizontal"></mat-divider>
+    <div class="empty-state" *ngIf="!successful">
+        <span class="material-symbols-outlined empty-state-icon">labs</span>
+        <h2>No results yet</h2>
+        <p>Upload your files on the <strong>Files</strong> page and run the analysis on the <strong>Analysis</strong> page.</p>
     </div>
+
 </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AnalysisResultTable } from './analysis-result-table/analysis-result-table';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -11,7 +11,6 @@ import { Dashboard } from './dashboard/dashboard';
 import { GoGraph } from './go-graph/go-graph';
 import { FilesService } from '../../services/files-service';
 import { AnalysisService, DotData, FrequentistRowData, ProportionData } from '../../services/analysis-service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-results',
@@ -20,19 +19,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './results.css',
   standalone: true
 })
-export class Results {
-  constructor(private filesService: FilesService, private analysisService: AnalysisService, private snackBar: MatSnackBar) { }
+export class Results implements OnInit {
+  constructor(private filesService: FilesService, private analysisService: AnalysisService) { }
 
-  buttonLabel = 'Start Analysis';
   selectedChart = 'dashboard';
-  isLoading = false;
-  graphDataLoaded = false;
   tableDataLoaded = false;
-  resultsLength = 0;
   dotData: DotData | null = null;
-
   tableData: FrequentistRowData[] | null = null;
-  successful: boolean = false;
+  successful = false;
 
   dashboardInfo: DashboardInfo = {
     mtcMethod: '',
@@ -49,53 +43,27 @@ export class Results {
     }
   };
 
-  selectTab(tab: string) {
-    this.selectedChart = tab;
+  ngOnInit() {
+    const tableData = this.analysisService.getTableData();
+    if (tableData === null) return;
+
+    this.tableData = tableData;
+    this.tableDataLoaded = true;
+    this.dotData = this.analysisService.getDotData();
+    this.dashboardInfo = {
+      studyGenes: this.filesService.getStudyGenesCount(),
+      popGenes: this.filesService.getPopGenesCount(),
+      goTerms: this.filesService.getGoTermsCount(),
+      mtcMethod: this.analysisService.getMtcMethod(),
+      analysisMethod: this.analysisService.getAnalysisMethod(),
+      resultsLength: this.analysisService.getResultsLength(),
+      proportionData: this.analysisService.getProportionData()
+    };
+    this.successful = true;
   }
 
-  async startAnalysis() {
-    console.log("fileStats", this.filesService.getFileStatus())
-
-    if (!Object.values(this.filesService.getFileStatus())
-      .every(fileLoaded => fileLoaded === true)) {
-      this.snackBar.open('⚠️ Not all required files are loaded.', 'Close', { panelClass: ['custom-snackbar'] });
-      return;
-    }
-    try {
-      this.buttonLabel = 'Analyzing...';
-      this.successful = false;
-      this.dotData = null;
-      this.isLoading = true;
-      await this.analysisService.runAnalysis();
-      await this.analysisService.loadAnalysisOutput();
-      this.tableData = this.analysisService.getTableData();
-      this.tableDataLoaded = true;
-      this.resultsLength = this.analysisService.getResultsLength();
-      await this.analysisService.loadDotData();
-      this.dotData = this.analysisService.getDotData();
-
-      const newDashboardInfo: DashboardInfo = {
-        studyGenes: this.filesService.getStudyGenesCount(),
-        popGenes: this.filesService.getPopGenesCount(),
-        goTerms: this.filesService.getGoTermsCount(),
-        mtcMethod: this.analysisService.getMtcMethod(),
-        analysisMethod: this.analysisService.getAnalysisMethod(),
-        resultsLength: this.analysisService.getResultsLength(),
-        proportionData: this.analysisService.getProportionData()
-      };
-
-      // Neu zuweisen → Childs bekommen neuen Input
-      this.dashboardInfo = newDashboardInfo;
-      console.log('Methods:', this.dashboardInfo.analysisMethod, this.dashboardInfo.mtcMethod);
-      this.successful = true;
-    } catch (err) {
-      console.error('Error loading analysis:', err);
-      alert('Failed to run analysis.');
-      this.successful = false;
-    } finally {
-      this.isLoading = false;
-      this.buttonLabel = 'Rerun Analysis';
-    }
+  selectTab(tab: string) {
+    this.selectedChart = tab;
   }
 }
 
@@ -108,6 +76,3 @@ export interface DashboardInfo {
   popGenes: number;
   proportionData: ProportionData;
 }
-
-
-

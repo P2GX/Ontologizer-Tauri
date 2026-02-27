@@ -244,7 +244,7 @@
     transition: background-color 0.2s ease;
 }
 
-.upload-form i {
+.upload-form .upload-icon {
     font-size: 2em;
     color: var(--theme-badge);
 }
@@ -267,7 +267,7 @@ section .row {
     justify-content: space-between;
 }
 
-section .row i {
+section .row .file-icon {
     color: var(--theme-badge);
     font-size: 30px;
 }
@@ -333,7 +333,7 @@ section .details span {
     font-size: 11px;
 }
 
-.uploaded-area i.fa-check {
+.uploaded-area .check-icon {
     font-size: 16px;
 }
 

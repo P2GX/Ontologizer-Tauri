@@ -1,6 +1,5 @@
 import { open } from '@tauri-apps/plugin-dialog';
 import { Component, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
-import { invoke } from '@tauri-apps/api/core'
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
@@ -39,7 +38,7 @@ export class FileUpload {
   showStats: boolean = false;
 
   filters = {
-    'go': { name: 'GO File', extensions: ['obo', 'go', 'json'] },
+    'go': { name: 'GO File', extensions: ['json'] },
     'annotation': { name: 'GAF File', extensions: ['gaf'] },
     'study': { name: 'Study gene File', extensions: ['txt'] },
     'pop': { name: 'Population gene File', extensions: ['txt'] }

@@ -2,7 +2,7 @@
     <h1 class="page-title">Analysis</h1>
 </div>
 
-<div class="settings-content">
+<div class="analysis-content">
     <div class="analysis-settings">
 
         <!-- Category Selection Cards -->
@@ -104,10 +104,10 @@
         </div>
 
         <!-- Start Analysis Button with Dividers -->
-        <div class="analyze-button-container" [class.disabled-state]="!selectedCategory">
+        <div class="analyze-button-container" [class.disabled-state]="!selectedCategory || isAnalysing">
             <mat-divider class="horizontal"></mat-divider>
-            <button class="button" [disabled]="!selectedCategory" (click)="startAnalysis()">
-                Start Analysis
+            <button class="button" [disabled]="!selectedCategory || isAnalysing" (click)="startAnalysis()">
+                {{ buttonLabel }}
                 <span class="material-symbols-outlined icon" id="expand-icon">
                     expand_circle_right
                 </span>

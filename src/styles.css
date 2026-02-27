@@ -74,3 +74,55 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     /* === Text === */
     --text-muted: color(srgb 0.6 0.6 0.6);
 }
+
+/* ===== Shared Button ===== */
+.button {
+    background-color: var(--md-sys-color-primary);
+    color: white;
+    border-radius: 3em;
+    width: 14rem;
+    height: 3.5rem;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.button:hover:not(:disabled) {
+    background-color: var(--md-sys-color-primary-hover);
+    box-shadow: 0 0.3em 0.7em rgba(0, 0, 0, 0.3);
+}
+
+.button:disabled {
+    background-color: var(--md-sys-color-outline);
+    color: var(--md-sys-color-on-surface-variant);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Animated Icon */
+.button .icon {
+    transition: 0.4s ease;
+    width: 0;
+    position: relative;
+    right: -0.3em;
+    opacity: 0;
+    font-size: 1.4rem;
+    color: white;
+}
+
+.button:hover:not(:disabled) .icon {
+    right: 0;
+    opacity: 1;
+    width: 1.2em;
+}
+
+.disabled-state {
+    opacity: 0.6;
+}

@@ -26,7 +26,7 @@
     box-sizing: border-box;
     animation: mymove 0.5s;
     position: relative;
-    background: var(--bg-main);
+    background: var(--md-sys-color-surface);
     padding: 2rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
@@ -102,7 +102,6 @@
 .illustration-container line { stroke: var(--theme-primary-divider); stroke-width: 2; }
 .illustration-container circle { fill: var(--theme-primary); stroke: var(--bg-main); stroke-width: 2; }
 
-/* --- Start Analysis Button Styles (Copied from analysis.css) --- */
 .analyze-button-container {
     display: flex;
     width: 100%;
@@ -118,59 +117,7 @@
     color: var(--md-sys-color-outline);
 }
 
-.button {
-    background-color: var(--md-sys-color-primary);
-    color: white;
-    border-radius: 3em;
-    width: 14rem;
-    height: 3.5rem;
-    border: none;
-    font-size: 1.1rem;
-    font-weight: 500;
-    cursor: pointer;
-    box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.2s ease;
-}
-
-.button:hover:not(:disabled) {
-    background-color: var(--md-sys-color-primary-hover);
-    box-shadow: 0 0.3em 0.7em rgba(0, 0, 0, 0.3);
-}
-
-.button:disabled {
-    background-color: var(--border-color);
-    color: var(--text-secondary);
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-/* Animated Icon Logic */
-.button .icon {
-    transition: 0.4s ease;
-    width: 0;
-    position: relative;
-    right: -0.3em;
-    opacity: 0;
-    font-size: 1.4rem;
-    color: white;
-}
-
-.button:hover:not(:disabled) .icon {
-    right: 0;
-    opacity: 1;
-    width: 1.2em;
-}
-
-.disabled-state {
-    opacity: 0.6;
-}
-
-
-.settings-content {
+.analysis-content {
     display: flex;
     justify-content: center;
 }

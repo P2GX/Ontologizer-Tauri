@@ -4,6 +4,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenu } from '../../shared/dropdown-menu/dropdown-menu';
 import { SettingsService, AppSettings } from '../../services/settings-service';
 import { MatDividerModule } from '@angular/material/divider';
+import { Router } from '@angular/router';
+import { FilesService } from '../../services/files-service';
+import { AnalysisService } from '../../services/analysis-service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export enum AnalysisMethod {
   TermForTerm = 'TermForTerm',
@@ -28,10 +32,10 @@ export enum MtcMethod {
 })
 export class Analysis {
 
-  // Top-level UI state: Initialized to null so no card is selected by default
   selectedCategory: 'Frequentist' | 'Bayesian' | null = null;
+  isAnalysing = false;
+  buttonLabel = 'Start Analysis';
 
-  // Sub-method states
   currentFrequentistMethod: string = AnalysisMethod.TermForTerm;
   currentMtcMethod: string = MtcMethod.Bonferroni;
 
@@ -43,22 +47,24 @@ export class Analysis {
 
   readonly mtcMethod = Object.values(MtcMethod);
 
-  constructor(private settingsService: SettingsService) { }
+  constructor(
+    private settingsService: SettingsService,
+    private filesService: FilesService,
+    private analysisService: AnalysisService,
+    private snackBar: MatSnackBar,
+    private router: Router
+  ) { }
 
-  // Switches between the two main cards
   setCategory(category: 'Frequentist' | 'Bayesian') {
     this.selectedCategory = category;
 
     if (category === 'Bayesian') {
-      // Automatically select MGSA and send to backend
       this.SelectSetting(AnalysisMethod.MGSA, 'analysisMethod');
     } else {
-      // Restore the previously selected Frequentist method
       this.SelectSetting(this.currentFrequentistMethod, 'analysisMethod');
     }
   }
 
-  // Updates specific dropdown selections
   SelectSetting(newSetting: string, type: keyof AppSettings) {
     if (type === 'analysisMethod' && newSetting !== AnalysisMethod.MGSA) {
       this.currentFrequentistMethod = newSetting;
@@ -69,10 +75,29 @@ export class Analysis {
     this.settingsService.updateSettings(newSetting, type);
   }
 
-  // Triggered by the "Start Analysis" button
-  startAnalysis() {
+  async startAnalysis() {
     if (!this.selectedCategory) return;
 
-    console.log(`Starting ${this.selectedCategory} analysis...`);
+    if (!Object.values(this.filesService.getFileStatus()).every(f => f === true)) {
+      this.snackBar.open('⚠️ Not all required files are loaded.', 'Close', { panelClass: ['custom-snackbar'] });
+      return;
+    }
+
+    this.isAnalysing = true;
+    this.buttonLabel = 'Analyzing...';
+
+    try {
+      await this.analysisService.runAnalysis();
+      await this.analysisService.loadAnalysisOutput();
+      await this.analysisService.loadDotData();
+      this.buttonLabel = 'Done!';
+      setTimeout(() => this.router.navigate(['/analysis']), 1000);
+    } catch (error) {
+      console.error('Error running analysis:', error);
+      this.snackBar.open('Failed to run analysis.', 'Close', { panelClass: ['custom-snackbar'] });
+      this.buttonLabel = 'Start Analysis';
+    } finally {
+      this.isAnalysing = false;
+    }
   }
 }

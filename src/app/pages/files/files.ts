@@ -5,10 +5,11 @@ import { Router } from '@angular/router';
 import { SettingsService } from '../../services/settings-service';
 import {FileStatus, FilesService, Stat} from '../../services/files-service';
 import {invoke} from "@tauri-apps/api/core";
+import {MatDivider} from "@angular/material/list";
 
 @Component({
   selector: 'app-files',
-  imports: [FileUpload, CommonModule],
+    imports: [FileUpload, CommonModule, MatDivider],
   templateUrl: './files.html',
   styleUrl: './files.css',
   standalone: true
@@ -33,10 +34,10 @@ export class Files implements AfterViewInit {
   triggerReload = 0; // if new GAF ist loaded, we need to reprocess the study and pop files before the analysis
 
   uploadSteps = [
-    { type: 'go' as keyof FileStatus, title: 'Upload the Gene Ontology', subtitle: 'Accepted File Types: .json, .obo', dependsOn: null, fileLoaded: () => this.filesStatus.go },
-    { type: 'annotation' as keyof FileStatus, title: 'Upload the Annotations', subtitle: 'Accepted File Types: .gaf', dependsOn: null, fileLoaded: () => this.filesStatus.annotation },
-    { type: 'study' as keyof FileStatus, title: 'Upload the Study Gene Set', subtitle: 'Accepted File Types: .txt', dependsOn: 'annotation' as keyof FileStatus, fileLoaded: () => this.filesStatus.study },
-    { type: 'pop' as keyof FileStatus, title: 'Upload the Population Gene Set', subtitle: 'Accepted File Types: .txt', dependsOn: 'annotation' as keyof FileStatus, fileLoaded: () => this.filesStatus.pop }
+    { type: 'go' as keyof FileStatus, title: 'Upload Gene Ontology', subtitle: 'Accepted File Types: .json', dependsOn: null, fileLoaded: () => this.filesStatus.go },
+    { type: 'annotation' as keyof FileStatus, title: 'Upload Annotations', subtitle: 'Accepted File Types: .gaf', dependsOn: null, fileLoaded: () => this.filesStatus.annotation },
+    { type: 'study' as keyof FileStatus, title: 'Upload Study Genes', subtitle: 'Accepted File Types: .txt', dependsOn: null , fileLoaded: () => this.filesStatus.study },
+    { type: 'pop' as keyof FileStatus, title: 'Upload Population Genes', subtitle: 'Accepted File Types: .txt', dependsOn: null, fileLoaded: () => this.filesStatus.pop }
   ];
 
   onFileLoadedSuccess(fileType: keyof FileStatus) {
@@ -94,13 +95,11 @@ export class Files implements AfterViewInit {
         stt++;
         const itemRef = this.sliderItems.toArray()[i];
         const item = (itemRef.nativeElement as HTMLElement);
-
-        item.style.transform = `translateX(${120 * stt}px) scale(${1 - 0.2 * stt}) perspective(10px) `;
+        item.style.transform = `translateX(${120 * stt}px) scale(${1 - 0.2 * stt}) perspective(10px)`;
         item.style.pointerEvents = 'none';
         item.style.zIndex = (5 - stt).toString();
         item.style.filter = `blur(${4 * stt}px)`;
         item.style.opacity = `${1 - 0.3 * stt}`;
-
       }
       stt = 0;
       for (let i = this.activeStep - 1; i >= 0; i--) {
@@ -108,8 +107,7 @@ export class Files implements AfterViewInit {
         const itemRef = this.sliderItems.toArray()[i];
         const item = (itemRef.nativeElement as HTMLElement);
         item.style.pointerEvents = 'none';
-
-        item.style.transform = `translateX(${-120 * stt}px) scale(${1 - 0.2 * stt}) perspective(10px) `;
+        item.style.transform = `translateX(${-120 * stt}px) scale(${1 - 0.2 * stt}) perspective(10px)`;
         item.style.zIndex = (5 - stt).toString();
         item.style.filter = `blur(${3 * stt}px)`;
         item.style.opacity = `${1 - 0.3 * stt}`;
@@ -118,10 +116,6 @@ export class Files implements AfterViewInit {
       console.error('Error in loadShow:', error);
     }
   }
-
-  onResize = () => {
-    this.loadShow();
-  };
 
   async processFiles() {
     if (this.uploadProgress < 100) return;
