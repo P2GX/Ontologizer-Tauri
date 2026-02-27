@@ -31,12 +31,12 @@
     <app-dashboard [dashboardInfo]="dashboardInfo" *ngIf="successful"
         [hidden]="selectedChart !== 'dashboard'" [visible]="selectedChart === 'dashboard'"></app-dashboard>
 
-    <app-analysis-result-table *ngIf="tableDataLoaded && tableData && successful" [hidden]="selectedChart !== 'table'"
-        [tableData]="tableData"></app-analysis-result-table>
+    <app-result-table *ngIf="tableDataLoaded && tableData && successful" [hidden]="selectedChart !== 'table'"
+        [tableData]="tableData"></app-result-table>
     <app-go-graph *ngIf="dotData !== null" [hidden]="selectedChart !== 'go-graph'"
         [visible]="selectedChart === 'go-graph'" [dotData]="dotData"></app-go-graph>
-    <app-analysis-bar-chart *ngIf="tableDataLoaded && tableData && successful" [hidden]="selectedChart !== 'bar-plot'"
-        [PlotData]="tableData"></app-analysis-bar-chart>
+    <app-bar-chart *ngIf="tableDataLoaded && tableData && successful" [hidden]="selectedChart !== 'bar-plot'"
+        [PlotData]="tableData"></app-bar-chart>
 
     <div class="empty-state" *ngIf="!successful">
         <span class="material-symbols-outlined empty-state-icon">labs</span>

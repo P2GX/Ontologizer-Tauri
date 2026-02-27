@@ -2,7 +2,7 @@ import { Component, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@
 import { FileUpload } from './file-upload/file-upload';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { SettingsService } from '../../services/settings-service';
+import { AnalysisService } from '../../services/analysis-service';
 import {FileStatus, FilesService, Stat} from '../../services/files-service';
 import {invoke} from "@tauri-apps/api/core";
 import {MatDivider} from "@angular/material/list";
@@ -16,12 +16,12 @@ import {MatDivider} from "@angular/material/list";
 })
 export class Files implements AfterViewInit {
 
-  // Inject the SettingsService to ensure that the initial settings (Term-for-Term, Bonferroni) are sent to the backend even if the user
+  // Inject the AnalysisService to ensure that the initial settings (Term-for-Term, Bonferroni) are sent to the backend even if the user
   // never opens the Analysis page.
   constructor(private filesService: FilesService,
-              private settingsService: SettingsService,
+              private analysisService: AnalysisService,
               private router: Router) {
-    this.settingsService.startAutoSave();
+    this.analysisService.startAutoSave();
   }
 
   // Track which files have been successfully loaded
@@ -132,7 +132,7 @@ export class Files implements AfterViewInit {
       // Data is successfully loaded and indexed in AppState!
       // Ready to route the user to the next screen here!
       setTimeout(() => {
-        this.router.navigate(['/settings']); // Adjust '/settings' if your route path is named differently
+        this.router.navigate(['/analysis']);
       }, 1500);
 
     } catch (error) {

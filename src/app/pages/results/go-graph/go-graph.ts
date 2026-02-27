@@ -2,9 +2,9 @@ import { Component, SimpleChanges, Input, OnChanges, ElementRef, ViewChild, Afte
 import { MatDivider } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { DropdownMenu } from '../../../shared/dropdown-menu/dropdown-menu';
-import { Legend } from '../analysis-bar-chart/legend/legend';
+import { Legend } from '../bar-chart/legend/legend';
 import { Tooltip } from '../../../shared/tooltip/tooltip';
-import { DotData } from '../../../services/analysis-service';
+import { DotData } from '../../../services/results-service';
 // import * as Viz from "@viz-js/viz";
 import 'd3-graphviz';
 import * as d3 from 'd3';

@@ -6,10 +6,10 @@ import { Contact } from './pages/contact/contact';
 import { About } from './pages/about/about';
 
 export const routes: Routes = [
-  { path: 'setup', component: Files },
-  { path: 'settings', component: Analysis },
-  { path: 'analysis', component: Results },
+  { path: 'files', component: Files },
+  { path: 'analysis', component: Analysis },
+  { path: 'results', component: Results },
   { path: 'about', component: About },
   { path: 'contact', component: Contact },
-  { path: '', redirectTo: '/setup', pathMatch: 'full' }
+  { path: '', redirectTo: '/files', pathMatch: 'full' }
 ];

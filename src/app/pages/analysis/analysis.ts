@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenu } from '../../shared/dropdown-menu/dropdown-menu';
-import { SettingsService, AppSettings } from '../../services/settings-service';
+import { AnalysisService, AppSettings } from '../../services/analysis-service';
 import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { FilesService } from '../../services/files-service';
-import { AnalysisService } from '../../services/analysis-service';
+import { ResultsService } from '../../services/results-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 export enum AnalysisMethod {
@@ -48,9 +48,9 @@ export class Analysis {
   readonly mtcMethod = Object.values(MtcMethod);
 
   constructor(
-    private settingsService: SettingsService,
-    private filesService: FilesService,
     private analysisService: AnalysisService,
+    private filesService: FilesService,
+    private resultsService: ResultsService,
     private snackBar: MatSnackBar,
     private router: Router
   ) { }
@@ -72,7 +72,7 @@ export class Analysis {
     if (type === 'mtcMethod') {
       this.currentMtcMethod = newSetting;
     }
-    this.settingsService.updateSettings(newSetting, type);
+    this.analysisService.updateSettings(newSetting, type);
   }
 
   async startAnalysis() {
@@ -87,11 +87,11 @@ export class Analysis {
     this.buttonLabel = 'Analyzing...';
 
     try {
-      await this.analysisService.runAnalysis();
-      await this.analysisService.loadAnalysisOutput();
-      await this.analysisService.loadDotData();
+      await this.resultsService.runAnalysis();
+      await this.resultsService.loadAnalysisOutput();
+      await this.resultsService.loadDotData();
       this.buttonLabel = 'Done!';
-      setTimeout(() => this.router.navigate(['/analysis']), 1000);
+      setTimeout(() => this.router.navigate(['/results']), 1000);
     } catch (error) {
       console.error('Error running analysis:', error);
       this.snackBar.open('Failed to run analysis.', 'Close', { panelClass: ['custom-snackbar'] });
