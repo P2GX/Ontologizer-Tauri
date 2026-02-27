@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ResultTable } from './result-table';
+import { FrequentistResultTable } from './frequentist-result-table';
 
-describe('ResultTable', () => {
-  let component: ResultTable;
-  let fixture: ComponentFixture<ResultTable>;
+describe('FrequentistResultTable', () => {
+  let component: FrequentistResultTable;
+  let fixture: ComponentFixture<FrequentistResultTable>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ResultTable]
+      imports: [FrequentistResultTable]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ResultTable);
+    fixture = TestBed.createComponent(FrequentistResultTable);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

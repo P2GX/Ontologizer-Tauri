@@ -9,7 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {FrequentistRowData} from '../../../services/results-service';
 
 @Component({
-  selector: 'app-result-table',
+  selector: 'app-frequentist-result-table',
   imports: [
     CommonModule,
     MatTableModule,
@@ -20,10 +20,10 @@ import {FrequentistRowData} from '../../../services/results-service';
     MatFormFieldModule
   ],
   standalone: true,
-  templateUrl: './result-table.html',
-  styleUrl: './result-table.css'
+  templateUrl: './frequentist-result-table.html',
+  styleUrl: './frequentist-result-table.css'
 })
-export class ResultTable implements OnChanges, AfterViewInit {
+export class FrequentistResultTable implements OnChanges, AfterViewInit {
   @Input() tableData!: FrequentistRowData[];
 
   displayedColumns: string[] = [

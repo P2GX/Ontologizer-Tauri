@@ -31,8 +31,8 @@
     <app-dashboard [dashboardInfo]="dashboardInfo" *ngIf="success"
         [hidden]="selectedChart !== 'dashboard'" [visible]="selectedChart === 'dashboard'"></app-dashboard>
 
-    <app-result-table *ngIf="tableDataLoaded && frequentistData && success" [hidden]="selectedChart !== 'table'"
-                      [tableData]="frequentistData"></app-result-table>
+    <app-frequentist-result-table *ngIf="tableDataLoaded && frequentistData && success" [hidden]="selectedChart !== 'table'"
+                      [tableData]="frequentistData"></app-frequentist-result-table>
     <app-bayesian-result-table *ngIf="tableDataLoaded && bayesianData && success" [hidden]="selectedChart !== 'table'"
                                [tableData]="bayesianData"></app-bayesian-result-table>
     <app-go-graph *ngIf="dotData !== null" [hidden]="selectedChart !== 'go-graph'"

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ResultTable } from './result-table/result-table';
+import { FrequentistResultTable } from './frequentist-result-table/frequentist-result-table';
 import { BayesianResultTable } from './bayesian-result-table/bayesian-result-table';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +16,7 @@ import { Method } from '../../services/analysis-service';
 
 @Component({
   selector: 'app-results',
-  imports: [Dashboard, BarChart, CommonModule, ResultTable, BayesianResultTable, GoGraph, MatSlideToggleModule, FormsModule, MatInputModule, MatFormFieldModule, MatDividerModule],
+  imports: [Dashboard, BarChart, CommonModule, FrequentistResultTable, BayesianResultTable, GoGraph, MatSlideToggleModule, FormsModule, MatInputModule, MatFormFieldModule, MatDividerModule],
   templateUrl: './results.html',
   styleUrl: './results.css',
   standalone: true
