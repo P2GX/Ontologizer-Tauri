@@ -22,7 +22,14 @@ export class Analysis {
   topology: Topology | null = null;
   correction: Correction | null = null;
   isAnalysing = false;
-  buttonLabel = 'Start Analysis';
+  private justCompleted = false;
+
+  get buttonLabel(): string {
+    if (this.isAnalysing) return 'Analyzing...';
+    if (this.justCompleted) return 'Done!';
+    if (this.resultsService.hasResults) return 'Rerun Analysis';
+    return 'Start Analysis';
+  }
 
   readonly topologyOptions: Topology[] = ['TermForTerm', 'ParentChildUnion', 'ParentChildIntersection'];
   readonly correctionOptions: Correction[] = ['Bonferroni', 'BonferroniHolm', 'BenjaminHochberg', 'None'];
@@ -80,7 +87,6 @@ export class Analysis {
 
     this.resultsService.currentMethod = this.selectedMethod;
     this.isAnalysing = true;
-    this.buttonLabel = 'Analyzing...';
 
     try {
       await this.resultsService.runAnalysis();
@@ -88,12 +94,11 @@ export class Analysis {
       if (this.selectedMethod !== 'bayesian') {
         await this.resultsService.loadDotData();
       }
-      this.buttonLabel = 'Done!';
+      this.justCompleted = true;
       setTimeout(() => this.router.navigate(['/results']), 1000);
     } catch (error) {
       console.error('Error running analysis:', error);
       this.snackBar.open('Failed to run analysis.', 'Close', { panelClass: ['custom-snackbar'] });
-      this.buttonLabel = 'Start Analysis';
     } finally {
       this.isAnalysing = false;
     }

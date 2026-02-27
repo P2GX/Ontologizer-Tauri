@@ -135,6 +135,10 @@ export class ResultsService {
     console.log('Proportion Data:', this.proportionData);
   }
 
+  get hasResults(): boolean {
+    return this.tableData !== null || this.bayesianTableData !== null;
+  }
+
   // Getters for components to access the data
   getMethod() { return this.currentMethod; }
   getTableData() { return this.tableData; }
