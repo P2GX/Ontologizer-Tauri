@@ -2,6 +2,7 @@ import { Component, Input, OnChanges, AfterViewInit, SimpleChanges, ViewChild, E
 import { CommonModule } from '@angular/common';
 import { Chart } from 'chart.js';
 import { DashboardInfo } from '../results';
+import { TOPOLOGY_NAMES, CORRECTION_NAMES } from '../../../services/analysis-service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,6 +23,24 @@ export class Dashboard implements OnChanges, AfterViewInit {
   @Input() visible: boolean = false;
   viewInitialized: boolean = false;
   showTooltip: boolean = false;
+
+  get isFrequentist(): boolean {
+    const m = this.dashboardInfo?.method;
+    return typeof m === 'object' && m !== null;
+  }
+
+  get methodLabel(): string {
+    const m = this.dashboardInfo?.method;
+    if (!m) return '';
+    if (m === 'bayesian') return 'Inference';
+    return TOPOLOGY_NAMES[m.frequentist[0]];
+  }
+
+  get correctionLabel(): string {
+    const m = this.dashboardInfo?.method;
+    if (!m || m === 'bayesian') return '';
+    return CORRECTION_NAMES[m.frequentist[1]];
+  }
 
   doughnutChartProperties = {
     'A': { title: 'Proportion of Significant vs. Non-Significant GO Terms', labels: ['Non-Significant', 'Significant'], backgroundColors: ['#b5b0eaff', 'rgb(255, 99, 132)'], data: [0, 0] },

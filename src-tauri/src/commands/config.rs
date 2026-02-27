@@ -5,37 +5,44 @@ use serde::{Deserialize, Serialize};
 // convert the string "frequentist" from JS into MethodConfig::Frequentist in Rust!
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
-pub enum MethodConfig {
-    Frequentist,
+pub enum Method {
+    Frequentist(Topology, Correction),
     Bayesian,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum AnalysisMethod {
+pub enum Topology {
     TermForTerm,
     ParentChildUnion,
     ParentChildIntersection,
-    MGSA,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Config {
-    pub method: AnalysisMethod,
+pub enum Correction {
+    Bonferroni,
+    BonferroniHolm,
+    BenjaminHochberg,
+    None
 }
 
-impl Config {
-    pub fn new(method: AnalysisMethod) -> Self {
-        Config { method }
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Settings {
+    pub method: Method,
+}
+
+impl Settings {
+    pub fn new(method: Method) -> Self {
+        Settings { method }
     }
 }
 
 #[tauri::command]
 pub fn save_settings(
     state: tauri::State<AppState>,
-    analysis_method: AnalysisMethod,
+    analysis_method: Method,
 ) -> Result<String, String> {
     // 1. Create the settings object
-    let settings = Config::new(analysis_method);
+    let settings = Settings::new(analysis_method);
 
     // 2. Lock the state and save it (Make sure the field name matches AppState,
     //    it might be `user_settings` instead of `settings` depending on your AppState definition)

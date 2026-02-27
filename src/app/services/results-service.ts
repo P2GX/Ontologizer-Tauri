@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
+import { Method } from './analysis-service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,10 @@ export class ResultsService {
     }
   }
 
+  currentMethod: Method | null = null;
+
   private tableData: FrequentistRowData[] | null = null;
+  private bayesianTableData: BayesianRowData[] | null = null;
   private dotData: DotData | null = null;
   private mtcMethod: string = '';
   private analysisMethod: string = '';
@@ -49,20 +53,19 @@ export class ResultsService {
       const parsedData = JSON.parse(data);
 
       const items = parsedData.items || [];
-      this.tableData = this.parseAnalysisResults(items);
-
-      // Calculate derived metrics from the new items array
       this.resultsLength = items.length;
-      this.significantCount = items.filter((item: any) => item.Score <= 0.05).length;
 
-      // Load Analysis Parameter
-      // this.mtcMethod = this.settingsService.mtcMethod || this.settingsService.getMtcMethod();
-      // this.analysisMethod = this.settingsService.analysisMethod || this.settingsService.getCalculationMethod();
-
-      this.calculateProportions();
+      if (this.currentMethod === 'bayesian') {
+        this.bayesianTableData = this.parseBayesianResults(items);
+      } else {
+        this.tableData = this.parseAnalysisResults(items);
+        this.significantCount = items.filter((item: any) => item.Score <= 0.05).length;
+        this.calculateProportions();
+      }
     } catch (error) {
       console.error('Error loading analysis output:', error);
       this.tableData = null;
+      this.bayesianTableData = null;
       throw error;
     }
   }
@@ -97,6 +100,16 @@ export class ResultsService {
     });
   }
 
+  parseBayesianResults(items: any[]): BayesianRowData[] {
+    return items.map(item => ({
+      id: item.Id,
+      label: item.Label,
+      aspect: item.Aspect,
+      score: item.Score,
+      associatedGenes: item['Associated Genes'] ? item['Associated Genes'].split(', ') : [],
+    }));
+  }
+
   calculateProportions() {
     this.proportionData = {
       total: { nonSignificant: 0, significant: 0 },
@@ -123,7 +136,9 @@ export class ResultsService {
   }
 
   // Getters for components to access the data
+  getMethod() { return this.currentMethod; }
   getTableData() { return this.tableData; }
+  getBayesianTableData() { return this.bayesianTableData; }
   getDotData() { return this.dotData; }
   getMtcMethod() { return this.mtcMethod; }
   getAnalysisMethod() { return this.analysisMethod; }
@@ -170,6 +185,14 @@ export interface EdgeData {
   target: string, // significant child node
   nodes_skipped: number, // counts how many non-significant nodes were skipped between source and target
   // 0 (solid edge) if direct parent is significant, otherwise >0 (dashed edge)
+}
+
+export interface BayesianRowData {
+  id: string;
+  label: string;
+  aspect: string;
+  score: number;
+  associatedGenes: string[];
 }
 
 export interface FrequentistRowData {

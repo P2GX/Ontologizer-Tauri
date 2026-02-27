@@ -12,8 +12,13 @@ import { CommonModule } from '@angular/common';
 export class DropdownMenu {
   @Input() label = '';
   @Input() options: string[] = [];
-  @Input() selected = '';
+  @Input() selected: string | null = null;
+  @Input() displayNames: Record<string, string> = {};
   @Output() selectedChange = new EventEmitter<string>();
+
+  displayOf(value: string | null): string {
+    return value ? (this.displayNames[value] ?? value) : '';
+  }
 
   menuOpen = false;
 

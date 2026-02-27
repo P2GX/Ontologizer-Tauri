@@ -2,26 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenu } from '../../shared/dropdown-menu/dropdown-menu';
-import { AnalysisService, AppSettings } from '../../services/analysis-service';
+import { AnalysisService, Method, Topology, Correction, TOPOLOGY_NAMES, CORRECTION_NAMES } from '../../services/analysis-service';
 import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { FilesService } from '../../services/files-service';
 import { ResultsService } from '../../services/results-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-export enum AnalysisMethod {
-  TermForTerm = 'TermForTerm',
-  ParentChildUnion = 'ParentChildUnion',
-  ParentChildIntersection = 'ParentChildIntersection',
-  MGSA = 'MGSA'
-}
-
-export enum MtcMethod {
-  Bonferroni ='Bonferroni',
-  BonferroniHolm = 'BonferroniHolm',
-  BenjaminiHochberg = 'BenjaminiHochberg',
-  None = 'None'
-}
 
 @Component({
   selector: 'app-analysis',
@@ -32,20 +18,21 @@ export enum MtcMethod {
 })
 export class Analysis {
 
-  selectedCategory: 'Frequentist' | 'Bayesian' | null = null;
+  selectedMethod: Method | null = null;
+  topology: Topology | null = null;
+  correction: Correction | null = null;
   isAnalysing = false;
   buttonLabel = 'Start Analysis';
 
-  currentFrequentistMethod: string = AnalysisMethod.TermForTerm;
-  currentMtcMethod: string = MtcMethod.Bonferroni;
+  readonly topologyOptions: Topology[] = ['TermForTerm', 'ParentChildUnion', 'ParentChildIntersection'];
+  readonly correctionOptions: Correction[] = ['Bonferroni', 'BonferroniHolm', 'BenjaminHochberg', 'None'];
 
-  readonly frequentistMethods = [
-    AnalysisMethod.TermForTerm,
-    AnalysisMethod.ParentChildUnion,
-    AnalysisMethod.ParentChildIntersection
-  ];
+  readonly topologyNames = TOPOLOGY_NAMES;
+  readonly correctionNames = CORRECTION_NAMES;
 
-  readonly mtcMethod = Object.values(MtcMethod);
+  get isFrequentist(): boolean {
+    return typeof this.selectedMethod === 'object' && this.selectedMethod !== null;
+  }
 
   constructor(
     private analysisService: AnalysisService,
@@ -56,40 +43,51 @@ export class Analysis {
   ) { }
 
   setCategory(category: 'Frequentist' | 'Bayesian') {
-    this.selectedCategory = category;
-
     if (category === 'Bayesian') {
-      this.SelectSetting(AnalysisMethod.MGSA, 'analysisMethod');
+      this.selectedMethod = 'bayesian';
     } else {
-      this.SelectSetting(this.currentFrequentistMethod, 'analysisMethod');
+      // Apply defaults on first Frequentist selection; remember previous choices afterwards
+      this.topology ??= 'TermForTerm';
+      this.correction ??= 'Bonferroni';
+      this.selectedMethod = { frequentist: [this.topology, this.correction] };
+    }
+    void this.analysisService.saveSettings(this.selectedMethod);
+  }
+
+  selectTopology(topology: string) {
+    this.topology = topology as Topology;
+    if (this.isFrequentist) {
+      this.selectedMethod = { frequentist: [this.topology, this.correction!] };
+      void this.analysisService.saveSettings(this.selectedMethod);
     }
   }
 
-  SelectSetting(newSetting: string, type: keyof AppSettings) {
-    if (type === 'analysisMethod' && newSetting !== AnalysisMethod.MGSA) {
-      this.currentFrequentistMethod = newSetting;
+  selectCorrection(correction: string) {
+    this.correction = correction as Correction;
+    if (this.isFrequentist) {
+      this.selectedMethod = { frequentist: [this.topology!, this.correction] };
+      void this.analysisService.saveSettings(this.selectedMethod);
     }
-    if (type === 'mtcMethod') {
-      this.currentMtcMethod = newSetting;
-    }
-    this.analysisService.updateSettings(newSetting, type);
   }
 
   async startAnalysis() {
-    if (!this.selectedCategory) return;
+    if (!this.selectedMethod) return;
 
     if (!Object.values(this.filesService.getFileStatus()).every(f => f === true)) {
       this.snackBar.open('⚠️ Not all required files are loaded.', 'Close', { panelClass: ['custom-snackbar'] });
       return;
     }
 
+    this.resultsService.currentMethod = this.selectedMethod;
     this.isAnalysing = true;
     this.buttonLabel = 'Analyzing...';
 
     try {
       await this.resultsService.runAnalysis();
       await this.resultsService.loadAnalysisOutput();
-      await this.resultsService.loadDotData();
+      if (this.selectedMethod !== 'bayesian') {
+        await this.resultsService.loadDotData();
+      }
       this.buttonLabel = 'Done!';
       setTimeout(() => this.router.navigate(['/results']), 1000);
     } catch (error) {

@@ -2,7 +2,6 @@ import { Component, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@
 import { FileUpload } from './file-upload/file-upload';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AnalysisService } from '../../services/analysis-service';
 import {FileStatus, FilesService, Stat} from '../../services/files-service';
 import {invoke} from "@tauri-apps/api/core";
 import {MatDivider} from "@angular/material/list";
@@ -16,12 +15,8 @@ import {MatDivider} from "@angular/material/list";
 })
 export class Files implements AfterViewInit {
 
-  // Inject the AnalysisService to ensure that the initial settings (Term-for-Term, Bonferroni) are sent to the backend even if the user
-  // never opens the Analysis page.
   constructor(private filesService: FilesService,
-              private analysisService: AnalysisService,
               private router: Router) {
-    this.analysisService.startAutoSave();
   }
 
   // Track which files have been successfully loaded

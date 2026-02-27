@@ -2,12 +2,12 @@
     <h4>{{ label }}</h4>
     <ul class="settings-menu">
         <li (click)="toggleMenu()" class="settings-menu-header">
-            <p>{{ selected }}</p>
+            <p>{{ displayOf(selected) }}</p>
             <img src="assets/icons/arrow-down.svg" alt="Arrow Icon" [class.down]="menuOpen" />
 
         </li>
         <ul class="settings-submenu" [class.open]="menuOpen">
-            <li *ngFor="let opt of options" (click)="selectOption(opt)">{{ opt }}</li>
+            <li *ngFor="let opt of options" (click)="selectOption(opt)">{{ displayOf(opt) }}</li>
         </ul>
 
     </ul>

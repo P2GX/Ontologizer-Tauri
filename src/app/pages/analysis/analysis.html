@@ -9,9 +9,9 @@
         <div class="category-cards">
             <!-- Frequentist Card -->
             <div class="method-card"
-                 [class.active]="selectedCategory === 'Frequentist'"
+                 [class.active]="isFrequentist"
                  (click)="setCategory('Frequentist')">
-                <span class="material-symbols-outlined card-icon">calculate</span>
+                <!-- <span class="material-symbols-outlined card-icon">calculate</span> -->
                 <h3>Frequentist</h3>
                 <p>Evaluates terms using hypergeometric tests, defining specific topological backgrounds to reduce hierarchy bias.</p>
 
@@ -37,22 +37,24 @@
                 </div>
 
                 <!-- Nested Dropdowns for Frequentist -->
-                <div class="nested-settings" *ngIf="selectedCategory === 'Frequentist'" (click)="$event.stopPropagation()">
-                    <div class="settings" id="analysisMethod">
+                <div class="nested-settings" style="display: flex; flex-direction: column; gap: 16px;" *ngIf="isFrequentist" (click)="$event.stopPropagation()">
+                    <div class="settings" id="topology">
                         <app-dropdown-menu
                                 [label]="'Background Model'"
-                                [options]="frequentistMethods"
-                                [selected]="currentFrequentistMethod"
-                                (selectedChange)="SelectSetting($event, 'analysisMethod')">
+                                [options]="topologyOptions"
+                                [selected]="topology"
+                                [displayNames]="topologyNames"
+                                (selectedChange)="selectTopology($event)">
                         </app-dropdown-menu>
                     </div>
 
-                    <div class="settings" id="mtcMethod">
+                    <div class="settings" id="correction">
                         <app-dropdown-menu
                                 [label]="'Multiple Testing Correction'"
-                                [options]="mtcMethod"
-                                [selected]="currentMtcMethod"
-                                (selectedChange)="SelectSetting($event, 'mtcMethod')">
+                                [options]="correctionOptions"
+                                [selected]="correction"
+                                [displayNames]="correctionNames"
+                                (selectedChange)="selectCorrection($event)">
                         </app-dropdown-menu>
                     </div>
                 </div>
@@ -60,10 +62,10 @@
 
             <!-- Bayesian Card -->
             <div class="method-card"
-                 [class.active]="selectedCategory === 'Bayesian'"
+                 [class.active]="selectedMethod === 'bayesian'"
                  (click)="setCategory('Bayesian')">
-                <span class="material-symbols-outlined card-icon">model_training</span>
-                <h3>Bayesian (MGSA)</h3>
+                <!-- <span class="material-symbols-outlined card-icon">model_training</span> -->
+                <h3>Bayesian</h3>
                 <p>Model-based inference considering term overlaps jointly.</p>
 
                 <!-- Inline SVG depicting Bayesian Network (Always Visible) -->
@@ -104,14 +106,20 @@
         </div>
 
         <!-- Start Analysis Button with Dividers -->
-        <div class="analyze-button-container" [class.disabled-state]="!selectedCategory || isAnalysing">
+        <div class="analyze-button-container" [class.disabled-state]="!selectedMethod || isAnalysing">
             <mat-divider class="horizontal"></mat-divider>
-            <button class="button" [disabled]="!selectedCategory || isAnalysing" (click)="startAnalysis()">
-                {{ buttonLabel }}
-                <span class="material-symbols-outlined icon" id="expand-icon">
-                    expand_circle_right
+            <div class="button-and-warning">
+                <button class="button" [disabled]="!selectedMethod || isAnalysing" (click)="startAnalysis()">
+                    {{ buttonLabel }}
+                    <span class="material-symbols-outlined icon" [class.spinning]="isAnalysing">
+                        {{ isAnalysing ? 'autorenew' : 'expand_circle_right' }}
+                    </span>
+                </button>
+                <span class="analysis-warning" *ngIf="isAnalysing && selectedMethod === 'bayesian'">
+                    <span class="material-symbols-outlined warning-icon">schedule</span>
+                    This may take some time.
                 </span>
-            </button>
+            </div>
             <mat-divider class="horizontal"></mat-divider>
         </div>
     </div>

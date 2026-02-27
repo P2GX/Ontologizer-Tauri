@@ -197,11 +197,10 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
         let mut nodes = Nodes::new();
         let mut edges = Edges::new();
 
-        let root_info = results
-            .items
-            .iter()
-            .find(|&item| item.id == root.to_string())
-            .unwrap();
+        let root_info = match results.items.iter().find(|&item| item.id == root.to_string()) {
+            Some(info) => info,
+            None => continue, // root term not in results (e.g. Bayesian analysis), skip this aspect
+        };
         nodes.add_node(
             root.to_string(),
             NodeData {

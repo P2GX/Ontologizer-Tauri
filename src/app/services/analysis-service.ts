@@ -1,58 +1,36 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { invoke } from '@tauri-apps/api/core';
+
+// These types mirror the Rust enums in src-tauri/src/commands/config.rs.
+// Keep them in sync when the Rust side changes.
+export type Topology = 'TermForTerm' | 'ParentChildUnion' | 'ParentChildIntersection';
+export type Correction = 'Bonferroni' | 'BonferroniHolm' | 'BenjaminHochberg' | 'None';
+export type Method = 'bayesian' | { frequentist: [Topology, Correction] };
+
+export const TOPOLOGY_NAMES: Record<Topology, string> = {
+  TermForTerm: 'Term For Term',
+  ParentChildUnion: 'Parent-Child Union',
+  ParentChildIntersection: 'Parent-Child Intersection',
+};
+
+export const CORRECTION_NAMES: Record<Correction, string> = {
+  Bonferroni: 'Bonferroni',
+  BonferroniHolm: 'Bonferroni-Holm',
+  BenjaminHochberg: 'Benjamini-Hochberg',
+  None: 'None',
+};
+
 @Injectable({
   providedIn: 'root'
 })
-
-// Service that manages user settings (analysis method, MTC method) and automatically syncs changes with the backend.
 export class AnalysisService {
 
-  constructor() { }
-
-  // BehaviorSubject to hold user settings. Default values are set here.
-  private userSettings = new BehaviorSubject<AppSettings>({
-    analysisMethod: 'TermForTerm',
-    mtcMethod: 'Bonferroni',
-  });
-
-  currentUserSettings = this.userSettings.asObservable();
-  subscriptionStarted = false;
-
-  async updateSettings(newSetting: String, type: keyof AppSettings) {
-    this.userSettings.next({ ...this.userSettings.getValue(), [type]: newSetting });
-  }
-
-  // Call this method to start auto-saving settings whenever they change
-  // -> automatically saves settings in the backend
-  startAutoSave() {
-    if (!this.subscriptionStarted) {
-      this.currentUserSettings.subscribe(settings => {
-        this.saveSettings(settings);
-      });
-      this.subscriptionStarted = true;
-    }
-  }
-
-  getUserSettings(): AppSettings {
-    return this.userSettings.getValue();
-  }
-
-  private async saveSettings(settings: AppSettings) {
+  async saveSettings(method: Method): Promise<void> {
     try {
-      await invoke('save_settings', {
-        analysisMethod: settings.analysisMethod,
-        mtcMethod: settings.mtcMethod
-      });
-      console.log('Settings saved:', settings);
+      await invoke('save_settings', { analysisMethod: method });
+      console.log('Settings saved:', method);
     } catch (err) {
       console.error('Error saving settings:', err);
     }
   }
-
-}
-
-export interface AppSettings {
-  analysisMethod: string;
-  mtcMethod: string;
 }

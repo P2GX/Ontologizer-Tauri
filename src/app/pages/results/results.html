@@ -3,7 +3,7 @@
 </div>
 <div class="analysis-body">
 
-    <div class="control-header" *ngIf="successful">
+    <div class="control-header" *ngIf="success">
         <div class="tabs-container">
             <button class="tab-button" [class.active]="selectedChart === 'dashboard'"
                 (click)="selectTab('dashboard')"><span class="material-symbols-outlined tab-icon">
@@ -28,17 +28,19 @@
         </div>
     </div>
 
-    <app-dashboard [dashboardInfo]="dashboardInfo" *ngIf="successful"
+    <app-dashboard [dashboardInfo]="dashboardInfo" *ngIf="success"
         [hidden]="selectedChart !== 'dashboard'" [visible]="selectedChart === 'dashboard'"></app-dashboard>
 
-    <app-result-table *ngIf="tableDataLoaded && tableData && successful" [hidden]="selectedChart !== 'table'"
-        [tableData]="tableData"></app-result-table>
+    <app-result-table *ngIf="tableDataLoaded && frequentistData && success" [hidden]="selectedChart !== 'table'"
+                      [tableData]="frequentistData"></app-result-table>
+    <app-bayesian-result-table *ngIf="tableDataLoaded && bayesianData && success" [hidden]="selectedChart !== 'table'"
+                               [tableData]="bayesianData"></app-bayesian-result-table>
     <app-go-graph *ngIf="dotData !== null" [hidden]="selectedChart !== 'go-graph'"
         [visible]="selectedChart === 'go-graph'" [dotData]="dotData"></app-go-graph>
-    <app-bar-chart *ngIf="tableDataLoaded && tableData && successful" [hidden]="selectedChart !== 'bar-plot'"
-        [PlotData]="tableData"></app-bar-chart>
+    <app-bar-chart *ngIf="tableDataLoaded && frequentistData && success" [hidden]="selectedChart !== 'bar-plot'"
+                   [PlotData]="frequentistData"></app-bar-chart>
 
-    <div class="empty-state" *ngIf="!successful">
+    <div class="empty-state" *ngIf="!success">
         <span class="material-symbols-outlined empty-state-icon">labs</span>
         <h2>No results yet</h2>
         <p>Upload your files on the <strong>Files</strong> page and run the analysis on the <strong>Analysis</strong> page.</p>
