@@ -15,7 +15,7 @@ export class ResultsService {
       await invoke<void>('run_analysis');
     } catch (error) {
       console.error('Error running analysis:', error);
-      this.tableData = null;
+      this.frequentistTableData = null;
       this.dotData = null;
       throw error;
     }
@@ -23,7 +23,7 @@ export class ResultsService {
 
   currentMethod: Method | null = null;
 
-  private tableData: FrequentistRowData[] | null = null;
+  private frequentistTableData: FrequentistRowData[] | null = null;
   private bayesianTableData: BayesianRowData[] | null = null;
   private dotData: DotData | null = null;
   private mtcMethod: string = '';
@@ -58,13 +58,13 @@ export class ResultsService {
       if (this.currentMethod === 'bayesian') {
         this.bayesianTableData = this.parseBayesianResults(items);
       } else {
-        this.tableData = this.parseAnalysisResults(items);
+        this.frequentistTableData = this.parseAnalysisResults(items);
         this.significantCount = items.filter((item: any) => item.Score <= 0.05).length;
         this.calculateProportions();
       }
     } catch (error) {
       console.error('Error loading analysis output:', error);
-      this.tableData = null;
+      this.frequentistTableData = null;
       this.bayesianTableData = null;
       throw error;
     }
@@ -118,9 +118,9 @@ export class ResultsService {
       CC: { nonSignificant: 0, significant: 0 }
     };
 
-    if (!this.tableData) return;
+    if (!this.frequentistTableData) return;
 
-    this.tableData.forEach((row: FrequentistRowData) => {
+    this.frequentistTableData.forEach((row: FrequentistRowData) => {
       const aspect = row.aspect as keyof ProportionData;
       const index = row.p_val <= 0.05 ? 'significant' : 'nonSignificant';
 
@@ -136,12 +136,12 @@ export class ResultsService {
   }
 
   get hasResults(): boolean {
-    return this.tableData !== null || this.bayesianTableData !== null;
+    return this.frequentistTableData !== null || this.bayesianTableData !== null;
   }
 
   // Getters for components to access the data
   getMethod() { return this.currentMethod; }
-  getTableData() { return this.tableData; }
+  getFrequentistTableData() { return this.frequentistTableData; }
   getBayesianTableData() { return this.bayesianTableData; }
   getDotData() { return this.dotData; }
   getMtcMethod() { return this.mtcMethod; }

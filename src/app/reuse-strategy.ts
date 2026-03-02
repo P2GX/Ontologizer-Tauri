@@ -8,6 +8,9 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     private storedRoutes = new Map<string, DetachedRouteHandle>();
 
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
+        // Don't cache the results route — it must reinitialize from the service
+        // each time so that freshly computed data is picked up via ngOnInit.
+        if (route.routeConfig?.path === 'results') return false;
         return true; // immer Route trennen --> Komponente zwischenspeichern --> beim wechseln/navigieren
         // zwischen Seiten wird die Komponente also Seite nicht neu geladen
         // und die Daten bleiben erhalten

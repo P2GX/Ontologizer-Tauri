@@ -55,7 +55,7 @@ export class Results implements OnInit {
       if (bayesianData === null) return;
       this.bayesianData = bayesianData;
     } else {
-      const frequentistData = this.resultsService.getTableData();
+      const frequentistData = this.resultsService.getFrequentistTableData();
       if (frequentistData === null) return;
       this.frequentistData = frequentistData;
     }
