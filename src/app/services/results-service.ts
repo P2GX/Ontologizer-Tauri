@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 import { Method } from './analysis-service';
 
@@ -6,8 +6,9 @@ import { Method } from './analysis-service';
   providedIn: 'root'
 })
 export class ResultsService {
-
-  constructor() { }
+  private analysisMethod = signal<string>('');
+  public isBayesian = computed(() => this.analysisMethod() === 'bayesian');
+  public bayesianTableData = signal<BayesianRowData[] | null >(null);
 
   async runAnalysis() {
     try {
@@ -24,10 +25,10 @@ export class ResultsService {
   currentMethod: Method | null = null;
 
   private frequentistTableData: FrequentistRowData[] | null = null;
-  private bayesianTableData: BayesianRowData[] | null = null;
+  
   private dotData: DotData | null = null;
   private mtcMethod: string = '';
-  private analysisMethod: string = '';
+  
   private significantCount: number = 0;
   private resultsLength: number = 0;
   private proportionData: ProportionData = {
@@ -56,7 +57,7 @@ export class ResultsService {
       this.resultsLength = items.length;
 
       if (this.currentMethod === 'bayesian') {
-        this.bayesianTableData = this.parseBayesianResults(items);
+        this.bayesianTableData.set(this.parseBayesianResults(items));
       } else {
         this.frequentistTableData = this.parseAnalysisResults(items);
         this.significantCount = items.filter((item: any) => item.Score <= 0.05).length;
@@ -65,7 +66,7 @@ export class ResultsService {
     } catch (error) {
       console.error('Error loading analysis output:', error);
       this.frequentistTableData = null;
-      this.bayesianTableData = null;
+      this.bayesianTableData.set(null);
       throw error;
     }
   }

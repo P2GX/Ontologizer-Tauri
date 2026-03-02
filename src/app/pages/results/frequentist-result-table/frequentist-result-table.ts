@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, Input, SimpleChanges, OnInit, OnChanges } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, Input, SimpleChanges, OnInit, OnChanges, input, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
@@ -23,8 +23,17 @@ import {FrequentistRowData} from '../../../services/results-service';
   templateUrl: './frequentist-result-table.html',
   styleUrl: './frequentist-result-table.css'
 })
-export class FrequentistResultTable implements OnChanges, AfterViewInit {
-  @Input() tableData!: FrequentistRowData[];
+export class FrequentistResultTable implements AfterViewInit {
+  tableData = input.required<FrequentistRowData[]>();
+  dataSource = new MatTableDataSource<FrequentistRowData>();
+  resultsLength = computed(() => this.tableData().length);
+ 
+  constructor() {
+    effect(() => {
+      const data = this.tableData();
+      this.dataSource.data = data;
+    });
+  }
 
   displayedColumns: string[] = [
     'label',
@@ -47,23 +56,15 @@ export class FrequentistResultTable implements OnChanges, AfterViewInit {
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  resultsLength = 0;
-
-  dataSource = new MatTableDataSource<FrequentistRowData>();
 
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.tableData && changes['tableData'] && this.viewInitialized) {
-      this.dataSource.data = this.tableData;
-      this.resultsLength = this.tableData.length;
-    }
-  }
+  
+
 
   ngAfterViewInit() {
-    if (this.tableData) {
+    const tdata = this.tableData();
+    if (tdata) {
       this.viewInitialized = true;
-      this.dataSource.data = this.tableData;
-      this.resultsLength = this.tableData.length;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
 

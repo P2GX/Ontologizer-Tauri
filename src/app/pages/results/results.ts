@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FrequentistResultTable } from './frequentist-result-table/frequentist-result-table';
 import { BayesianResultTable } from './bayesian-result-table/bayesian-result-table';
@@ -22,18 +22,24 @@ import { Method } from '../../services/analysis-service';
   standalone: true
 })
 export class Results implements OnInit {
-  constructor(private filesService: FilesService, private resultsService: ResultsService) { }
+  private filesService = inject(FilesService);
+  public resultsService = inject(ResultsService);
+    bayesianData = computed<BayesianRowData[] | null>(() => {
+      const data = this.resultsService.bayesianTableData()
+      if (data === null) return null;
+      else return data;
+    });
+
+
+  
 
   selectedChart = 'dashboard';
   tableDataLoaded = false;
   dotData: DotData | null = null;
   frequentistData: FrequentistRowData[] | null = null;
-  bayesianData: BayesianRowData[] | null = null;
+ // bayesianData: BayesianRowData[] | null = null;
   success = false;
 
-  get isBayesian(): boolean {
-    return this.resultsService.currentMethod === 'bayesian';
-  }
 
   dashboardInfo: DashboardInfo = {
     method: null,
@@ -50,7 +56,7 @@ export class Results implements OnInit {
   };
 
   ngOnInit() {
-    if (this.isBayesian) {
+    if (this.resultsService.isBayesian()) {
       const bayesianData = this.resultsService.getBayesianTableData();
       if (bayesianData === null) return;
       this.bayesianData = bayesianData;
