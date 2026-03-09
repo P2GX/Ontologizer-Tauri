@@ -25,21 +25,20 @@ export class Dashboard implements OnChanges, AfterViewInit {
   showTooltip: boolean = false;
 
   get isFrequentist(): boolean {
-    const m = this.dashboardInfo?.method;
-    return typeof m === 'object' && m !== null;
+    return this.dashboardInfo?.method?.method === 'frequentist';
   }
 
   get methodLabel(): string {
     const m = this.dashboardInfo?.method;
     if (!m) return '';
-    if (m === 'bayesian') return 'Inference';
-    return TOPOLOGY_NAMES[m.frequentist[0]];
+    if (m.method === 'bayesian') return 'Inference';
+    return TOPOLOGY_NAMES[m.topology];
   }
 
   get correctionLabel(): string {
     const m = this.dashboardInfo?.method;
-    if (!m || m === 'bayesian') return '';
-    return CORRECTION_NAMES[m.frequentist[1]];
+    if (!m || m.method === 'bayesian') return '';
+    return CORRECTION_NAMES[m.correction];
   }
 
   doughnutChartProperties = {

@@ -1,23 +1,9 @@
-:host {
-    /* Theme Colors */
-    --theme-primary: #635ca4;
-    --theme-primary-hover-border: #a199ee;
-    --theme-primary-hover-bg: #f8f7ff;
-    --theme-primary-active-bg: #f3f2fa;
-    --theme-primary-shadow: rgba(99, 92, 164, 0.15);
-    --theme-primary-divider: #d1ccfa;
-
-    /* Basic UI Colors */
-    --bg-main: white;
-    --bg-card: #fafafa;
-    --text-primary: #262f42;
-    --text-secondary: #555;
-    --border-color: #e0e0e0;
-
-    /* Material System Simulation (from analysis.css) */
-    --md-sys-color-primary: var(--theme-primary);
-    --md-sys-color-primary-hover: var(--theme-primary-hover-border);
-    --md-sys-color-outline: var(--border-color);
+.analysis-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    margin-bottom: 2rem;
 }
 
 .analysis-settings {
@@ -26,17 +12,17 @@
     box-sizing: border-box;
     animation: mymove 0.5s;
     position: relative;
-    background: var(--md-sys-color-surface);
+    background: var(--md-sys-color-on-primary);
     padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px var(--shadow-header);
 }
 
 @keyframes mymove {
     from { top: -1rem; opacity: 0; }
-    to { top: 0rem; opacity: 1; }
+    to { top: 0; opacity: 1; }
 }
 
-/* Category Cards */
+/* === Category Cards === */
 .category-cards {
     display: flex;
     gap: 1.5rem;
@@ -45,40 +31,65 @@
 
 .method-card {
     flex: 1;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--md-sys-color-outline);
     border-radius: 1rem;
     padding: 1.5rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    background-color: var(--bg-card);
+    background-color: var(--md-sys-color-primary-container);
     display: flex;
     flex-direction: column;
+    font-size: var(--font-standard);
 }
 
-.method-card:hover {
-    border-color: var(--theme-primary-hover-border);
-    background-color: var(--theme-primary-hover-bg);
-}
-
-.method-card.active {
-    border-color: var(--theme-primary);
-    background-color: var(--theme-primary-active-bg);
-}
-
-.card-icon {
-    font-size: 2rem;
-    color: var(--theme-primary);
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 0.5rem;
 }
 
-/* Dropdowns Side-by-Side */
+.card-header h3 {
+    font-size: var(--font-highlight);
+    font-weight: 400;
+    margin: 0;
+}
+
+.help-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    font-size: var(--font-standard);
+    background-color: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.help-icon:hover {
+    background-color: var(--md-sys-color-secondary-hover);
+    transition: background-color 0.2s ease;
+}
+
+.method-card:hover {
+    border-color: var(--md-sys-color-primary);
+    background-color: var(--md-sys-color-primary-container);
+}
+
+.method-card.active {
+    border-color: var(--md-sys-color-primary);
+    background-color: var(--md-sys-color-primary-container);
+}
+
+/* === Dropdowns === */
 .nested-settings {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    margin-top: 1.5rem;
+    flex-direction: column;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--border-color);
     width: 100%;
 }
 
@@ -86,7 +97,7 @@
     flex: 1;
 }
 
-/* SVG Styling */
+/* === SVG Illustrations === */
 .illustration-container {
     display: flex;
     justify-content: center;
@@ -99,29 +110,11 @@
     width: auto;
 }
 
-.illustration-container line { stroke: var(--theme-primary-divider); stroke-width: 2; }
-.illustration-container circle { fill: var(--theme-primary); stroke: var(--bg-main); stroke-width: 2; }
+.illustration-container line { stroke: var(--md-sys-color-primary-hover); stroke-width: 2; opacity: 0.7;}
+.illustration-container circle.layer-input  {fill: var(--md-sys-color-secondary); stroke: var(--md-sys-color-on-primary); stroke-width: 2; }
+.illustration-container circle { fill: var(--md-sys-color-primary); stroke: var(--md-sys-color-on-primary); stroke-width: 2; }
 
-.analyze-button-container {
-    display: flex;
-    width: 100%;
-    margin-top: 3rem;
-    gap: 1.5rem;
-    box-sizing: border-box;
-    align-items: center;
-    justify-content: center;
-}
-
-.mat-divider.horizontal {
-    width: 35%;
-    color: var(--md-sys-color-outline);
-}
-
-.analysis-content {
-    display: flex;
-    justify-content: center;
-}
-
+/* === Analyze Button === */
 .button-and-warning {
     display: flex;
     flex-direction: column;
@@ -129,6 +122,7 @@
     gap: 0.6rem;
 }
 
+/* === Spinner === */
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -138,14 +132,15 @@
     animation: spin 1s linear infinite;
 }
 
+/* === Warning === */
 .analysis-warning {
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    font-size: var(--font-small);
+    color: var(--md-sys-color-on-primary-container);
 }
 
 .warning-icon {
-    font-size: 1rem;
+    font-size: var(--font-standard);
 }

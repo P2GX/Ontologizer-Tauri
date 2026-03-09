@@ -16,11 +16,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './analysis.css',
   standalone: true
 })
+
 export class Analysis {
 
   selectedMethod: Method | null = null;
-  topology: Topology | null = null;
-  correction: Correction | null = null;
+  topology: Topology = 'Standard';
+  correction: Correction = 'None';
   isAnalysing = false;
   private justCompleted = false;
 
@@ -31,14 +32,14 @@ export class Analysis {
     return 'Start Analysis';
   }
 
-  readonly topologyOptions: Topology[] = ['TermForTerm', 'ParentChildUnion', 'ParentChildIntersection'];
+  readonly topologyOptions: Topology[] =  ['Standard', 'ParentUnion', 'ParentIntersection'];
   readonly correctionOptions: Correction[] = ['Bonferroni', 'BonferroniHolm', 'BenjaminHochberg', 'None'];
 
   readonly topologyNames = TOPOLOGY_NAMES;
   readonly correctionNames = CORRECTION_NAMES;
 
   get isFrequentist(): boolean {
-    return typeof this.selectedMethod === 'object' && this.selectedMethod !== null;
+    return this.selectedMethod?.method === 'frequentist';
   }
 
   constructor(
@@ -51,12 +52,13 @@ export class Analysis {
 
   setCategory(category: 'Frequentist' | 'Bayesian') {
     if (category === 'Bayesian') {
-      this.selectedMethod = 'bayesian';
+      this.selectedMethod  = { method: 'bayesian' };
     } else {
+      this.topology = "Standard";
+      this.correction = "None";
       // Apply defaults on first Frequentist selection; remember previous choices afterwards
-      this.topology ??= 'TermForTerm';
-      this.correction ??= 'Bonferroni';
-      this.selectedMethod = { frequentist: [this.topology, this.correction] };
+      this.selectedMethod = { method: 'frequentist', topology: this.topology, correction: this.correction };
+
     }
     void this.analysisService.saveSettings(this.selectedMethod);
   }
@@ -64,7 +66,7 @@ export class Analysis {
   selectTopology(topology: string) {
     this.topology = topology as Topology;
     if (this.isFrequentist) {
-      this.selectedMethod = { frequentist: [this.topology, this.correction!] };
+      this.selectedMethod = { method: 'frequentist', topology: this.topology, correction: this.correction! };
       void this.analysisService.saveSettings(this.selectedMethod);
     }
   }
@@ -72,7 +74,7 @@ export class Analysis {
   selectCorrection(correction: string) {
     this.correction = correction as Correction;
     if (this.isFrequentist) {
-      this.selectedMethod = { frequentist: [this.topology!, this.correction] };
+      this.selectedMethod = { method: 'frequentist', topology: this.topology!, correction: this.correction };
       void this.analysisService.saveSettings(this.selectedMethod);
     }
   }
@@ -85,13 +87,14 @@ export class Analysis {
       return;
     }
 
-    this.resultsService.currentMethod = this.selectedMethod;
+    this.resultsService.clearResults();
+    this.resultsService.currentMethod.set(this.selectedMethod);
     this.isAnalysing = true;
 
     try {
       await this.resultsService.runAnalysis();
       await this.resultsService.loadAnalysisOutput();
-      if (this.selectedMethod !== 'bayesian') {
+      if (this.selectedMethod.method !== 'bayesian')  {
         await this.resultsService.loadDotData();
       }
       this.justCompleted = true;

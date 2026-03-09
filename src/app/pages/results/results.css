@@ -23,7 +23,7 @@
     justify-content: center;
     gap: 0.5rem;
     margin-top: 5rem;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--md-sys-color-on-primary-container);
     text-align: center;
 }
 
@@ -36,7 +36,7 @@
     margin: 0;
     font-weight: 400;
     font-size: 1.4rem;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--md-sys-color-on-primary-container);
 }
 
 .empty-state p {
@@ -71,7 +71,7 @@ button.tab-button {
 }
 
 button.tab-button.active {
-    background-color: var(--theme-primary-light);
+    background-color: var(--md-sys-color-primary-container);
     color: black;
 }
 
@@ -82,7 +82,7 @@ button.tab-button:hover:not(.active) {
 .tabs-container {
     display: flex;
     box-shadow: 0 2px 4px var(--shadow-header);
-    background-color: var(--md-sys-color-surface);
+    background-color: var(--md-sys-color-on-primary);
     border-radius: 0.5rem;
     position: relative;
     animation-timing-function: ease-in;
@@ -112,7 +112,7 @@ button.tab-button:hover:not(.active) {
 
 .mat-divider.vertical {
     width: 1px;
-    color: var(--md-sys-color-outline-variant);
+    color: var(--md-sys-color-outline);
     margin-top: 0.5em;
     margin-bottom: 0.5em;
 }

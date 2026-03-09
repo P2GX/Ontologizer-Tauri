@@ -1,71 +1,61 @@
-import { Component, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChildren, QueryList, ElementRef, AfterViewInit, signal, computed } from '@angular/core';
 import { FileUpload } from './file-upload/file-upload';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import {FileStatus, FilesService, Stat} from '../../services/files-service';
-import {invoke} from "@tauri-apps/api/core";
-import {MatDivider} from "@angular/material/list";
+import { FileStatus, FilesService } from '../../services/files-service';
+import { invoke } from "@tauri-apps/api/core";
+import { MatDivider } from "@angular/material/list";
 
 @Component({
   selector: 'app-files',
-    imports: [FileUpload, CommonModule, MatDivider],
+  imports: [FileUpload, MatDivider],
   templateUrl: './files.html',
   styleUrl: './files.css',
-  standalone: true
 })
 export class Files implements AfterViewInit {
 
-  constructor(private filesService: FilesService,
-              private router: Router) {
-  }
+  constructor(private filesService: FilesService, private router: Router) {}
 
-  // Track which files have been successfully loaded
-  filesStatus: FileStatus = { study: false, pop: false, go: false, annotation: false };
+  filesStatus = signal<FileStatus>({ study: false, pop: false, go: false, annotation: false });
+  isProcessingAll = signal(false);
+  isFinished = signal(false);
+  activeStep = signal(0);
+  triggerReload = signal(0); // incremented when annotation is reloaded, triggers study/pop to reprocess
 
-  isProcessingAll = false;
-  isFinished = false;
-  uploadProgress = 0; // Progress from 0 to 100 indicating the overall upload progress
-  activeStep = 0;
-  triggerReload = 0; // if new GAF ist loaded, we need to reprocess the study and pop files before the analysis
+  allFilesLoaded = computed(() => Object.values(this.filesStatus()).every(v => v));
 
   uploadSteps = [
-    { type: 'go' as keyof FileStatus, title: 'Upload Gene Ontology', subtitle: 'Accepted File Types: .json', dependsOn: null, fileLoaded: () => this.filesStatus.go },
-    { type: 'annotation' as keyof FileStatus, title: 'Upload Annotations', subtitle: 'Accepted File Types: .gaf', dependsOn: null, fileLoaded: () => this.filesStatus.annotation },
-    { type: 'study' as keyof FileStatus, title: 'Upload Study Genes', subtitle: 'Accepted File Types: .txt', dependsOn: null , fileLoaded: () => this.filesStatus.study },
-    { type: 'pop' as keyof FileStatus, title: 'Upload Population Genes', subtitle: 'Accepted File Types: .txt', dependsOn: null, fileLoaded: () => this.filesStatus.pop }
+    { type: 'go' as keyof FileStatus, title: 'Upload Gene Ontology', subtitle: 'Accepted File Types: .json', dependsOn: null, fileLoaded: () => this.filesStatus().go },
+    { type: 'annotation' as keyof FileStatus, title: 'Upload Annotations', subtitle: 'Accepted File Types: .gaf', dependsOn: null, fileLoaded: () => this.filesStatus().annotation },
+    { type: 'pop' as keyof FileStatus, title: 'Upload Population Genes', subtitle: 'Accepted File Types: .txt', dependsOn: 'annotation' as keyof FileStatus, fileLoaded: () => this.filesStatus().pop },
+    { type: 'study' as keyof FileStatus, title: 'Upload Study Genes', subtitle: 'Accepted File Types: .txt', dependsOn: 'annotation' as keyof FileStatus, fileLoaded: () => this.filesStatus().study }
   ];
 
   onFileLoadedSuccess(fileType: keyof FileStatus) {
-    if (!this.filesStatus[fileType]) {
-      this.uploadProgress += 25;
-    }
-
-    this.filesStatus[fileType] = true;
+    this.filesStatus.update(status => ({ ...status, [fileType]: true }));
     this.filesService.updateFileStatus({ [fileType]: true });
 
-    // Special case: Annotation → trigger reload of study and pop files
     if (fileType === 'annotation') {
-      this.triggerReload++;
+      this.triggerReload.update(v => v + 1);
     }
   }
 
   @ViewChildren('sliderItem', { read: ElementRef }) sliderItems!: QueryList<ElementRef>;
 
   selectStep(index: number) {
-    this.activeStep = index;
+    this.activeStep.set(index);
     this.loadShow();
   }
 
   nextStep() {
-    if (this.activeStep < this.uploadSteps.length - 1) {
-      this.activeStep++;
+    if (this.activeStep() < this.uploadSteps.length - 1) {
+      this.activeStep.update(v => v + 1);
       this.loadShow();
     }
   }
 
   prevStep() {
-    if (this.activeStep > 0) {
-      this.activeStep--;
+    if (this.activeStep() > 0) {
+      this.activeStep.update(v => v - 1);
       this.loadShow();
     }
   }
@@ -74,38 +64,35 @@ export class Files implements AfterViewInit {
     this.loadShow();
   }
 
-  // Function for slider effect/animation
   loadShow() {
     try {
       let stt = 0;
-      const itemRef = this.sliderItems.toArray()[this.activeStep];
-      const item = (itemRef.nativeElement as HTMLElement);
+      const active = this.activeStep();
+      const item = this.sliderItems.toArray()[active].nativeElement as HTMLElement;
       item.style.transform = 'none';
-      item.style.zIndex = (10).toString();
+      item.style.zIndex = '10';
       item.style.filter = 'none';
       item.style.opacity = '1';
       item.style.pointerEvents = 'auto';
 
-      for (let i = this.activeStep + 1; i < this.uploadSteps.length; i++) {
+      for (let i = active + 1; i < this.uploadSteps.length; i++) {
         stt++;
-        const itemRef = this.sliderItems.toArray()[i];
-        const item = (itemRef.nativeElement as HTMLElement);
-        item.style.transform = `translateX(${120 * stt}px) scale(${1 - 0.2 * stt}) perspective(10px)`;
-        item.style.pointerEvents = 'none';
-        item.style.zIndex = (5 - stt).toString();
-        item.style.filter = `blur(${4 * stt}px)`;
-        item.style.opacity = `${1 - 0.3 * stt}`;
+        const el = this.sliderItems.toArray()[i].nativeElement as HTMLElement;
+        el.style.transform = `translateX(${120 * stt}px) scale(${1 - 0.2 * stt}) perspective(10px)`;
+        el.style.pointerEvents = 'none';
+        el.style.zIndex = (5 - stt).toString();
+        el.style.filter = `blur(${4 * stt}px)`;
+        el.style.opacity = `${1 - 0.3 * stt}`;
       }
       stt = 0;
-      for (let i = this.activeStep - 1; i >= 0; i--) {
+      for (let i = active - 1; i >= 0; i--) {
         stt++;
-        const itemRef = this.sliderItems.toArray()[i];
-        const item = (itemRef.nativeElement as HTMLElement);
-        item.style.pointerEvents = 'none';
-        item.style.transform = `translateX(${-120 * stt}px) scale(${1 - 0.2 * stt}) perspective(10px)`;
-        item.style.zIndex = (5 - stt).toString();
-        item.style.filter = `blur(${3 * stt}px)`;
-        item.style.opacity = `${1 - 0.3 * stt}`;
+        const el = this.sliderItems.toArray()[i].nativeElement as HTMLElement;
+        el.style.pointerEvents = 'none';
+        el.style.transform = `translateX(${-120 * stt}px) scale(${1 - 0.2 * stt}) perspective(10px)`;
+        el.style.zIndex = (5 - stt).toString();
+        el.style.filter = `blur(${3 * stt}px)`;
+        el.style.opacity = `${1 - 0.3 * stt}`;
       }
     } catch (error) {
       console.error('Error in loadShow:', error);
@@ -113,27 +100,18 @@ export class Files implements AfterViewInit {
   }
 
   async processFiles() {
-    if (this.uploadProgress < 100) return;
+    if (!this.allFilesLoaded()) return;
 
-    this.isProcessingAll = true;
-
+    this.isProcessingAll.set(true);
     try {
-      // Call the final command that consumes GoAnnotations and builds the Index
       const result = await invoke('build_annotation_index');
       console.log("Success:", result);
-
-      this.isFinished = true;
-
-      // Data is successfully loaded and indexed in AppState!
-      // Ready to route the user to the next screen here!
-      setTimeout(() => {
-        this.router.navigate(['/analysis']);
-      }, 1500);
-
+      this.isFinished.set(true);
+      setTimeout(() => this.router.navigate(['/analysis']), 1500);
     } catch (error) {
       console.error("Error building annotation index:", error);
     } finally {
-      this.isProcessingAll = false;
+      this.isProcessingAll.set(false);
     }
   }
 }

@@ -1,4 +1,4 @@
-use ontologizer::{AnnotationIndex, EnrichmentResult, GeneSet};
+use ontologizer::{AnnotationIndex, AnalysisResult, GeneSet};
 
 use crate::commands::config::Settings;
 use ontolius::ontology::csr::FullCsrOntology;
@@ -12,5 +12,5 @@ pub struct AppState {
     pub study_genes: Mutex<Option<GeneSet>>,
     pub pop_genes: Mutex<Option<GeneSet>>,
     pub settings: Mutex<Option<Settings>>,
-    pub results: RwLock<Option<EnrichmentResult>>, // Optional field to store analysis results
+    pub results: RwLock<Option<AnalysisResult>>, // Optional field to store analysis results
 }

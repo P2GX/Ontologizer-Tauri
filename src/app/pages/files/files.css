@@ -1,3 +1,4 @@
+/* === Page Container === */
 .file-container {
     display: flex;
     flex-direction: column;
@@ -5,64 +6,46 @@
     height: 100%;
     margin-bottom: 2rem;
     min-width: 700px;
-
 }
 
-
-.progress-bars-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    gap: 1rem;
-    justify-content: left;
-    margin-bottom: 1rem;
-    max-width: 50%;
+.files-settings {
+    border-radius: 1rem;
+    width: 80cqw;
+    box-sizing: border-box;
+    animation: mymove 0.5s;
+    position: relative;
+    background: var(--md-sys-color-on-primary);
+    padding: 2rem;
+    box-shadow: 0 4px 12px var(--shadow-header);
 }
 
-
-.bar {
-    max-width: 20rem;
-    min-width: 1rem;
-    height: 2px;
-    background-color: rgb(190, 190, 190);
-}
-
-.progress-bar {
-    flex: 1 1 0%;
-    height: 5px;
-    min-width: 6rem;
-    background-color: #455780ff;
-    opacity: 0.2;
-}
-
-.progress-percentage-value {
-    font-size: 2rem;
-    font-weight: 600;
-    color: rgb(47, 47, 47);
-}
-
-.progress-percentage-text {
-    font-weight: 200;
-}
-
-.progress-percentage {
-    margin-left: 2rem;
+/* === Step Navigation === */
+ul.upload-step-ul {
+    list-style: none;
+    padding: 0;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-
+    justify-content: center;
 }
 
-.progress-bar.active {
-    opacity: 1;
+ul.upload-step-ul li {
+    cursor: pointer;
+    border-radius: 2rem;
+    border: 2px solid var(--md-sys-color-outline);
+    color: var(--md-sys-color-outline);
+    display: flex;
+    padding: 0.5rem;
+    padding-right: 1rem;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: var(--font-standard);
 }
 
 nav ul li.active {
     background-color: var(--md-sys-color-primary);
     color: white !important;
-    border-color: var(--md-sys-color-inverse-primary);
+    border-color: var(--md-sys-color-secondary);
     transition: 0.2s ease;
-
 }
 
 nav ul li.green-active {
@@ -70,39 +53,12 @@ nav ul li.green-active {
     color: white !important;
     border-color: var(--md-sys-color-success) !important;
     transition: 0.2s ease;
-
 }
 
-.circle.active {
-    background-color: var(--md-sys-color-surface) !important;
-    color: var(--md-sys-color-primary);
+nav ul li.upload-success {
+    color: var(--md-sys-color-success);
+    border-color: var(--md-sys-color-success);
     transition: 0.2s ease;
-}
-
-.circle.green-active {
-    background-color: var(--md-sys-color-surface) !important;
-    color: var(--md-sys-color-success) !important;
-    transition: 0.2s ease;
-}
-
-ul.upload-step-ul {
-    list-style: none;
-    display: flex;
-    align-items: center;
-
-}
-
-ul.upload-step-ul li {
-    cursor: pointer;
-    border-radius: 2rem;
-    border: 2px solid rgb(190, 190, 190);
-    color: rgb(190, 190, 190);
-    display: flex;
-    padding: 0.5rem;
-    padding-right: 1rem;
-    align-items: center;
-    gap: 0.8rem;
-
 }
 
 .circle {
@@ -116,8 +72,20 @@ ul.upload-step-ul li {
     border-radius: 50%;
     font-weight: bold;
     color: white;
-    background-color: rgb(190, 190, 190);
+    background-color: var(--md-sys-color-outline);
     user-select: none;
+}
+
+.circle.active {
+    background-color: var(--md-sys-color-on-primary) !important;
+    color: var(--md-sys-color-primary);
+    transition: 0.2s ease;
+}
+
+.circle.green-active {
+    background-color: var(--md-sys-color-on-primary) !important;
+    color: var(--md-sys-color-success) !important;
+    transition: 0.2s ease;
 }
 
 .circle.upload-success {
@@ -126,39 +94,14 @@ ul.upload-step-ul li {
     transition: 0.2s ease;
 }
 
-nav ul li.upload-success {
-
-    color: var(--md-sys-color-success);
-    border-color: var(--md-sys-color-success);
-    transition: 0.2s ease;
-
+.bar {
+    max-width: 20rem;
+    min-width: 1rem;
+    height: 2px;
+    background-color: var(--md-sys-color-outline);
 }
 
-@media (max-width: 1000px) {
-    .file-container {
-        margin-left: 0;
-        flex-direction: row;
-        margin-left: 2rem;
-        align-items: start;
-    }
-
-    ul.upload-step-ul {
-        flex-direction: column;
-        align-items: left;
-        gap: 1rem;
-    }
-
-    .bar {
-        display: none;
-    }
-
-    .slider-item {
-        margin-left: 1.5rem;
-        left: 0;
-    }
-
-}
-
+/* === Upload Card Slider === */
 .upload-card-slider {
     position: relative;
     display: grid;
@@ -191,84 +134,45 @@ nav ul li.upload-success {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px var(--shadow-header);
 }
+
 #next:not([hidden]) {
     left: max(calc(100% - 7rem), calc(50% + 16rem));
 }
 
 #next:hover, #prev:hover {
-    background-color: var(--theme-nav-hover);
+    background-color: var(--md-sys-color-primary-hover);
     transition: background-color 0.2s ease;
 }
 
-/* Styles for the new Process button */
-#process-btn {
-    position: absolute;
-    top: 12rem;
-    right: 5rem;
-    z-index: 4;
-    transform: translateY(-50%);
-    background-color: rgb(190, 190, 190); /* Grey color initially */
-    color: white;
-    border: none;
-    border-radius: 2rem;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: not-allowed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease, filter 0.2s ease;
+/* Override shared margin so slider is equidistant from nav and button */
+.files-settings .action-button-container {
+    margin-top: 0;
 }
 
-/* Active color state when all files are uploaded but processing hasn't finished */
-#process-btn.ready {
-    background-color: var(--md-sys-color-primary); /* Purple */
-    cursor: pointer;
-}
+/* === Responsive === */
+@media (max-width: 1000px) {
+    .file-container {
+        flex-direction: row;
+        margin-left: 2rem;
+        align-items: start;
+    }
 
-#process-btn.ready:hover:not([disabled]) {
-    filter: brightness(0.9); /* Slight hover effect */
-}
+    ul.upload-step-ul {
+        flex-direction: column;
+        align-items: left;
+        gap: 1rem;
+    }
 
-/* Finished state when build_annotation_index is done */
-#process-btn.finished {
-    background-color: var(--md-sys-color-success); /* Success Green */
-    cursor: default;
-}
+    .bar {
+        display: none;
+    }
 
-.process-button-container {
-    display: flex;
-    width: 100%;
-    margin-top: 3rem;
-    gap: 1.5rem;
-    box-sizing: border-box;
-    align-items: center;
-    justify-content: center;
-}
-
-.mat-divider.horizontal {
-    width: 35%;
-    color: var(--md-sys-color-outline);
-}
-
-.analysis-content {
-    display: flex;
-    justify-content: center;
-}
-
-.files-settings {
-    border-radius: 1rem;
-    width: 80cqw;
-    box-sizing: border-box;
-    animation: mymove 0.5s;
-    position: relative;
-    background: var(--md-sys-color-surface);
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    .slider-item {
+        margin-left: 1.5rem;
+        left: 0;
+    }
 }
 
 @keyframes mymove {

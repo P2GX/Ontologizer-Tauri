@@ -6,9 +6,23 @@ import { Method } from './analysis-service';
   providedIn: 'root'
 })
 export class ResultsService {
-  private analysisMethod = signal<string>('');
-  public isBayesian = computed(() => this.analysisMethod() === 'bayesian');
-  public bayesianTableData = signal<BayesianRowData[] | null >(null);
+  public currentMethod = signal<Method | null>(null);
+  public isBayesian = computed(() => this.currentMethod()?.method === 'bayesian');
+  public bayesianTableData = signal<BayesianRowData[] | null>(null);
+
+  clearResults() {
+    this.frequentistTableData = null;
+    this.bayesianTableData.set(null);
+    this.dotData = null;
+    this.significantCount = 0;
+    this.resultsLength = 0;
+    this.proportionData = {
+      total: { nonSignificant: 0, significant: 0 },
+      BP: { nonSignificant: 0, significant: 0 },
+      MF: { nonSignificant: 0, significant: 0 },
+      CC: { nonSignificant: 0, significant: 0 }
+    };
+  }
 
   async runAnalysis() {
     try {
@@ -21,8 +35,6 @@ export class ResultsService {
       throw error;
     }
   }
-
-  currentMethod: Method | null = null;
 
   private frequentistTableData: FrequentistRowData[] | null = null;
   
@@ -56,7 +68,7 @@ export class ResultsService {
       const items = parsedData.items || [];
       this.resultsLength = items.length;
 
-      if (this.currentMethod === 'bayesian') {
+      if (this.currentMethod()?.method === 'bayesian') {
         this.bayesianTableData.set(this.parseBayesianResults(items));
       } else {
         this.frequentistTableData = this.parseAnalysisResults(items);
@@ -137,16 +149,15 @@ export class ResultsService {
   }
 
   get hasResults(): boolean {
-    return this.frequentistTableData !== null || this.bayesianTableData !== null;
+    return this.frequentistTableData !== null || this.bayesianTableData() !== null;
   }
 
   // Getters for components to access the data
-  getMethod() { return this.currentMethod; }
+  getMethod() { return this.currentMethod(); }
   getFrequentistTableData() { return this.frequentistTableData; }
   getBayesianTableData() { return this.bayesianTableData; }
   getDotData() { return this.dotData; }
   getMtcMethod() { return this.mtcMethod; }
-  getAnalysisMethod() { return this.analysisMethod; }
   getSignificantCount() { return this.significantCount; }
   getResultsLength() { return this.resultsLength; }
   getProportionData() { return this.proportionData; }

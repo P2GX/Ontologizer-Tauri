@@ -7,7 +7,9 @@
 
         </li>
         <ul class="settings-submenu" [class.open]="menuOpen">
-            <li *ngFor="let opt of options" (click)="selectOption(opt)">{{ displayOf(opt) }}</li>
+            @for (opt of options; track opt) {
+                <li (click)="selectOption(opt)">{{ displayOf(opt) }}</li>
+            }
         </ul>
 
     </ul>

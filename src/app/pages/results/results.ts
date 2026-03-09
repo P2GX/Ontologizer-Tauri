@@ -57,9 +57,7 @@ export class Results implements OnInit {
 
   ngOnInit() {
     if (this.resultsService.isBayesian()) {
-      const bayesianData = this.resultsService.getBayesianTableData();
-      if (bayesianData === null) return;
-      this.bayesianData = bayesianData;
+      if (this.resultsService.bayesianTableData() === null) return;
     } else {
       const frequentistData = this.resultsService.getFrequentistTableData();
       if (frequentistData === null) return;

@@ -9,20 +9,20 @@
 
 .mat-mdc-row:nth-child(4n),
 .mat-mdc-row:nth-child(4n+1) {
-    background-color: var(--md-sys-color-surface);
+    background-color: var(--md-sys-color-on-primary);
 }
 
 .mat-mdc-row:nth-child(4n):hover{
-    background-color: var(--theme-primary-hover-bg);
+    background-color: var(--md-sys-color-primary-container);
 }
 
 .mat-mdc-row:nth-child(4n+2),
 .mat-mdc-row:nth-child(4n+3) {
-    background-color: var(--md-sys-color-surface-variant);
+    background-color: var(--md-sys-color-primary-container);
 }
 
 .mat-mdc-row:nth-child(4n+2):hover{
-    background-color: var(--table-row-alt-hover);
+    background-color: var(--md-sys-color-primary-container);
 }
 
 
@@ -51,7 +51,7 @@
     box-sizing: border-box;
     border-radius: 1rem;
     padding: 1.5rem;
-    background-color: var(--md-sys-color-surface);
+    background-color: var(--md-sys-color-on-primary);
     box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
 }
 
@@ -65,7 +65,7 @@
     position: sticky;
     top: 0 !important;
     z-index: 100;
-    background-color: var(--table-header-bg) !important;
+    background-color: var(--md-sys-color-primary-container) !important;
 }
 
 .table-container h3 {
@@ -127,7 +127,7 @@ h3 {
 }
 
 ::ng-deep .mat-mdc-select-panel {
-    background-color: var(--md-sys-color-surface) !important;
+    background-color: var(--md-sys-color-on-primary) !important;
 }
 
 ::ng-deep .mdc-notched-outline {

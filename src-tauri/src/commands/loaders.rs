@@ -1,5 +1,5 @@
 use crate::appstate::AppState;
-use oboannotation::go::stats::get_annotation_stats;
+use oboannotation::go::stats::get_annotation_map;
 use oboannotation::go::{GoAnnotations, GoGafAnnotationLoader};
 use oboannotation::io::AnnotationLoader;
 use ontolius::io::OntologyLoaderBuilder;
@@ -67,7 +67,12 @@ pub async fn process_gaf_file(
         .await
         .map_err(|e| format!("Task join error: {}", e))??;
 
-    let stats = get_annotation_stats(&annotations);
+    let unique_genes = get_annotation_map(&annotations).len();
+    let stats = vec![
+        Stat::new("Version", &annotations.version),
+        Stat::new("Total annotations", annotations.annotations.len().to_string()),
+        Stat::new("Unique genes", unique_genes.to_string()),
+    ];
 
     let mut raw_annotations_lock = state
         .raw_annotations

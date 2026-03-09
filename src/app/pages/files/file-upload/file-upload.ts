@@ -2,7 +2,6 @@ import { open } from '@tauri-apps/plugin-dialog';
 import { Component, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { FilesService, FileStats, Stat } from '../../../services/files-service';
@@ -11,7 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-file-upload',
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatTableModule, MatDividerModule, Tooltip],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatDividerModule, Tooltip],
   templateUrl: './file-upload.html',
   styleUrl: './file-upload.css',
   standalone: true
@@ -32,10 +31,8 @@ export class FileUpload {
   fileLoaded: boolean = false;
   fileLoading: boolean = false;
   filePath: string | null = null;
-  showTooltip: boolean = false;
   fileName: string | null = null;
   fileStats: Stat[] = [];
-  showStats: boolean = false;
 
   filters = {
     'go': { name: 'GO File', extensions: ['json'] },
@@ -64,7 +61,7 @@ export class FileUpload {
 
       if (!this.filePath) return;
 
-      if (this.filePath && typeof this.filePath === 'string') {
+      if (this.filePath) {
         this.fileName = this.filePath.split(/[/\\]/).pop() ?? null;
         await this.processFile(this.filePath);
       }

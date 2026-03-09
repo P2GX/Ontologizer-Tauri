@@ -1,17 +1,19 @@
 <div class="file-upload-card">
     <div class="wrapper">
         <div class="step">
-            <div style="display: flex; justify-content: space-between;">
-                <p>Step {{num}}/4</p>
-                <div class="help-icon" (mouseover)="showTooltip = true" (mouseout)="showTooltip = false">?</div>
+            <div class="step-header">
+                <div class="step-title">{{stepTitle}}</div>
+                <div class="tooltip-trigger">
+                    <div class="help-icon">?</div>
+                    <app-tooltip [type]="processFileType" />
+                </div>
             </div>
-            <div class="step-title">{{stepTitle}}</div>
         </div>
-        <mat-divider class="horizontal"></mat-divider>
+        <mat-divider class="horizontal" />
 
         <div class="upload-form" (click)="openFileDialog()" [class.disabled]="!dependenciesLoaded">
             <span class="material-symbols-outlined upload-icon">cloud_upload</span>
-            <p> {{label}}</p>
+            <p>{{label}}</p>
         </div>
         <p class="subtitle">{{ subtitle }}</p>
 
@@ -23,53 +25,29 @@
 
         @if (fileLoaded && !fileLoading) {
             <section class="uploaded-area">
-                <li class="row">
+                <div class="row">
                     <div class="content">
                         <span class="material-symbols-outlined file-icon">description</span>
                         <div class="details">
                             <span class="name">{{fileName}}</span>
                         </div>
                     </div>
-                    <span class="material-symbols-outlined check-icon">check</span>
-                </li>
+                    <div class="stats-trigger">
+                        <div class="help-icon">ℹ</div>
+                        <div class="stats-panel">
+                            <dl class="stats-list">
+                                @for (stat of fileStats; track stat.key) {
+                                    <div class="stats-row">
+                                        <dt>{{ stat.key }}</dt>
+                                        <dd>{{ stat.value }}</dd>
+                                    </div>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined check-icon"></span>
+                </div>
             </section>
         }
-
-        @if (fileLoaded && !fileLoading) {
-            <button class="stats-button" (click)="showStats = !showStats"
-                [disabled]="!dependenciesLoaded">
-                <span class="show-stats-title">{{ showStats ? 'Hide Stats' : 'Show Stats' }}</span>
-                <span class="material-symbols-outlined icon" [class.hide-stats]="showStats">
-                    expand_circle_right
-                </span>
-            </button>
-        }
-
     </div>
-    @if (showTooltip) {
-        <app-tooltip [type]="processFileType"></app-tooltip>
-    }
-
-    <!-- Table to display file statistics after upload -->
-    @if (showStats && fileStats.length > 0) {
-        <div class="stats-table-wrapper">
-            <div class="stats-table-overflow">
-                <table mat-table [dataSource]="fileStats" class="stats-table">
-                    <ng-container matColumnDef="key">
-                        <th mat-header-cell *matHeaderCellDef> Info </th>
-                        <td mat-cell *matCellDef="let element"> {{ element.key }} </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="value">
-                        <th mat-header-cell *matHeaderCellDef> Value </th>
-                        <td mat-cell *matCellDef="let element"> {{ element.value }} </td>
-                    </ng-container>
-
-                    <tr mat-header-row *matHeaderRowDef="['key', 'value']"></tr>
-                    <tr mat-row *matRowDef="let _; columns: ['key', 'value']"></tr>
-                </table>
-            </div>
-        </div>
-    }
-
 </div>

@@ -1,30 +1,9 @@
 use crate::appstate::AppState;
 use serde::{Deserialize, Serialize};
+use ontologizer::Method;
 
 // By adding Deserialize and rename_all="lowercase", Tauri can automatically
 // convert the string "frequentist" from JS into MethodConfig::Frequentist in Rust!
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum Method {
-    Frequentist(Topology, Correction),
-    Bayesian,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum Topology {
-    TermForTerm,
-    ParentChildUnion,
-    ParentChildIntersection,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum Correction {
-    Bonferroni,
-    BonferroniHolm,
-    BenjaminHochberg,
-    None
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Settings {
     pub method: Method,

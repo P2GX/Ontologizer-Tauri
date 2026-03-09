@@ -5,48 +5,50 @@
 <div class="file-container">
     <div class="files-settings">
         <nav class="step-nav">
-            <ul class="upload-step-ul" style="list-style: none; padding: 0;">
-                <ng-container *ngFor="let step of uploadSteps; let i = index">
-                    <li (click)="selectStep(i)" [class.active]="activeStep === i && !step.fileLoaded()"
-                        [class.green-active]="step.fileLoaded() && activeStep === i"
+            <ul class="upload-step-ul">
+                @for (step of uploadSteps; track step.type; let i = $index) {
+                    <li (click)="selectStep(i)" [class.active]="activeStep() === i && !step.fileLoaded()"
+                        [class.green-active]="step.fileLoaded() && activeStep() === i"
                         [class.upload-success]="step.fileLoaded()">
-                        <span class="circle" [class.active]="activeStep === i && !step.fileLoaded()"
-                              [class.upload-success]="step.fileLoaded()" [class.green-active]="step.fileLoaded() && activeStep === i">
-                            <span *ngIf="step.fileLoaded(); else showNum">✓</span>
-                            <ng-template #showNum>{{ i + 1 }}</ng-template>
+                        <span class="circle" [class.active]="activeStep() === i && !step.fileLoaded()"
+                              [class.upload-success]="step.fileLoaded()" [class.green-active]="step.fileLoaded() && activeStep() === i">
+                            @if (step.fileLoaded()) { ✓ } @else { {{ i + 1 }} }
                         </span>
                         {{ step.title }}
                     </li>
-                    <div *ngIf="i !== 3" class="bar"></div>
-                </ng-container>
+                    @if (i !== uploadSteps.length - 1) {
+                        <div class="bar"></div>
+                    }
+                }
             </ul>
         </nav>
 
         <div class="upload-card-slider">
-            <div class="slider-item" #sliderItem *ngFor="let step of uploadSteps; let i = index">
-                <app-file-upload [processFileType]="step.type" [num]="i + 1" [stepTitle]="step.title"
-                                 [subtitle]="step.subtitle"
-                                 [dependenciesLoaded]="step.dependsOn ? filesStatus[step.dependsOn] : true"
-                                 [triggerReload]="step.dependsOn ? triggerReload : null"
-                                 (uploadSuccess)="onFileLoadedSuccess(step.type)">
-                </app-file-upload>
-            </div>
+            @for (step of uploadSteps; track step.type; let i = $index) {
+                <div class="slider-item" #sliderItem>
+                    <app-file-upload [processFileType]="step.type" [num]="i + 1" [stepTitle]="step.title"
+                                     [subtitle]="step.subtitle"
+                                     [dependenciesLoaded]="step.dependsOn ? filesStatus()[step.dependsOn] : true"
+                                     [triggerReload]="step.dependsOn ? triggerReload() : null"
+                                     (uploadSuccess)="onFileLoadedSuccess(step.type)" />
+                </div>
+            }
 
-            <button id="next" [hidden]="activeStep === 3" (click)="nextStep()">
+            <button id="next" [hidden]="activeStep() === uploadSteps.length - 1" (click)="nextStep()">
                 <span class="material-symbols-outlined">chevron_right</span>
             </button>
-            <button id="prev" [hidden]="activeStep === 0" (click)="prevStep()">
+            <button id="prev" [hidden]="activeStep() === 0" (click)="prevStep()">
                 <span class="material-symbols-outlined">chevron_left</span>
             </button>
         </div>
 
-        <!-- Process Files Button with Dividers -->
-        <div class="process-button-container" [class.disabled-state]="uploadProgress != 100">
-            <mat-divider class="horizontal"></mat-divider>
-            <button class="button" [disabled]="uploadProgress != 100" (click)="processFiles()">
-                {{ isProcessingAll ? 'Processing...' : (isFinished ? 'Finished!' : 'Process Files') }}
+        <div class="action-button-container" [class.disabled-state]="!allFilesLoaded()">
+            <mat-divider class="horizontal" />
+            <button class="button" [disabled]="!allFilesLoaded()" (click)="processFiles()">
+                {{ isProcessingAll() ? 'Processing...' : (isFinished() ? 'Finished!' : 'Process Files') }}
             </button>
-            <mat-divider class="horizontal"></mat-divider>
+            <mat-divider class="horizontal" />
         </div>
     </div>
 </div>
+

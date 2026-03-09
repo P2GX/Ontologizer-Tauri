@@ -23,9 +23,9 @@
     display: flex;
     flex-direction: column;
     padding: 1rem;
-    border: 1px solid var(--md-sys-color-outline-variant);
+    border: 1px solid var(--md-sys-color-outline);
     border-radius: 1rem;
-    background-color: var(--md-sys-color-surface);
+    background-color: var(--md-sys-color-on-primary);
     gap: 0.5rem;
     box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
 }
@@ -36,8 +36,8 @@
     flex: 1 1 0;
     cursor: pointer;
     min-height: 0;
-    border: 1px solid var(--md-sys-color-outline-variant);
-    background-color: var(--md-sys-color-surface);
+    border: 1px solid var(--md-sys-color-outline);
+    background-color: var(--md-sys-color-on-primary);
     border-radius: 1rem;
     box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
 }
@@ -55,7 +55,7 @@ h3 {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
-    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    border-bottom: 1px solid var(--md-sys-color-outline);
 }
 
 .summary-item:last-child {
@@ -109,7 +109,7 @@ h3 {
     margin-left: 1em;
     border-radius: 50%;
     font-size: 1rem;
-    background-color: var(--theme-badge);
+    background-color: var(--md-sys-color-secondary);
     color: white;
     display: flex;
     align-items: center;
@@ -118,7 +118,7 @@ h3 {
 }
 
 .help-icon:hover {
-    background-color: var(--theme-badge-hover);
+    background-color: var(--md-sys-color-secondary-hover);
     transition: background-color 0.2s ease;
 }
 

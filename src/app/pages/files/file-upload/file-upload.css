@@ -1,51 +1,49 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-
-/*header of the table*/
-.stats-table .mat-mdc-header-row {
-    font-weight: bold;
-    background-color: color(srgb 0.1216 0.1608 0.2157);
-    color: white;
-    box-shadow: 0 2px 4px var(--shadow-header);
-    text-transform: uppercase;
-    font-size: 1rem;
+/* === Stats Panel === */
+.stats-panel {
+    position: absolute;
+    z-index: 100;
+    min-width: 16rem;
+    border-radius: 0.75rem;
+    padding: 0.6rem 1rem;
+    background-color: var(--md-sys-color-on-primary);
+    box-shadow: 0 4px 16px var(--shadow-header);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    box-sizing: border-box;
 }
 
-.stats-table .mat-mdc-row {
-    font-size: 1rem;
-}
-
-.mat-mdc-row:nth-child(odd) {
-    background-color: var(--md-sys-color-surface-variant);
-    /* hellgrau */
-}
-
-.step-title {
-    font-weight: 500;
-    font-size: 1.3rem;
-    color: color(srgb 0.285 0.285 0.285);
-}
-
-.upload-card {
-    position: relative;
+.stats-list {
+    margin: 0;
+    padding: 0;
     display: flex;
-    flex-direction: row;
-    width: 20em;
-    height: 4em;
-    background-color: azure;
-    border-radius: 0.5em;
-    border: 0.7px solid var(--md-sys-color-outline-variant);
-    padding: 1em;
-    margin: 1em;
-    position: relative;
-    animation-timing-function: ease-in;
-    animation: mymove 0.5s;
+    flex-direction: column;
 }
 
-.help-icon {
-    cursor: pointer !important;
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1.5rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--md-sys-color-outline);
+    font-size: var(--font-small);
 }
 
-.num-circle,
+.stats-row:last-child {
+    border-bottom: none;
+}
+
+.stats-row dt {
+    color: var(--md-sys-color-on-primary-container);
+    font-weight: 400;
+}
+
+.stats-row dd {
+    color: var(--md-sys-color-primary);
+    font-weight: 500;
+    margin: 0;
+}
+
+/* === Help Icons === */
 .help-icon {
     width: 1.5rem;
     height: 1.5rem;
@@ -54,211 +52,125 @@
     margin-left: 1em;
     border-radius: 50%;
     font-size: 1rem;
-    background-color: var(--theme-badge);
-    color: white;
+    background-color: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .help-icon:hover {
-    background-color: var(--theme-badge-hover);
+    background-color: var(--md-sys-color-secondary-hover);
     transition: background-color 0.2s ease;
 }
 
+/* === Tooltip Trigger (?) === */
+.tooltip-trigger {
+    position: relative;
+}
+
+app-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.tooltip-trigger:hover app-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* === Stats Trigger (ℹ) === */
+.stats-trigger .stats-panel {
+    display: none;
+}
+
+.stats-trigger:hover .stats-panel {
+    display: block;
+}
+
+/* === Step Header === */
 .step {
     display: flex;
     flex-direction: column;
-    font-size: 1.5rem;
-    /* pointer-events: none; */
 }
 
-.mat-mdc-row:nth-child(even) {
-    background-color: var(--md-sys-color-surface);
+.step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.stats-table-wrapper {
-    width: 29rem;
-    /* box-shadow: rgba(0, 0, 0, 0.08) 0px 0.13rem 0.8rem; */
-    border-radius: 0.5em;
-    overflow-y: auto;
-    padding: 1rem;
-    position: absolute;
-    z-index: 100;
-    background-color: var(--md-sys-color-surface);
-    box-sizing: border-box;
+.step-title {
+    font-weight: 500;
+    font-size: var(--font-highlight);
+    color: var(--md-sys-color-primary);
+}
 
+/* === Upload Card Wrapper === */
+.file-upload-card {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1em;
+    gap: 1em;
+    flex-wrap: wrap;
+    max-width: 100%;
+    position: relative;
 }
 
 .wrapper {
     width: 26em;
     min-width: 23em;
-    background: var(--md-sys-color-surface);
+    background: var(--md-sys-color-on-primary);
     display: flex;
     flex-direction: column;
     border-radius: 0.8em;
     padding: 1.5em;
-    box-shadow: 0 0.13rem 0.8rem rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0.13rem 0.8rem var(--shadow-header);
 }
 
-
 .wrapper:hover {
-    box-shadow: 0 0.13rem 0.8rem rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0.13rem 0.8rem var(--shadow-header);
     transition: box-shadow 0.3s ease;
 }
 
-.stats-table-overflow {
-    overflow-x: auto;
-    /* statt hidden → Scrollbar */
-    overflow-y: auto;
-    height: 19rem;
-}
-
-.stats-table {
-    width: 100%;
-    /* Spalten werden gleichmäßig verteilt */
-    word-wrap: break-word;
-    table-layout: fixed;
-    /* lange Werte umbrechen */
-}
-
-.stats-table .mat-column-key {
-    width: 66% !important;
-    /* 2/3 der Tabelle */
-}
-
-/* Zweite Spalte (value) = 1 Teil */
-.stats-table .mat-column-value {
-    width: 34% !important;
-    /* 1/3 der Tabelle */
-}
-
-
-.mat-mdc-header-row,
-.mat-mdc-row,
-.mat-mdc-cell,
-.mat-mdc-header-cell {
-    border: 1px solid var(--md-sys-color-outline);
-    border-right: none;
-    border-left: none;
-}
-
-.mat-mdc-extended-fab {
-    color: white;
-    background-color: color(srgb 0.1433 0.1939 0.305);
-    border-radius: 3em;
-    width: 10em;
-    height: 4em;
-}
-
-.upload-row {
-    display: flex;
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    gap: 1em;
-}
-
-.stats-button {
-    background-color: var(--md-sys-color-primary);
-    align-self: center;
-    color: white;
-    border-radius: 3em;
-    width: 10rem;
-    height: 3rem;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-
-}
-
-.stats-button:hover {
-    background-color: var(--md-sys-color-primary-hover);
-    transition: background-color 0.2s ease;
-    box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.4)
-}
-
-/* >icon in circle (expand)*/
-.material-symbols-outlined {
-    color: white;
-}
-
-.hide-stats {
-    transform: scaleX(-1);
-    color: white;
-
-}
-
-
-.stats-button .icon {
-    transition: 0.5s;
-    width: 0;
-    position: relative;
-    right: -0.3em;
-    opacity: 0;
-}
-
-.stats-button:hover .icon {
-    right: 0;
-    opacity: 1;
-    width: 1em;
-}
-
-
-
-::selection {
-    color: #fff;
-    background: #78a4e8;
-}
-
-
-
-.wrapper header {
-    color: #78a4e8;
-    font-size: 27px;
-    font-weight: 600;
-    text-align: center;
-}
-
+/* === Upload Form === */
 .upload-form {
     height: 7em;
     display: flex;
-    background-color: var(--md-sys-color-surface);
+    background-color: var(--md-sys-color-primary-container);
     cursor: pointer;
     align-items: center;
     justify-content: center;
     margin-bottom: 0.5rem;
     flex-direction: column;
     border-radius: 5px;
-    border: 2px dashed var(--theme-badge);
+    border: 2px solid var(--md-sys-color-outline);
+    transition: all 0.2s ease;
 }
 
 .upload-form:hover {
-    background-color: var(--theme-primary-hover-bg);
-    transition: background-color 0.2s ease;
+    border-color: var(--md-sys-color-primary);
+    background-color: var(--md-sys-color-primary-container);
 }
 
 .upload-form .upload-icon {
     font-size: 2em;
-    color: var(--theme-badge);
+    color: var(--md-sys-color-on-primary-container);
 }
 
 .upload-form p {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
-    /* font-size: 1.5em; */
-    color: var(--theme-badge);
+    color: var(--md-sys-color-on-primary-container);
 }
 
+/* === Uploaded File Row === */
 section .row {
     margin: 1rem 0;
-    background: #e1f7e5;
+    background: var(--md-sys-color-success-container);
     list-style: none;
     padding: 15px 20px;
     border-radius: 5px;
@@ -268,40 +180,13 @@ section .row {
 }
 
 section .row .file-icon {
-    color: var(--theme-badge);
+    color: var(--md-sys-color-on-primary-container);
     font-size: 30px;
 }
 
 section .details span {
-    font-size: 1rem;
-    color: rgb(31, 31, 31);
-}
-
-.progress-area .row .content {
-    width: 100%;
-    margin-left: 15px;
-}
-
-.progress-area .details {
-    display: flex;
-    align-items: center;
-    margin-bottom: 7px;
-    justify-content: space-between;
-}
-
-.progress-area .content .progress-bar {
-    height: 6px;
-    width: 100%;
-    margin-bottom: 4px;
-    background: #fff;
-    border-radius: 30px;
-}
-
-.content .progress-bar .progress {
-    height: 100%;
-    width: 0%;
-    background: var(--md-sys-color-secondary);
-    border-radius: inherit;
+    font-size: var(--font-standard);
+    color: var(--md-sys-color-primary);
 }
 
 .uploaded-area {
@@ -309,17 +194,14 @@ section .details span {
     overflow-y: scroll;
 }
 
-.uploaded-area.onprogress {
-    max-height: 150px;
-}
-
 .uploaded-area::-webkit-scrollbar {
-    width: 0px;
+    width: 0;
 }
 
 .uploaded-area .row .content {
     display: flex;
     align-items: center;
+    flex: 1;
 }
 
 .uploaded-area .row .details {
@@ -328,29 +210,11 @@ section .details span {
     flex-direction: column;
 }
 
-.uploaded-area .row .details .size {
-    color: #404040;
-    font-size: 11px;
-}
-
 .uploaded-area .check-icon {
     font-size: 16px;
 }
 
-.file-upload-card {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 1em;
-    gap: 1em;
-    flex-wrap: wrap;
-    /* min-width: 77rem; */
-    max-width: 100%;
-    position: relative;
-    /* animation-timing-function: ease-in;
-    animation: mymove 0.5s; */
-}
-
-
+/* === Misc === */
 ::ng-deep .disabled {
     pointer-events: none;
     user-select: none;
@@ -358,37 +222,29 @@ section .details span {
 
 .mat-divider {
     margin: 1em 0;
-    color: var(--md-sys-color-outline-variant);
+    color: var(--md-sys-color-outline);
 }
 
 p {
-    color: var(--text-muted);
+    color: var(--md-sys-color-on-primary-container);
     font-weight: 300;
     margin: 0;
-    font-size: 1rem;
+    font-size: var(--font-standard);
 }
 
-/* 
-@media (min-width: 768px) {
-    .stats-table-wrapper {
-        width: 100%;
-    }
-
-    .file-upload-card {
-        min-width: 100%;
-    } */
-
-.isDragOver {
-    background-color: #16656f;
+.step p {
+    font-size: var(--font-small);
 }
 
+.subtitle {
+    font-size: var(--font-small);
+}
 
-@keyframes mymove {
-    from {
-        top: -0.5rem;
-    }
+.material-symbols-outlined {
+    color: var(--md-sys-color-on-primary);
+}
 
-    to {
-        top: 0;
-    }
+::selection {
+    color: var(--md-sys-color-on-primary);
+    background: var(--md-sys-color-secondary);
 }

@@ -11,11 +11,12 @@
             <div class="method-card"
                  [class.active]="isFrequentist"
                  (click)="setCategory('Frequentist')">
-                <!-- <span class="material-symbols-outlined card-icon">calculate</span> -->
-                <h3>Statistical Testing</h3>
+                <div class="card-header">
+                    <h3>Statistical Testing</h3>
+                    <div class="help-icon">?</div>
+                </div>
                 <p>Evaluates terms using hypergeometric tests, defining specific topological backgrounds to reduce hierarchy bias.</p>
 
-                <!-- Gaussian Distribution SVG (Always Visible) -->
                 <div class="illustration-container">
                     <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
                         <defs>
@@ -23,24 +24,17 @@
                                 <rect x="115" y="0" width="45" height="80" />
                             </clipPath>
                         </defs>
-                        <!-- Baseline -->
-                        <!-- <line x1="5" y1="70" x2="155" y2="70" stroke="var(--text-secondary)" stroke-width="1.5" /> -->
-
-                        <!-- Shaded Area (upper tail) -->
                         <path d="M 10 70 C 40 70, 55 10, 80 10 C 105 10, 120 70, 150 70 L 150 70 L 10 70 Z"
-                              fill="var(--theme-primary)" opacity="0.3" clip-path="url(#p-value-clip)" />
-
-                        <!-- Gaussian Curve Line -->
+                              fill="var(--md-sys-color-secondary)" opacity="0.7" clip-path="url(#p-value-clip)" />
                         <path d="M 10 70 C 40 70, 55 10, 80 10 C 105 10, 120 70, 150 70"
-                              fill="none" stroke="var(--theme-primary)" stroke-width="2.5" />
+                              fill="none" stroke="var(--md-sys-color-primary)" stroke-width="2.5" />
                     </svg>
                 </div>
 
-                <!-- Nested Dropdowns for Frequentist -->
-                <div class="nested-settings" style="display: flex; flex-direction: column; gap: 16px;" *ngIf="isFrequentist" (click)="$event.stopPropagation()">
+                <div class="nested-settings" (click)="$event.stopPropagation()">
                     <div class="settings" id="topology">
                         <app-dropdown-menu
-                                [label]="'Background Model'"
+                                [label]="'Background'"
                                 [options]="topologyOptions"
                                 [selected]="topology"
                                 [displayNames]="topologyNames"
@@ -62,41 +56,32 @@
 
             <!-- Bayesian Card -->
             <div class="method-card"
-                 [class.active]="selectedMethod === 'bayesian'"
+                 [class.active]="selectedMethod?.method === 'bayesian'"
                  (click)="setCategory('Bayesian')">
-                <!-- <span class="material-symbols-outlined card-icon">model_training</span> -->
-                <h3>Bayesian Inference</h3>
+                <div class="card-header">
+                    <h3>Bayesian Inference</h3>
+                    <div class="help-icon">?</div>
+                </div>
                 <p>Model-based gene set analysis considering term overlaps jointly using a Bayesian hierarchical model.</p>
 
-                <!-- Inline SVG depicting Bayesian Network (Always Visible) -->
                 <div class="illustration-container">
                     <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Edges Layer 1 to Layer 2 -->
                         <line x1="20" y1="10" x2="80" y2="20" />
                         <line x1="20" y1="10" x2="80" y2="40" />
                         <line x1="20" y1="30" x2="80" y2="20" />
                         <line x1="20" y1="50" x2="80" y2="40" />
                         <line x1="20" y1="50" x2="80" y2="60" />
                         <line x1="20" y1="70" x2="80" y2="60" />
-
-                        <!-- Edges Layer 2 to Layer 3 (One-to-one) -->
                         <line x1="80" y1="20" x2="140" y2="20" />
                         <line x1="80" y1="40" x2="140" y2="40" />
                         <line x1="80" y1="60" x2="140" y2="60" />
-
-                        <!-- Layer 1 Nodes (4) -->
-                        <!-- Layer 1 Nodes (4) - Rotated Rectangles -->
-                        <circle cx="20" cy="10" r="6" />
-                        <circle cx="20" cy="30" r="6" />
-                        <circle cx="20" cy="50" r="6" />
-                        <circle cx="20" cy="70" r="6" />
-
-                        <!-- Layer 2 Nodes (3) -->
+                        <circle cx="20" cy="10" r="6" class="layer-input" />
+                        <circle cx="20" cy="30" r="6" class="layer-input" />
+                        <circle cx="20" cy="50" r="6" class="layer-input" />
+                        <circle cx="20" cy="70" r="6" class="layer-input" />
                         <circle cx="80" cy="20" r="6" />
                         <circle cx="80" cy="40" r="6" />
                         <circle cx="80" cy="60" r="6" />
-
-                        <!-- Layer 3 Nodes (3) -->
                         <circle cx="140" cy="20" r="6" />
                         <circle cx="140" cy="40" r="6" />
                         <circle cx="140" cy="60" r="6" />
@@ -106,8 +91,8 @@
         </div>
 
         <!-- Start Analysis Button with Dividers -->
-        <div class="analyze-button-container" [class.disabled-state]="!selectedMethod || isAnalysing">
-            <mat-divider class="horizontal"></mat-divider>
+        <div class="action-button-container" [class.disabled-state]="!selectedMethod || isAnalysing">
+            <mat-divider class="horizontal" />
             <div class="button-and-warning">
                 <button class="button" [disabled]="!selectedMethod || isAnalysing" (click)="startAnalysis()">
                     {{ buttonLabel }}
@@ -115,12 +100,14 @@
                         {{ isAnalysing ? 'autorenew' : 'expand_circle_right' }}
                     </span>
                 </button>
-                <span class="analysis-warning" *ngIf="isAnalysing && selectedMethod === 'bayesian'">
-                    <span class="material-symbols-outlined warning-icon">schedule</span>
-                    This may take some time.
-                </span>
+                @if (isAnalysing && selectedMethod?.method === 'bayesian') {
+                    <span class="analysis-warning">
+                        <span class="material-symbols-outlined warning-icon">schedule</span>
+                        This may take some time.
+                    </span>
+                }
             </div>
-            <mat-divider class="horizontal"></mat-divider>
+            <mat-divider class="horizontal" />
         </div>
     </div>
 </div>

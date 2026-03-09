@@ -4,12 +4,16 @@
 
 .settings-menu {
     position: relative;
-    padding: 0em 0.5em 0 0.5em;
-    background-color: var(--theme-primary-light);
+    padding: 0 0.5em;
+    background-color: var(--md-sys-color-on-primary);
+    border: 1px solid var(--md-sys-color-primary);
     border-radius: 0.5rem;
     width: 12rem;
+    z-index: 2;
+}
 
-
+.settings-menu:has(.settings-submenu.open) {
+    z-index: 10;
 }
 
 .settings-menu li {
@@ -40,14 +44,9 @@ li.settings-menu-header {
     justify-content: space-between;
     align-items: center;
     padding: 0.3em 0.2em 0.3em 0.2em;
-    color: white;
+    color: var(--md-sys-color-primary);
     border-radius: 0.5rem;
     transition: background-color .2s ease;
-}
-
-.settings-submenu.open li:hover {
-    background-color: #535071;
-
 }
 
 h4 {
@@ -56,27 +55,28 @@ h4 {
 }
 
 .settings-submenu {
-    opacity: 0;
+    display: none;
     position: absolute;
-    top: 50%;
+    top: 100%;
     left: 0;
-    background-color: rgb(43, 43, 43);
+    background-color: var(--md-sys-color-on-primary);
+    border: 1px solid var(--md-sys-color-primary);
     border-radius: 0.5rem;
-    transition: all .2s ease;
-    pointer-events: none;
     cursor: pointer;
     padding: 0.7rem;
     font-weight: 300;
     min-width: 100%;
     box-sizing: border-box;
-
 }
 
 .settings-submenu.open {
-    opacity: 1;
-    top: 100%;
+    display: block;
     pointer-events: all;
+    z-index: 1;
+}
 
+.settings-submenu.open li:hover {
+    background-color: var(--md-sys-color-primary-container);
 }
 
 .settings-menu li:hover .settings-submenu {

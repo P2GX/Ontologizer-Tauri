@@ -1,90 +1,64 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: "Trebuchet MS", Trebuchet, sans-serif; }
 
 :root {
-    /* === Material Design 3 Color System === */
+    /* === Color Palette === */
+    /* Tints are mixed with white at the given percentage (e.g. 20% = 20% color + 80% white) */
 
-    /* Accent: Primary (Derived from #635ca4) */
-    --md-sys-color-primary: #5c38b5;
-    --md-sys-color-primary-hover: #7e55e8;
+    /* Primary: Dark Navy #003754 */
+    --md-sys-color-primary: #003754;
+    --md-sys-color-primary-hover: #335F76;          /* 80% navy */
     --md-sys-color-on-primary: #ffffff;
-    --md-sys-color-primary-container: #e5e4f1;
-    --md-sys-color-on-primary-container: #262f42;
+    --md-sys-color-primary-container: #E5EBEE;      /* 20% navy */
+    --md-sys-color-on-primary-container: #003754;
 
-    /* Accent: Secondary (Derived from info-accent / badges) */
-    --md-sys-color-secondary: #4a90e2;
+    /* Secondary: Signal Red #EA5451 */
+    --md-sys-color-secondary: #EA5451;
+    --md-sys-color-secondary-hover: #EE7674;        /* 80% signal red */
     --md-sys-color-on-secondary: #ffffff;
-    --md-sys-color-secondary-container: #e8f4fd;
-    --md-sys-color-on-secondary-container: #333333;
+    --md-sys-color-secondary-container: #FBDDDC;    /* 20% signal red */
+    --md-sys-color-on-secondary-container: #003754;
+
+    /* Tertiary: Dark Red #AF1821 */
+    --md-sys-color-tertiary: #AF1821;
+    --md-sys-color-on-tertiary: #ffffff;
+    --md-sys-color-tertiary-container: #EFD1D3;     /* 20% dark red */
+    --md-sys-color-on-tertiary-container: #003754;
 
     /* Semantic: Error & Success */
-    --md-sys-color-error: #ba1a1a;
+    --md-sys-color-error: #AF1821;
     --md-sys-color-on-error: #ffffff;
-    --md-sys-color-success: #22a239;
+    --md-sys-color-success: #9D7220;
     --md-sys-color-on-success: #ffffff;
+    --md-sys-color-success-container: #EBE3D2;      /* 20% gold */
 
-    /* Neutrals: Background & Surface */
+    /* Neutrals: Background */
     --md-sys-color-background: #f2f3f5;
-    --md-sys-color-on-background: #262f42;
 
-    --md-sys-color-surface: #ffffff;
-    --md-sys-color-on-surface: #262f42;
-
-    --md-sys-color-surface-variant: #f5f5f5;
-    --md-sys-color-on-surface-variant: #555555;
-
-    /* Boundaries: Outlines & Dividers */
-    --md-sys-color-outline: #d4d4d4;
-    --md-sys-color-outline-variant: #eeeeee;
-
-    /* Inverse: Standout elements (Sidebar) */
-    --md-sys-color-inverse-surface: #1b1918;
-    --md-sys-color-inverse-on-surface: #cbd5e1;
-    --md-sys-color-inverse-primary: #a199ee;
-
-    /* === App Shell (outside M3 spec) === */
-    --sidebar-hover-bg: rgba(191, 195, 201, 0.057);
-    --sidebar-active-bg: linear-gradient(90deg, rgb(57, 56, 56) 0%, rgb(33, 32, 30) 69%);
-    --sidebar-text-light: rgb(208, 208, 208);
-    --sidebar-icon: #afb6bf;
-    --text-toolbar: #1e293b;
-    --text-header: color(srgb 0.195 0.2559 0.39);
-    --divider-dark: color(srgb 0.16 0.1541 0.1512);
-    --ripple-color: color(srgb 0.9 0.9 0.9);
-
-    /* === Supplementary Theme Tokens === */
-    --theme-primary-light: #cbc7f7;
-    --theme-primary-hover-bg: #f8f7ff;
-    --theme-primary-shadow: rgba(99, 92, 164, 0.15);
-    --theme-primary-divider: #d1ccfa;
-    --theme-badge: #9383e9;
-    --theme-badge-hover: #7b68ee;
-    --theme-nav-hover: #4e4a8c;
+    /* Boundaries: Outlines */
+    --md-sys-color-outline: #D9E1E5;                /* 15% navy */
 
     /* === Shadows === */
-    --shadow-base: rgba(0, 0, 0, 0.05);
     --shadow-header: rgba(0, 0, 0, 0.1);
 
-    /* === Table Specifics === */
-    --table-header-bg: #e9eaff;
-    --table-row-alt-hover: #edeef4;
-
-    /* === Text === */
-    --text-muted: color(srgb 0.6 0.6 0.6);
+    /* === Typography Scale === */
+    --font-small: 0.8rem;
+    --font-standard: 1.0rem;
+    --font-highlight: 1.2rem;
 }
 
 /* ===== Shared Button ===== */
 .button {
     background-color: var(--md-sys-color-primary);
-    color: white;
+    color: var(--md-sys-color-on-primary);
     border-radius: 3em;
     width: 14rem;
     height: 3.5rem;
     border: none;
-    font-size: 1.1rem;
-    font-weight: 500;
+    font-size: var(--font-highlight);
+    font-weight: 400;
     cursor: pointer;
     box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.2);
     display: flex;
@@ -101,7 +75,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .button:disabled {
     background-color: var(--md-sys-color-outline);
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--md-sys-color-on-primary-container);
     cursor: not-allowed;
     box-shadow: none;
 }
@@ -114,7 +88,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     right: -0.3em;
     opacity: 0;
     font-size: 1.4rem;
-    color: white;
+    color: var(--md-sys-color-on-primary);
 }
 
 .button:hover:not(:disabled) .icon {
@@ -125,4 +99,20 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .disabled-state {
     opacity: 0.6;
+}
+
+/* ===== Shared Action Button Container ===== */
+.action-button-container {
+    display: flex;
+    width: 100%;
+    margin-top: 3rem;
+    gap: 1.5rem;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+}
+
+.mat-divider.horizontal {
+    width: 35%;
+    color: var(--md-sys-color-outline);
 }

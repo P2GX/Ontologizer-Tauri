@@ -11,7 +11,7 @@ body {
 }
 
 .sidenav {
-  background-color: var(--md-sys-color-inverse-surface);
+  background-color: var(--md-sys-color-primary);
   overflow-x: hidden;
   overflow-y: hidden;
   width: 16rem;
@@ -20,8 +20,8 @@ body {
 
 .sidenav-header {
   padding: 1rem;
-  background: var(--md-sys-color-inverse-surface);
-  color: var(--md-sys-color-surface); /* Reusing white from style.css */
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary); /* Reusing white from style.css */
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -51,33 +51,33 @@ body {
   margin: 4px 8px;
   border-radius: 8px;
   transition: all 0.2s ease;
-  color: var(--md-sys-color-inverse-on-surface);
+  color: var(--md-sys-color-on-primary);
   white-space: nowrap; /* Prevents wrapping during collapse */
   overflow: hidden;
 }
 
 .nav-item:hover {
-  background-color: var(--sidebar-hover-bg);
+  background-color: rgba(255, 255, 255, 0.05);
   transform: translateX(0.2em);
 }
 
 .nav-item mat-icon {
-  color: var(--sidebar-icon);
+  color: var(--md-sys-color-primary-container);
   margin-right: 12px;
   font-size: 20px;
   align-content: center;
 }
 
 .nav-item span[matListItemTitle] {
-  color: var(--sidebar-text-light);
+  color: var(--md-sys-color-on-primary);
   font-weight: 200;
 }
 
 .nav-item.active-link {
-  background: var(--sidebar-active-bg);
+  background: linear-gradient(90deg, var(--md-sys-color-primary-hover) 0%, var(--md-sys-color-primary) 69%);
   border-radius: 2em;
   transform: translateX(0.2em);
-  color: var(--md-sys-color-surface); /* Reusing white */
+  color: var(--md-sys-color-on-primary); /* Reusing white */
   transition: all 0.6s ease;
 }
 
@@ -129,7 +129,7 @@ a.nav-item {
 }
 
 .menu-button {
-  color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-primary);
 }
 
 ::ng-deep.mat-drawer-inner-container {
@@ -163,16 +163,16 @@ a.nav-item {
   margin: 1rem;
   font-size: 2.0rem;
   font-weight: 400;
-  color: var(--text-header);
+  color: var(--md-sys-color-primary);
 }
 
 ::ng-deep .page-header {
   display: flex;
   flex-direction: column;
-  padding: 0 5vw 1rem 5vw;
+  padding: 0 5vw 0rem 5vw;
   box-shadow: 0 2px 4px var(--shadow-header);
   margin-bottom: 2rem;
-  background-color: var(--md-sys-color-surface);
+  background-color: var(--md-sys-color-on-primary);
 }
 
 ::ng-deep h1.page-title {
@@ -181,20 +181,20 @@ a.nav-item {
 
 .mat-divider {
   margin: 1rem 0.5rem;
-  color: var(--divider-dark);
+  color: var(--md-sys-color-primary);
 }
 
 ::ng-deep.mat-mdc-button .mat-mdc-button-persistent-ripple::before {
-  color: var(--ripple-color);
+  color: var(--md-sys-color-on-primary);
 }
 
 ::ng-deep.mat-snack-bar-container.mat-snack-bar-container-animations-enabled {
-  background-color: var(--md-sys-color-surface) !important;
+  background-color: var(--md-sys-color-on-primary) !important;
   opacity: 0.95 !important;
 }
 
 ::ng-deep.mat-snack-bar-container-animations-enabled {
-  background-color: var(--md-sys-color-surface) !important;
+  background-color: var(--md-sys-color-on-primary) !important;
   opacity: 0.95 !important;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0.13rem 0.3rem;
 }
