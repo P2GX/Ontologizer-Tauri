@@ -1,20 +1,22 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-legend',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './legend.html',
   styleUrl: './legend.css'
 })
 export class Legend {
-  legend = [
-    { text: '≤ 0.05', color: "#f7dd60ff" },
-    { text: '< 0.01', color: "#fcc469ff" },
-    { text: '< 1e-3', color: '#fc8d59' },
-    { text: '< 1e-4', color: '#e34a33' },
-    { text: '< 1e-5', color: '#b30000' },
-    { text: '< 1e-6', color: '#800000' }
-  ];
+  @Input() maxValue: number = 6;
+  @Input() isBayesian: boolean = false;
 
+  // Always exactly 7 evenly-spaced ticks: 0, max/6, 2*max/6, ..., max
+  get ticks(): { label: string; position: number }[] {
+    const max = this.maxValue;
+    return Array.from({ length: 7 }, (_, i) => {
+      const val = (i / 6) * max;
+      const label = val === 0 ? '0' : val % 1 === 0 ? val.toFixed(0) : val.toFixed(1);
+      return { label, position: (i / 6) * 100 };
+    });
+  }
 }

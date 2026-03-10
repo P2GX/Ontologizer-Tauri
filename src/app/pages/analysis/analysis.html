@@ -31,7 +31,7 @@
                     </svg>
                 </div>
 
-                <div class="nested-settings" (click)="$event.stopPropagation()">
+                <div class="nested-settings" (click)="setCategory('Frequentist'); $event.stopPropagation()">
                     <div class="settings" id="topology">
                         <app-dropdown-menu
                                 [label]="'Background'"

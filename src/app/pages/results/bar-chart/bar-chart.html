@@ -1,21 +1,17 @@
 <div class="chart-container">
     <div class="control-panel">
-        <div>
-            <app-dropdown-menu [label]="'Value to plot'" [options]="plotOptions" [selected]="'-Log10(p.adj)'"
+        @if (!isBayesian) {
+            <app-dropdown-menu [label]="'Value to plot'" [options]="plotOptions" [selected]="selectedPlotOption"
                 (selectedChange)="selectPlotOption($event)"></app-dropdown-menu>
-        </div>
-        <div>
-            <app-dropdown-menu [label]="'Aspect'" [options]="subgraphs" [selected]="'All'"
-                (selectedChange)="selectSubgraph($event)"></app-dropdown-menu>
-        </div>
-        <div style="display:flex; flex-direction:column;">
-            <span class="chart-title">Adjusted P-Value</span>
-            <app-legend></app-legend>
-        </div>
+        }
+        <app-dropdown-menu [label]="'Aspect'" [options]="subgraphs" [selected]="'All'"
+            (selectedChange)="selectSubgraph($event)"></app-dropdown-menu>
+        <app-dropdown-menu [label]="'Show'" [options]="topNOptions" [selected]="selectedTopN"
+            (selectedChange)="selectTopN($event)"></app-dropdown-menu>
+        <app-legend [maxValue]="legendMaxValue" [isBayesian]="isBayesian"></app-legend>
     </div>
 
-    <div class="container-body" style="width:100%; max-width:100%; height: 100%;overflow-x: scroll;">
-
+    <div class="container-body" style="width:100%; max-width:100%; height: 100%; overflow-x: scroll;">
         <div #chartDiv class="chartDiv" style="height: 100%; cursor: pointer;">
             <canvas #barCanvas></canvas>
         </div>

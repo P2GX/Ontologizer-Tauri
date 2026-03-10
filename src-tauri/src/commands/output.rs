@@ -5,13 +5,106 @@ use ontolius::{
     TermId,
 };
 
-use ontologizer::EnrichmentItem;
+use ontologizer::{EnrichmentItem, Method};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{HashMap, HashSet},
     hash::Hash,
     vec,
 };
+
+#[derive(Serialize)]
+pub struct PagedResults {
+    pub items: String,
+    pub total: usize,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AspectCounts {
+    pub significant: usize,
+    pub non_significant: usize,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SummaryProportionData {
+    pub total: AspectCounts,
+    pub bp: AspectCounts,
+    pub mf: AspectCounts,
+    pub cc: AspectCounts,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AnalysisSummary {
+    pub total: usize,
+    pub proportion_data: SummaryProportionData,
+}
+
+#[tauri::command]
+pub fn get_analysis_summary(state: tauri::State<AppState>) -> Result<AnalysisSummary, String> {
+    let results_lock = state
+        .results
+        .read()
+        .map_err(|e| format!("Failed to lock results: {}", e))?;
+    let results = results_lock.as_ref().ok_or("No analysis results loaded")?;
+
+    let mut bp = AspectCounts { significant: 0, non_significant: 0 };
+    let mut mf = AspectCounts { significant: 0, non_significant: 0 };
+    let mut cc = AspectCounts { significant: 0, non_significant: 0 };
+    let mut total_counts = AspectCounts { significant: 0, non_significant: 0 };
+
+    for item in &results.items {
+        let is_significant = item.score <= 0.05;
+        let aspect_counts = match item.aspect.as_str() {
+            "BP" => &mut bp,
+            "MF" => &mut mf,
+            "CC" => &mut cc,
+            _ => continue,
+        };
+        if is_significant {
+            aspect_counts.significant += 1;
+            total_counts.significant += 1;
+        } else {
+            aspect_counts.non_significant += 1;
+            total_counts.non_significant += 1;
+        }
+    }
+
+    Ok(AnalysisSummary {
+        total: results.items.len(),
+        proportion_data: SummaryProportionData {
+            total: total_counts,
+            bp,
+            mf,
+            cc,
+        },
+    })
+}
+
+#[tauri::command]
+pub fn get_analysis_results_page(
+    state: tauri::State<AppState>,
+    page: usize,
+    page_size: usize,
+) -> Result<PagedResults, String> {
+    let results_lock = state
+        .results
+        .read()
+        .map_err(|e| format!("Failed to lock results: {}", e))?;
+    let results = results_lock.as_ref().ok_or("No analysis results loaded")?;
+
+    let total = results.items.len();
+    let start = page * page_size;
+    let end = (start + page_size).min(total);
+    let page_items = &results.items[start..end];
+
+    let items_json = serde_json::to_string(page_items)
+        .map_err(|e| format!("Serialization error: {}", e))?;
+
+    Ok(PagedResults { items: items_json, total })
+}
 
 // Retrieves the table analysis results from the shared app state and returns them as a JSON string.
 #[tauri::command]
@@ -157,6 +250,23 @@ impl Eq for EdgeData {}
 // Generates the compressed and "full" GO graph data in DOT format for each of the three GO categories (BP, MF, CC).
 #[tauri::command]
 pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, String> {
+    // Determine analysis method so we can apply the correct significance threshold.
+    // Frequentist: score is an adjusted p-value  → significant when score <= 0.05
+    // Bayesian:    score is a posterior probability → significant when score >= 0.5
+    let settings_lock = state
+        .settings
+        .lock()
+        .map_err(|e| format!("Failed to lock settings: {}", e))?;
+    let is_bayesian = settings_lock
+        .as_ref()
+        .map(|s| matches!(s.method, Method::Bayesian))
+        .unwrap_or(false);
+    drop(settings_lock);
+
+    let is_significant = |score: f64| -> bool {
+        if is_bayesian { score >= 0.5 } else { score <= 0.05 }
+    };
+
     // Acquire read locks on the GO ontology and analysis results
     let ontology_lock = state
         .ontology
@@ -170,15 +280,14 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
         .map_err(|e| format!("Failed to lock analysis results for reading: {}", e))?;
     let results = results_lock.as_ref().ok_or("No analysis results loaded")?;
 
-    // create map of all significant results (TermId -> GOTermResult)
+    // Maps of significant and all-tested terms for graph traversal
     let significant_terms: HashMap<TermId, &EnrichmentItem> = results
-    .items
+        .items
         .iter()
-        .filter(|&item| item.score <= 0.05)
+        .filter(|&item| is_significant(item.score))
         .map(|item| (item.id.parse::<TermId>().unwrap(), item))
         .collect();
 
-    // create map of all tested results (TermId -> GOTermResult)
     let tested_terms: HashMap<TermId, &EnrichmentItem> = results
         .items
         .iter()
@@ -187,33 +296,32 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
 
     let mut dot_data = DotData::new();
 
-    // We want to create three separate graph data for the three categories of the Gene Ontology
     let root_terms: Vec<TermId> = vec![
         BIOLOGICAL_PROCESS.clone(),
         CELLULAR_COMPONENT.clone(),
         MOLECULAR_FUNCTION.clone(),
-    ]; // BP, CC, MF
+    ];
+
     for root in root_terms {
         let mut nodes = Nodes::new();
         let mut edges = Edges::new();
 
-        let root_info = match results.items.iter().find(|&item| item.id == root.to_string()) {
-            Some(info) => info,
-            None => continue, // root term not in results (e.g. Bayesian analysis), skip this aspect
-        };
-        nodes.add_node(
-            root.to_string(),
-            NodeData {
-                id: root.to_string(),
-                label: root_info.id.clone(),
-                study_count: root_info.associated_genes.len() as u32,
-                population_count: root_info.associated_genes.len() as u32,
-                // todo!(this is currently just study gene count)
-                depth: 0,
-                p_val: root_info.score as f32,
-            },
-            true,
-        );
+        // Add the root node only if it appears in the results (may be absent in Bayesian).
+        // Either way we still traverse the ontology from this root to find all significant children.
+        if let Some(root_info) = results.items.iter().find(|item| item.id == root.to_string()) {
+            nodes.add_node(
+                root.to_string(),
+                NodeData {
+                    id: root.to_string(),
+                    label: root_info.id.clone(),
+                    study_count: root_info.associated_genes.len() as u32,
+                    population_count: root_info.associated_genes.len() as u32,
+                    depth: 0,
+                    p_val: root_info.score as f32,
+                },
+                is_significant(root_info.score),
+            );
+        }
 
         let mut visited: HashSet<TermId> = HashSet::new();
         traverse_term(
@@ -227,6 +335,11 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
             &mut visited,
             0,
         );
+
+        // Remove compressed edges whose target is not a known significant node.
+        // This can happen when the root term is absent from the results (Bayesian),
+        // leaving top-level significant terms with a dangling edge to the virtual root.
+        edges.compressed.retain(|e| nodes.significant.contains_key(&e.target));
 
         if root == BIOLOGICAL_PROCESS {
             dot_data.BP = DotGraph::new(nodes, edges);
@@ -296,29 +409,28 @@ fn traverse_term(
         }
     }
 
-    // Nur sichtbare Knoten (signifikante + deren Pfad) hinzufügen
+    // Add visible nodes (significant + ancestors on the path).
+    // Guard against terms not present in tested_terms (e.g. the virtual root in Bayesian).
     if keep {
-        let node_result = tested_terms.get(term).unwrap(); // sichtbare sind getestet
-        let node_data = NodeData {
-            id: term.to_string(),
-            label: node_result.id.clone(),
-            depth,
-            p_val: node_result.score as f32,
-            study_count: node_result.associated_genes.len() as u32,
-            population_count: node_result.associated_genes.len() as u32,
-        };
+        if let Some(node_result) = tested_terms.get(term) {
+            let node_data = NodeData {
+                id: term.to_string(),
+                label: node_result.id.clone(),
+                depth,
+                p_val: node_result.score as f32,
+                study_count: node_result.associated_genes.len() as u32,
+                population_count: node_result.associated_genes.len() as u32,
+            };
 
-        if is_significant {
-            // signifikante Knoten
-            nodes.add_node(term.to_string(), node_data, true);
-
-            // compressed edge: zu nächstem signifikanten Eltern
-            edges.add_edge(
-                EdgeData::new(term.to_string(), significant_parent.to_string(), 0),
-                true,
-            );
-        } else {
-            nodes.add_node(term.to_string(), node_data, false);
+            if is_significant {
+                nodes.add_node(term.to_string(), node_data, true);
+                edges.add_edge(
+                    EdgeData::new(term.to_string(), significant_parent.to_string(), 0),
+                    true,
+                );
+            } else {
+                nodes.add_node(term.to_string(), node_data, false);
+            }
         }
 
         visited.insert(term.clone());

@@ -52,13 +52,9 @@ export class Analysis {
 
   setCategory(category: 'Frequentist' | 'Bayesian') {
     if (category === 'Bayesian') {
-      this.selectedMethod  = { method: 'bayesian' };
+      this.selectedMethod = { method: 'bayesian' };
     } else {
-      this.topology = "Standard";
-      this.correction = "None";
-      // Apply defaults on first Frequentist selection; remember previous choices afterwards
       this.selectedMethod = { method: 'frequentist', topology: this.topology, correction: this.correction };
-
     }
     void this.analysisService.saveSettings(this.selectedMethod);
   }
@@ -94,14 +90,15 @@ export class Analysis {
     try {
       await this.resultsService.runAnalysis();
       await this.resultsService.loadAnalysisOutput();
-      if (this.selectedMethod.method !== 'bayesian')  {
-        await this.resultsService.loadDotData();
-      }
+      await this.resultsService.loadDotData();
       this.justCompleted = true;
       setTimeout(() => this.router.navigate(['/results']), 1000);
     } catch (error) {
       console.error('Error running analysis:', error);
-      this.snackBar.open('Failed to run analysis.', 'Close', { panelClass: ['custom-snackbar'] });
+      const msg = typeof error === 'string' && error.includes('Annotations not loaded')
+        ? 'Annotations not loaded — please go to the Files page and click "Process Files" first.'
+        : 'Failed to run analysis.';
+      this.snackBar.open(msg, 'Close', { panelClass: ['custom-snackbar'], duration: 8000 });
     } finally {
       this.isAnalysing = false;
     }

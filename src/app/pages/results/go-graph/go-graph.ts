@@ -1,24 +1,23 @@
 import { Component, SimpleChanges, Input, OnChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { MatDivider } from '@angular/material/divider';
-import { CommonModule } from '@angular/common';
 import { DropdownMenu } from '../../../shared/dropdown-menu/dropdown-menu';
 import { Legend } from '../bar-chart/legend/legend';
 import { Tooltip } from '../../../shared/tooltip/tooltip';
 import { DotData } from '../../../services/results-service';
-// import * as Viz from "@viz-js/viz";
 import 'd3-graphviz';
 import * as d3 from 'd3';
 
 @Component({
   selector: 'app-go-graph',
-  imports: [CommonModule, DropdownMenu, Legend, Tooltip],
+  imports: [DropdownMenu, Legend, Tooltip],
   templateUrl: './go-graph.html',
   styleUrl: './go-graph.css'
 })
-
 export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   @Input() visible: boolean = false;
   @Input() dotData?: DotData | null = null;
+  @Input() legendMaxValue: number = 1;
+  @Input() isBayesian: boolean = false;
+
   viewInitialized: boolean = false;
 
   @ViewChild('MFgraphvizContainer', { static: true }) MFgraphvizContainer!: ElementRef;
@@ -28,90 +27,147 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('BPgraphvizContainerFull', { static: true }) BPgraphvizContainerFull!: ElementRef;
   @ViewChild('CCgraphvizContainerFull', { static: true }) CCgraphvizContainerFull!: ElementRef;
 
-  subgraphs: string[] = ["Molecular Function", "Biological Process", "Cellular Component"];
+  subgraphs: string[] = ['Molecular Function', 'Biological Process', 'Cellular Component'];
+  topNOptions: string[] = ['Significant', 'Top 10', 'Top 25', 'Top 50', 'Top 100'];
+
   showTooltip: boolean = false;
   showNonSignificant: boolean = false;
+  fullGraphsRendered: boolean = false;
 
   selectedChart: 'MF' | 'BP' | 'CC' = 'MF';
+  selectedTopN: string = 'Significant';
 
   dotStrings = {
     BP: { compressed: '', full: '' },
     MF: { compressed: '', full: '' },
     CC: { compressed: '', full: '' }
-  }
+  };
 
   toggleExpanded() {
     this.showNonSignificant = !this.showNonSignificant;
+    if (this.showNonSignificant && !this.fullGraphsRendered) {
+      this.fullGraphsRendered = true;
+      setTimeout(() => {
+        this.renderFull('MF');
+        this.renderFull('BP');
+        this.renderFull('CC');
+      }, 0);
+    }
+  }
+
+  selectChart(chart: string) {
+    switch (chart) {
+      case 'Molecular Function': this.selectedChart = 'MF'; break;
+      case 'Biological Process': this.selectedChart = 'BP'; break;
+      case 'Cellular Component': this.selectedChart = 'CC'; break;
+    }
+  }
+
+  selectTopN(option: string) {
+    this.selectedTopN = option;
+    this.generateDot('MF');
+    this.generateDot('BP');
+    this.generateDot('CC');
+    this.renderCompressed('MF');
+    this.renderCompressed('BP');
+    this.renderCompressed('CC');
+    if (this.showNonSignificant) {
+      setTimeout(() => {
+        this.renderFull('MF');
+        this.renderFull('BP');
+        this.renderFull('CC');
+      }, 0);
+    } else {
+      this.fullGraphsRendered = false;
+    }
   }
 
   generateDot(subgraph: 'MF' | 'BP' | 'CC'): void {
-    let compressed_dot = "digraph {\n";
-    compressed_dot += "rankdir=BT;\n";
-    compressed_dot += "ranksep=1.2;\n";
-    compressed_dot += "nodesep=0.5;\n";
+    if (!this.dotData) return;
 
-    let full_dot = "digraph {\n";
-    full_dot += "rankdir=BT;\n";
-    full_dot += "ranksep=1.2;\n";
-    full_dot += "nodesep=0.5;\n";
+    let significant_nodes = Object.values(this.dotData[subgraph].nodes.significant);
 
-    if (this.dotData) {
-      let edges_compressed = this.dotData[subgraph].edges.compressed;
-      let edges_full = this.dotData[subgraph].edges.full;
-      let significant_nodes = Object.values(this.dotData[subgraph].nodes.significant);
-      let all_nodes = [
-        ...significant_nodes,
-        ...Object.values(this.dotData[subgraph].nodes.ancestors)
-      ];
+    // Sort by significance: frequentist = ascending p-value, bayesian = descending posterior prob
+    significant_nodes.sort((a, b) =>
+      this.isBayesian ? b.p_val - a.p_val : a.p_val - b.p_val
+    );
 
-
-      // generate compressed dot string
-      for (const node of significant_nodes) {
-        const [fillColor, fontColor] = this.pvalToColor(node.p_val);
-        compressed_dot += `"${node.id}" [label="${this.wrapLabel(node.label, 15)}", tooltip="${node.id} <br/> p.adj: ${this.formatPValue(node.p_val)}<br/> Study annotations: ${node.study_count}<br/> Population annotations: ${node.population_count}<br/> actual depth: ${node.depth}", fillcolor="${fillColor}", style=filled, fontname="Arial", fontcolor="${fontColor}", fixedsize=false, shape=box];\n`;
-      }
-
-      for (const edge of edges_compressed) {
-        const style = edge.nodes_skipped === 0 ? "solid" : "dashed";
-        compressed_dot += `"${edge.source}" -> "${edge.target}" [style=${style}];\n`;
-      }
-
-      compressed_dot += "}\n";
-
-      // generate full dot string starting from most specific significant nodes
-      for (const node of all_nodes) {
-        const [fillColor, fontColor] = this.pvalToColor(node.p_val);
-        full_dot += `"${node.id}" [label="${this.wrapLabel(node.label, 15)}", tooltip="${node.id} <br/> p.adj: ${this.formatPValue(node.p_val)}<br/> Study annotations: ${node.study_count}<br/> Population annotations: ${node.population_count}<br/> actual depth: ${node.depth}", fillcolor="${fillColor}", style=filled, fontname="Arial", fontcolor="${fontColor}", fixedsize=false, shape=box];\n`;
-      }
-
-      for (const edge of edges_full) {
-        const style = edge.nodes_skipped === 0 ? "solid" : "dashed";
-        full_dot += `"${edge.source}" -> "${edge.target}" [style=${style}];\n`;
-      }
-      full_dot += "}\n";
-
-      this.dotStrings[subgraph] = { compressed: compressed_dot, full: full_dot };
-
+    // Apply top-N filter
+    if (this.selectedTopN !== 'Significant') {
+      const n = parseInt(this.selectedTopN.replace('Top ', ''), 10);
+      significant_nodes = significant_nodes.slice(0, n);
     }
+
+    const significantIds = new Set(significant_nodes.map(nd => nd.id));
+    const ancestor_nodes = Object.values(this.dotData[subgraph].nodes.ancestors);
+    const all_nodes = [...significant_nodes, ...ancestor_nodes];
+    const allIds = new Set(all_nodes.map(nd => nd.id));
+
+    const edges_compressed = this.dotData[subgraph].edges.compressed
+      .filter(e => significantIds.has(e.source) && significantIds.has(e.target));
+    const edges_full = this.dotData[subgraph].edges.full
+      .filter(e => allIds.has(e.source) && allIds.has(e.target));
+
+    let compressed_dot = 'digraph {\nrankdir=BT;\nranksep=1.2;\nnodesep=0.5;\n';
+    let full_dot = 'digraph {\nrankdir=BT;\nranksep=1.2;\nnodesep=0.5;\n';
+
+    for (const node of significant_nodes) {
+      const [fillColor, fontColor] = this.pvalToColor(node.p_val);
+      const tooltip = `${node.id} <br/> p.adj: ${this.formatPValue(node.p_val)}<br/> Study: ${node.study_count}<br/> Population: ${node.population_count}`;
+      const attrs = `label="${this.wrapLabel(node.label, 15)}", tooltip="${tooltip}", fillcolor="${fillColor}", style=filled, fontname="Arial", fontcolor="${fontColor}", fixedsize=false, shape=box`;
+      compressed_dot += `"${node.id}" [${attrs}];\n`;
+    }
+    for (const edge of edges_compressed) {
+      compressed_dot += `"${edge.source}" -> "${edge.target}" [style=${edge.nodes_skipped === 0 ? 'solid' : 'dashed'}];\n`;
+    }
+    compressed_dot += '}\n';
+
+    for (const node of all_nodes) {
+      const [fillColor, fontColor] = this.pvalToColor(node.p_val);
+      const tooltip = `${node.id} <br/> p.adj: ${this.formatPValue(node.p_val)}<br/> Study: ${node.study_count}<br/> Population: ${node.population_count}`;
+      const attrs = `label="${this.wrapLabel(node.label, 15)}", tooltip="${tooltip}", fillcolor="${fillColor}", style=filled, fontname="Arial", fontcolor="${fontColor}", fixedsize=false, shape=box`;
+      full_dot += `"${node.id}" [${attrs}];\n`;
+    }
+    for (const edge of edges_full) {
+      full_dot += `"${edge.source}" -> "${edge.target}" [style=${edge.nodes_skipped === 0 ? 'solid' : 'dashed'}];\n`;
+    }
+    full_dot += '}\n';
+
+    this.dotStrings[subgraph] = { compressed: compressed_dot, full: full_dot };
   }
 
   formatPValue(p: number): string {
-    if (p < 0.001) {
-      return p.toExponential(2);
-    } else {
-      return p.toFixed(4);
-    }
+    if (p < 0.001) return p.toExponential(2);
+    return p.toFixed(4);
   }
 
-  pvalToColor(adj_pval: number): [string, string] {
-    if (adj_pval < 0.000001) return ["#800000", "#ffffff"];
-    if (adj_pval < 0.00001) return ["#b30000", "#ffffff"];
-    if (adj_pval < 0.0001) return ["#e34a33", "#ffffff"];
-    if (adj_pval < 0.001) return ["#fc8d59", "black"];
-    if (adj_pval < 0.01) return ["#fcc469ff", "black"];
-    if (adj_pval <= 0.05) return ["#f7dd60ff", "black"];
+  pvalToColor(score: number): [string, string] {
+    const max = this.legendMaxValue;
+    // Frequentist: t = -log10(p) / max   (lower p → higher t → darker)
+    // Bayesian:    t = post_prob / max    (higher prob → higher t → darker)
+    const t = max > 0
+      ? Math.min(1, Math.max(0, this.isBayesian ? score / max : -Math.log10(score) / max))
+      : 0;
+    const fill = this.interpolateGoldToRed(t);
+    const fontColor = t >= 0.55 ? '#ffffff' : '#003754';
+    return [fill, fontColor];
+  }
 
-    return ["#fefefeff", "#505050"]; // fallback: non-significant
+  private interpolateGoldToRed(t: number): string {
+    // 3-stop gradient: light gold #F0DC8C → signal red #EA5451 → dark maroon #5C0B10
+    let r: number, g: number, b: number;
+    if (t <= 0.5) {
+      const s = t * 2;
+      r = Math.round(0xF0 + (0xEA - 0xF0) * s);
+      g = Math.round(0xDC + (0x54 - 0xDC) * s);
+      b = Math.round(0x8C + (0x51 - 0x8C) * s);
+    } else {
+      const s = (t - 0.5) * 2;
+      r = Math.round(0xEA + (0x5C - 0xEA) * s);
+      g = Math.round(0x54 + (0x0B - 0x54) * s);
+      b = Math.round(0x51 + (0x10 - 0x51) * s);
+    }
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   }
 
   ngAfterViewInit(): void {
@@ -128,69 +184,29 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private renderAll(): void {
+    this.fullGraphsRendered = false;
     this.generateDot('MF');
     this.generateDot('BP');
     this.generateDot('CC');
-    this.createGraphviz('MF');
-    this.createGraphviz('BP');
-    this.createGraphviz('CC');
+    this.renderCompressed('MF');
+    this.renderCompressed('BP');
+    this.renderCompressed('CC');
   }
 
-  selectChart(chart: string) {
-
-    switch (chart) {
-      case 'Molecular Function':
-        this.selectedChart = 'MF';
-        break;
-      case 'Biological Process':
-        this.selectedChart = 'BP';
-        break;
-      case 'Cellular Component':
-        this.selectedChart = 'CC';
-        break;
-    }
-
-  }
-
-  wrapLabel(text: string, maxChars: number): string {
-    const individual_words = text.split(/\s+/);
-    const lines: string[] = [];
-    let currentLine = "";
-
-    for (const word of individual_words) {
-      if (!currentLine) {
-        currentLine = word;
-      } else if ((currentLine.length + 1 + word.length) <= maxChars) {
-        currentLine += " " + word;
-      } else {
-        lines.push(currentLine);
-        currentLine = word;
-      }
-    }
-
-    if (currentLine) lines.push(currentLine);
-
-    return lines.join("\\n");
-  }
-
-  createGraphviz(subgraph: 'MF' | 'BP' | 'CC'): void {
-    const containerCompressed = d3.select(this[`${subgraph}graphvizContainer`].nativeElement) as any;
-    const containerFull = d3.select(this[`${subgraph}graphvizContainerFull`].nativeElement) as any;
-
-    const dotCompressed = this.dotStrings[subgraph].compressed;
-    const dotFull = this.dotStrings[subgraph].full;
-
-    // Compressed Graph
-    containerCompressed
+  renderCompressed(subgraph: 'MF' | 'BP' | 'CC'): void {
+    const container = d3.select(this[`${subgraph}graphvizContainer`].nativeElement) as any;
+    container
       .graphviz({ useWorker: false, zoom: true, fit: true })
-      .renderDot(dotCompressed)
-      .on('end', () => this.setupGraph(containerCompressed, subgraph, true));
+      .renderDot(this.dotStrings[subgraph].compressed)
+      .on('end', () => this.setupGraph(container, subgraph, true));
+  }
 
-    // Full Graph starting from most specific significant nodes
-    containerFull
+  renderFull(subgraph: 'MF' | 'BP' | 'CC'): void {
+    const container = d3.select(this[`${subgraph}graphvizContainerFull`].nativeElement) as any;
+    container
       .graphviz({ useWorker: false, zoom: true, fit: true })
-      .renderDot(dotFull)
-      .on('end', () => this.setupGraph(containerFull, subgraph, false));
+      .renderDot(this.dotStrings[subgraph].full)
+      .on('end', () => this.setupGraph(container, subgraph, false));
   }
 
   setupGraph(container: any, subgraph: 'MF' | 'BP' | 'CC', compressed: boolean) {
@@ -207,26 +223,21 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     nodes.selectAll('title').remove();
     svg.select('title').remove();
 
-    // Tooltip
     this.HoverNodeTooltip(nodes, subgraph, compressed);
   }
 
-
   HoverNodeTooltip(nodes: any, subgraph: 'MF' | 'BP' | 'CC', compressed: boolean = true): void {
     nodes.on('mouseover', (event: any) => {
-      console.log('mouseover', event.currentTarget);
       const current_node = event.currentTarget;
 
       d3.select(event.currentTarget)
-        .select("polygon, rect")
-        .attr("stroke-width", 4);
+        .select('polygon, rect')
+        .attr('stroke-width', 4);
 
       const aTag = d3.select(current_node).select('g a');
       const tooltipText = aTag.attr('data-tooltip');
-      aTag.attr('title', null); // Verhindert den Standard-Browser-Tooltip
-      if (compressed) {
+      aTag.attr('title', null);
 
-      }
       let containerRect = this[`${subgraph}graphvizContainer`].nativeElement.getBoundingClientRect();
       let tooltipRef = d3.select(`#${subgraph}Tooltip`);
       if (!compressed) {
@@ -249,18 +260,33 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
         if (!compressed) {
           tooltipRef = d3.select(`#${subgraph}TooltipFull`);
         }
-
         tooltipRef.style('opacity', 0);
 
         d3.select(event.currentTarget)
           .select('polygon, ellipse, rect')
           .attr('stroke-width', '1');
       });
+  }
 
+  wrapLabel(text: string, maxChars: number): string {
+    const words = text.split(/\s+/);
+    const lines: string[] = [];
+    let currentLine = '';
+    for (const word of words) {
+      if (!currentLine) {
+        currentLine = word;
+      } else if (currentLine.length + 1 + word.length <= maxChars) {
+        currentLine += ' ' + word;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    if (currentLine) lines.push(currentLine);
+    return lines.join('\\n');
   }
 
   ngOnDestroy(): void {
-    // Clean up any resources or subscriptions here if needed
     d3.select(this.MFgraphvizContainer.nativeElement).selectAll('*').remove();
     d3.select(this.BPgraphvizContainer.nativeElement).selectAll('*').remove();
     d3.select(this.CCgraphvizContainer.nativeElement).selectAll('*').remove();
@@ -268,5 +294,4 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     d3.select(this.BPgraphvizContainerFull.nativeElement).selectAll('*').remove();
     d3.select(this.CCgraphvizContainerFull.nativeElement).selectAll('*').remove();
   }
-
 }

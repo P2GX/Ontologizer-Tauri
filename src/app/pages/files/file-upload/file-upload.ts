@@ -1,4 +1,5 @@
 import { open } from '@tauri-apps/plugin-dialog';
+import { invoke } from '@tauri-apps/api/core';
 import { Component, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -54,8 +55,10 @@ export class FileUpload {
 
   async openFileDialog() {
     try {
+      const defaultPath = await invoke<string>('get_data_dir').catch(() => undefined);
       this.filePath = await open({
         multiple: false,
+        defaultPath,
         filters: this.filters[this.processFileType] ? [this.filters[this.processFileType]] : []
       });
 

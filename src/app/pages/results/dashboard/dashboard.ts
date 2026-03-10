@@ -42,8 +42,8 @@ export class Dashboard implements OnChanges, AfterViewInit {
   }
 
   doughnutChartProperties = {
-    'A': { title: 'Proportion of Significant vs. Non-Significant GO Terms', labels: ['Non-Significant', 'Significant'], backgroundColors: ['#b5b0eaff', 'rgb(255, 99, 132)'], data: [0, 0] },
-    'B': { title: 'Proportion of significant terms by GO category', labels: ['Biological Process', 'Molecular Function', 'Cellular Component'], backgroundColors: ['#4bc0c0ff', '#ffcd56ff', '#639cffff'], data: [0, 0, 0] }
+    'A': { title: 'Proportion of Significant vs. Non-Significant GO Terms', labels: ['Non-Significant', 'Significant'], backgroundColors: ['#9D7220', '#EA5451'], data: [0, 0] },
+    'B': { title: 'Proportion of significant terms by GO category', labels: ['Biological Process', 'Molecular Function', 'Cellular Component'], backgroundColors: ['#003754', '#009AA9', '#7876B6'], data: [0, 0, 0] }
   }
 
   private updateChartData(): void {
@@ -68,8 +68,10 @@ export class Dashboard implements OnChanges, AfterViewInit {
     if (!this.viewInitialized) return;
 
     if (changes['visible'] && this.visible) {
-      this.chartA?.resize();
-      this.chartB?.resize();
+      setTimeout(() => {
+        this.createChart('A', this.doughnutChartProperties.A.data);
+        this.createChart('B', this.doughnutChartProperties.B.data);
+      });
       return;
     }
 

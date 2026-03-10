@@ -1,6 +1,14 @@
-<div class="legend-container">
-    <div class="legend-item" *ngFor="let item of legend">
-        <span class="legend-color" [style.backgroundColor]="item.color"></span>
-        <span class="legend-text">{{ item.text }}</span>
+<div class="legend-wrapper">
+  <span class="legend-label">{{ isBayesian ? 'Post. Prob.' : '-log₁₀(p)' }}</span>
+  <div class="legend-scale">
+    <div class="legend-gradient"></div>
+    <div class="legend-ticks">
+      @for (tick of ticks; track tick.label) {
+        <div class="legend-tick" [style.left.%]="tick.position">
+          <div class="tick-line"></div>
+          <span class="tick-label">{{ tick.label }}</span>
+        </div>
+      }
     </div>
+  </div>
 </div>

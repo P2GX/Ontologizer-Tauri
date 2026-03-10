@@ -2,62 +2,76 @@
     <h1 class="page-title">Results</h1>
 </div>
 
-<div>
-    <p>Is bayesian?: {{resultsService.isBayesian()}}</p>
-</div>
-
 <div class="analysis-body">
     @if (success) {
         <div class="control-header">
             <div class="tabs-container">
                 <button class="tab-button" [class.active]="selectedChart === 'dashboard'"
-                    (click)="selectTab('dashboard')"><span class="material-symbols-outlined tab-icon">
-                        dashboard
-                    </span>Dashboard</button>
+                    (click)="selectTab('dashboard')">
+                    <span class="material-symbols-outlined tab-icon">dashboard</span>
+                    Dashboard
+                </button>
                 <mat-divider class="vertical" [vertical]="true"></mat-divider>
-                <button class="tab-button" [class.active]="selectedChart === 'table'" (click)="selectTab('table')"><span
-                        class="material-symbols-outlined tab-icon">
-                        data_table
-                    </span>Table</button>
+                <button class="tab-button" [class.active]="selectedChart === 'table'"
+                    (click)="selectTab('table')">
+                    <span class="material-symbols-outlined tab-icon">data_table</span>
+                    Table
+                </button>
                 <mat-divider class="vertical" [vertical]="true"></mat-divider>
                 <button class="tab-button" [class.active]="selectedChart === 'go-graph'"
-                    (click)="selectTab('go-graph')"><span class="material-symbols-outlined tab-icon">
-                        graph_4
-                    </span>GO-Graph</button>
+                    (click)="selectTab('go-graph')">
+                    <span class="material-symbols-outlined tab-icon">graph_4</span>
+                    GO-Graph
+                </button>
                 <mat-divider class="vertical" [vertical]="true"></mat-divider>
                 <button class="tab-button" [class.active]="selectedChart === 'bar-plot'"
-                    (click)="selectTab('bar-plot')"><span class="material-symbols-outlined tab-icon">
-                        finance
-                    </span>Bar Plot
+                    (click)="selectTab('bar-plot')">
+                    <span class="material-symbols-outlined tab-icon">finance</span>
+                    Bar Plot
                 </button>
             </div>
         </div>
     }
 
-    <app-dashboard [dashboardInfo]="dashboardInfo" *ngIf="success"
-        [hidden]="selectedChart !== 'dashboard'" [visible]="selectedChart === 'dashboard'"></app-dashboard>
-
-    @if (success && tableDataLoaded && selectedChart === 'table') {
-        @if (resultsService.isBayesian()) {
-            <app-bayesian-result-table 
-                [tableData]="bayesianData() ?? []">
-            </app-bayesian-result-table>
-        } @else {
-            <app-frequentist-result-table 
-                *ngIf="frequentistData"
-                [tableData]="frequentistData">
-            </app-frequentist-result-table>
-        }
+    @if (success) {
+        <app-dashboard [dashboardInfo]="dashboardInfo"
+            [hidden]="selectedChart !== 'dashboard'" [visible]="selectedChart === 'dashboard'">
+        </app-dashboard>
     }
-    <app-go-graph *ngIf="dotData !== null" [hidden]="selectedChart !== 'go-graph'"
-        [visible]="selectedChart === 'go-graph'" [dotData]="dotData"></app-go-graph>
-    <app-bar-chart *ngIf="tableDataLoaded && frequentistData && success" [hidden]="selectedChart !== 'bar-plot'"
-                   [PlotData]="frequentistData"></app-bar-chart>
 
-    <div class="empty-state" *ngIf="!success">
-        <span class="material-symbols-outlined empty-state-icon">labs</span>
-        <h2>No results yet</h2>
-        <p>Upload your files on the <strong>Files</strong> page and run the analysis on the <strong>Analysis</strong> page.</p>
-    </div>
+    @if (success && tableData() !== null && selectedChart === 'table') {
+        <app-result-table
+            [tableData]="tableData()!"
+            [totalCount]="totalCount()"
+            [isFrequentist]="resultsService.isFrequentist()"
+            [sortDirection]="resultsService.isBayesian() ? 'desc' : 'asc'"
+            (pageChange)="onPageChange($event)">
+        </app-result-table>
+    }
+
+    @if (dotData !== null) {
+        <app-go-graph [hidden]="selectedChart !== 'go-graph'"
+            [visible]="selectedChart === 'go-graph'" [dotData]="dotData"
+            [legendMaxValue]="globalLegendMax"
+            [isBayesian]="resultsService.isBayesian()">
+        </app-go-graph>
+    }
+
+    @if (tableData() !== null && success) {
+        <app-bar-chart
+            [hidden]="selectedChart !== 'bar-plot'"
+            [PlotData]="tableData()!"
+            [isBayesian]="resultsService.isBayesian()"
+            [legendMaxValue]="globalLegendMax">
+        </app-bar-chart>
+    }
+
+    @if (!success) {
+        <div class="empty-state">
+            <span class="material-symbols-outlined empty-state-icon">labs</span>
+            <h2>No results yet</h2>
+            <p>Upload your files on the <strong>Files</strong> page and run the analysis on the <strong>Analysis</strong> page.</p>
+        </div>
+    }
 
 </div>

@@ -11,9 +11,9 @@ use std::sync::Mutex;
 mod commands;
 use commands::{
     analysis::run_analysis,
-    config::{save_settings},
+    config::{save_settings, get_data_dir},
     loaders::{process_gaf_file, process_gene_file, process_go_file, build_annotation_index},
-    output::{build_go_graph_data, get_analysis_results},
+    output::{build_go_graph_data, get_analysis_results, get_analysis_summary, get_analysis_results_page},
 };
 
 fn main() {
@@ -37,8 +37,11 @@ fn main() {
             process_gene_file,
             build_annotation_index,
             save_settings,
+            get_data_dir,
             run_analysis,
             get_analysis_results,
+            get_analysis_summary,
+            get_analysis_results_page,
             build_go_graph_data,
         ])
         .run(tauri::generate_context!())

@@ -15,6 +15,38 @@ impl Settings {
     }
 }
 
+/// Returns a sensible default directory for the file-open dialog.
+///
+/// Strategy:
+///   1. Dev mode – look for a `data/` folder in the current working directory
+///      or one level up (covers both running from the project root and from
+///      `src-tauri/` via plain `cargo run`).
+///   2. Production fallback – return the user's home directory so the dialog
+///      opens somewhere the user can actually navigate from.
+#[tauri::command]
+pub fn get_data_dir(app: tauri::AppHandle) -> String {
+    use tauri::Manager;
+
+    // Check cwd and cwd/.. for a `data/` sub-directory.
+    // canonicalize() both resolves `..` and verifies the path exists.
+    if let Ok(cwd) = std::env::current_dir() {
+        for candidate in [cwd.join("data"), cwd.join("../data")] {
+            if let Ok(resolved) = candidate.canonicalize() {
+                if resolved.is_dir() {
+                    return resolved.to_string_lossy().into_owned();
+                }
+            }
+        }
+    }
+
+    // Production fallback: home directory → documents → filesystem root.
+    app.path()
+        .home_dir()
+        .or_else(|_| app.path().document_dir())
+        .map(|p| p.to_string_lossy().into_owned())
+        .unwrap_or_else(|_| "/".to_string())
+}
+
 #[tauri::command]
 pub fn save_settings(
     state: tauri::State<AppState>,

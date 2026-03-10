@@ -81,7 +81,7 @@
 }
 
 .method-card.active {
-    border-color: var(--md-sys-color-primary);
+    border-color: var(--md-sys-color-success);
     background-color: var(--md-sys-color-primary-container);
 }
 

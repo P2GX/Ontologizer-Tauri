@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FileStatus, FilesService } from '../../services/files-service';
 import { invoke } from "@tauri-apps/api/core";
 import { MatDivider } from "@angular/material/list";
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-files',
@@ -13,7 +14,7 @@ import { MatDivider } from "@angular/material/list";
 })
 export class Files implements AfterViewInit {
 
-  constructor(private filesService: FilesService, private router: Router) {}
+  constructor(private filesService: FilesService, private router: Router, private snackBar: MatSnackBar) {}
 
   filesStatus = signal<FileStatus>({ study: false, pop: false, go: false, annotation: false });
   isProcessingAll = signal(false);
@@ -110,6 +111,7 @@ export class Files implements AfterViewInit {
       setTimeout(() => this.router.navigate(['/analysis']), 1500);
     } catch (error) {
       console.error("Error building annotation index:", error);
+      this.snackBar.open(`Failed to process files: ${error}`, 'Close', { panelClass: ['custom-snackbar'], duration: 8000 });
     } finally {
       this.isProcessingAll.set(false);
     }

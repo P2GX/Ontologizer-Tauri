@@ -37,16 +37,20 @@ pub async fn run_analysis(state: tauri::State<'_, AppState>) -> Result<(), Strin
 
         let start_time = Instant::now();
 
-        let result = match settings.method.clone() {
+        let mut result = match settings.method.clone() {
             Method::Frequentist { topology, correction } => frequentist_analysis(ontology, annotation_index, study_genes.recognized_genes(), &topology, &correction),
             Method::Bayesian => bayesian_analysis(ontology, annotation_index, study_genes.recognized_genes()),
         };
+
+        match &settings.method {
+            Method::Frequentist { .. } => result.sort_by_score(false),
+            Method::Bayesian => result.sort_by_score(true),
+        }
 
         let duration = start_time.elapsed();
         println!("Calculated results in: {:?}", duration);
         println!("Results before storing: {:?}", result.items.len());
 
-        // All input locks are dropped here at end of block_in_place closure
         Ok(result)
     })?;
 

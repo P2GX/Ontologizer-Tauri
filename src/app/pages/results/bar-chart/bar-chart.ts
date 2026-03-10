@@ -1,17 +1,15 @@
 import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import Chart from 'chart.js/auto';
-import { CommonModule } from '@angular/common';
-import { FrequentistRowData } from '../../../services/results-service';
+import { RowData, FrequentistRowData } from '../../../services/results-service';
 import { Legend } from './legend/legend';
 import { DropdownMenu } from '../../../shared/dropdown-menu/dropdown-menu';
 
 @Component({
   selector: 'app-bar-chart',
-  imports: [CommonModule, Legend, DropdownMenu],
+  imports: [Legend, DropdownMenu],
   templateUrl: './bar-chart.html',
   styleUrl: './bar-chart.css',
   standalone: true
-
 })
 export class BarChart implements AfterViewInit, OnChanges {
 
@@ -19,17 +17,23 @@ export class BarChart implements AfterViewInit, OnChanges {
   @ViewChild('chartDiv') chartDiv!: ElementRef<HTMLDivElement>;
   chart?: Chart;
 
-  @Input() PlotData!: FrequentistRowData[] | null;
-  significantData: FrequentistRowData[] | null = null;
+  @Input() PlotData!: RowData[] | null;
+  @Input() isBayesian: boolean = false;
+  @Input() legendMaxValue: number = 1;
+
   viewInitialized = false;
-  minAdjPval: number = 0;
-  maxAdjPval: number = 0;
 
   plotOptions: string[] = ['-Log10(p.adj)', 'Enrichment ratio', 'Study counts'];
-  subgraphs: string[] = ["All", "Molecular Function", "Biological Process", "Cellular Component"];
+  subgraphs: string[] = ['All', 'Molecular Function', 'Biological Process', 'Cellular Component'];
 
-  selectedPlotOption: string = '-Log10(p.adj)';
-  selectedSubgraph: string = 'All';
+  selectedPlotOption = '-Log10(p.adj)';
+  selectedSubgraph = 'All';
+  selectedTopN = 'Significant';
+
+  get topNOptions(): string[] {
+    const base = ['Top 10', 'Top 25', 'Top 50'];
+    return this.isBayesian ? base : ['Significant', ...base];
+  }
 
   selectPlotOption(option: string) {
     this.selectedPlotOption = option;
@@ -41,55 +45,95 @@ export class BarChart implements AfterViewInit, OnChanges {
     this.createChart();
   }
 
+  selectTopN(option: string) {
+    this.selectedTopN = option;
+    this.createChart();
+  }
+
   ngAfterViewInit(): void {
-    if (this.PlotData) {
-      this.significantData = this.PlotData?.filter(row => row.p_val <= 0.05) ?? [];
-      this.createChart();
-    }
     this.viewInitialized = true;
-
-  };
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['PlotData'] && this.PlotData && this.viewInitialized) {
-      this.significantData = this.PlotData?.filter(row => row.p_val <= 0.05) ?? [];
+    if (this.PlotData && this.PlotData.length > 0) {
       this.createChart();
     }
   }
 
-  createChart(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['isBayesian'] && changes['isBayesian'].isFirstChange()) {
+      this.selectedTopN = this.isBayesian ? 'Top 25' : 'Significant';
+    }
+    if (changes['PlotData'] && this.PlotData && this.viewInitialized) {
+      this.createChart();
+    }
+  }
 
-    if (!this.significantData || this.significantData.length === 0) {
+  private getDisplayData(): RowData[] {
+    if (!this.PlotData) return [];
+
+    let data = this.selectedSubgraph === 'All'
+      ? [...this.PlotData]
+      : this.PlotData.filter(row => {
+          if (this.selectedSubgraph === 'Molecular Function') return row.aspect === 'MF';
+          if (this.selectedSubgraph === 'Biological Process') return row.aspect === 'BP';
+          if (this.selectedSubgraph === 'Cellular Component') return row.aspect === 'CC';
+          return true;
+        });
+
+    data = this.isBayesian
+      ? data.sort((a, b) => b.score - a.score)
+      : data.sort((a, b) => a.score - b.score);
+
+    if (this.selectedTopN === 'Significant') {
+      return data.filter(row => row.score <= 0.05);
+    }
+    const n = parseInt(this.selectedTopN.replace('Top ', ''), 10);
+    return data.slice(0, n);
+  }
+
+  createChart(): void {
+    const displayData = this.getDisplayData();
+
+    if (displayData.length === 0) {
+      if (this.chart) {
+        this.chart.destroy();
+        this.chart = undefined;
+      }
       return;
     }
+
     if (this.chart) {
       this.chart.destroy();
-      this.chartDiv.nativeElement.style.width = `100%`;
+      this.chartDiv.nativeElement.style.width = '100%';
     }
 
-    const plotOption = this.selectedPlotOption;
-    const filteredData = this.selectedSubgraph === 'All' ? this.significantData : this.significantData.filter(row => {
-      if (this.selectedSubgraph === 'Molecular Function') return row.aspect === 'MF';
-      if (this.selectedSubgraph === 'Biological Process') return row.aspect === 'BP';
-      if (this.selectedSubgraph === 'Cellular Component') return row.aspect === 'CC';
-      return true;
-    });
+    const labels = displayData.map(row => row.label);
+    const backgroundColors = displayData.map(row =>
+      this.isBayesian ? this.postProbToColor(row.score) : this.pvalToColor(row.score)
+    );
 
-    const labels = filteredData.map(row => row.label);
-    console.log('labels count', labels.length);
-    const adj_pvals = filteredData.map(row => row.p_val);
-    const go_ids = filteredData.map(row => row.id);
-    const backgroundColors = filteredData.map(row => this.pvalToColor(row.p_val));
+    let yData: number[];
+    if (this.isBayesian) {
+      yData = displayData.map(row => row.score);
+    } else {
+      const yValues: Record<string, number[]> = {
+        '-Log10(p.adj)': displayData.map(r => -Math.log10(r.score)),
+        'Enrichment ratio': displayData.map(r => {
+          const f = r as FrequentistRowData;
+          return (f.k / f.n) / (f.K / f.N);
+        }),
+        'Study counts': displayData.map(r => (r as FrequentistRowData).k)
+      };
+      yData = yValues[this.selectedPlotOption] ?? yValues['-Log10(p.adj)'];
+    }
 
-    const yValues: { [key: string]: number[] } = { '-Log10(p.adj)': adj_pvals.map(p => -Math.log10(p)), 'Study counts': filteredData.map(row => row.k), 'Enrichment ratio': filteredData.map(row => (row.k / row.n) / (row.K / row.N)) };
+    const yAxisLabel = this.isBayesian ? 'Posterior Probability' : this.selectedPlotOption;
 
     this.chart = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
       data: {
-        labels: labels,
+        labels,
         datasets: [{
-          label: this.selectedPlotOption,
-          data: yValues[plotOption],
+          label: yAxisLabel,
+          data: yData,
           borderWidth: 1,
           barThickness: 10,
           backgroundColor: backgroundColors,
@@ -100,15 +144,18 @@ export class BarChart implements AfterViewInit, OnChanges {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          y: { beginAtZero: true, title: { display: true, text: this.selectedPlotOption } }
+          y: { beginAtZero: true, title: { display: true, text: yAxisLabel } }
         },
         plugins: {
+          legend: { display: false },
           tooltip: {
             callbacks: {
-
               afterBody: (context) => {
-                const adj_pval = adj_pvals[context[0].dataIndex];
-                return `Adjusted p-value: ${this.formatPValue(adj_pval)}`;
+                const row = displayData[context[0].dataIndex];
+                if (this.isBayesian) {
+                  return `Posterior Probability: ${this.formatScore(row.score)}`;
+                }
+                return `Adj. p-value: ${this.formatScore(row.score)}`;
               }
             }
           }
@@ -120,26 +167,41 @@ export class BarChart implements AfterViewInit, OnChanges {
       const newWidth = 1830 + ((labels.length - 30) * 10);
       this.chartDiv.nativeElement.style.width = `${newWidth}px`;
     }
-
   }
 
-  formatPValue(p: number): string {
-    if (p < 0.001) {
-      return p.toExponential(2);
-    } else {
-      return p.toFixed(4);
-    }
+  formatScore(value: number): string {
+    if (value < 0.001) return value.toExponential(2);
+    return value.toFixed(4);
   }
 
   pvalToColor(adj_pval: number): string {
-    if (adj_pval < 0.000001) return "#800000";
-    if (adj_pval < 0.00001) return "#b30000";
-    if (adj_pval < 0.0001) return "#e34a33";
-    if (adj_pval < 0.001) return "#fc8d59";
-    if (adj_pval < 0.01) return "#fcc469ff";
-    if (adj_pval <= 0.05) return "#f7dd60ff";
+    const max = this.legendMaxValue;
+    if (max <= 0) return '#F0DC8C';
+    const t = Math.min(1, Math.max(0, -Math.log10(adj_pval) / max));
+    return this.interpolateGoldToRed(t);
+  }
 
-    return "#cccccc"; // fallback: non-significant
+  postProbToColor(post_prob: number): string {
+    const max = this.legendMaxValue;
+    if (max <= 0) return '#F0DC8C';
+    const t = Math.min(1, Math.max(0, post_prob / max));
+    return this.interpolateGoldToRed(t);
+  }
+
+  private interpolateGoldToRed(t: number): string {
+    // 3-stop gradient: light gold #F0DC8C → signal red #EA5451 → dark maroon #5C0B10
+    let r: number, g: number, b: number;
+    if (t <= 0.5) {
+      const s = t * 2;
+      r = Math.round(0xF0 + (0xEA - 0xF0) * s);
+      g = Math.round(0xDC + (0x54 - 0xDC) * s);
+      b = Math.round(0x8C + (0x51 - 0x8C) * s);
+    } else {
+      const s = (t - 0.5) * 2;
+      r = Math.round(0xEA + (0x5C - 0xEA) * s);
+      g = Math.round(0x54 + (0x0B - 0x54) * s);
+      b = Math.round(0x51 + (0x10 - 0x51) * s);
+    }
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   }
 }
-

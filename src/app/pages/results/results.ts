@@ -1,22 +1,16 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FrequentistResultTable } from './frequentist-result-table/frequentist-result-table';
-import { BayesianResultTable } from './bayesian-result-table/bayesian-result-table';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { FormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDividerModule } from '@angular/material/divider';
 import { BarChart } from './bar-chart/bar-chart';
 import { Dashboard } from './dashboard/dashboard';
 import { GoGraph } from './go-graph/go-graph';
+import { ResultTable } from './result-table/result-table';
 import { FilesService } from '../../services/files-service';
-import { ResultsService, DotData, FrequentistRowData, BayesianRowData, ProportionData } from '../../services/results-service';
+import { ResultsService, DotData, ProportionData, RowData } from '../../services/results-service';
 import { Method } from '../../services/analysis-service';
 
 @Component({
   selector: 'app-results',
-  imports: [Dashboard, BarChart, CommonModule, FrequentistResultTable, BayesianResultTable, GoGraph, MatSlideToggleModule, FormsModule, MatInputModule, MatFormFieldModule, MatDividerModule],
+  imports: [Dashboard, BarChart, ResultTable, GoGraph, MatDividerModule],
   templateUrl: './results.html',
   styleUrl: './results.css',
   standalone: true
@@ -24,22 +18,22 @@ import { Method } from '../../services/analysis-service';
 export class Results implements OnInit {
   private filesService = inject(FilesService);
   public resultsService = inject(ResultsService);
-    bayesianData = computed<BayesianRowData[] | null>(() => {
-      const data = this.resultsService.bayesianTableData()
-      if (data === null) return null;
-      else return data;
-    });
 
-
-  
+  frequentistData = computed(() => this.resultsService.frequentistTableData());
+  bayesianData = computed(() => this.resultsService.bayesianTableData());
+  tableData = computed(() =>
+    this.resultsService.isBayesian() ? this.bayesianData() : this.frequentistData()
+  );
+  totalCount = computed(() =>
+    this.resultsService.isBayesian()
+      ? this.resultsService.bayesianTotalCount()
+      : this.resultsService.frequentistTotalCount()
+  );
 
   selectedChart = 'dashboard';
-  tableDataLoaded = false;
   dotData: DotData | null = null;
-  frequentistData: FrequentistRowData[] | null = null;
- // bayesianData: BayesianRowData[] | null = null;
   success = false;
-
+  globalLegendMax = 1;
 
   dashboardInfo: DashboardInfo = {
     method: null,
@@ -56,13 +50,7 @@ export class Results implements OnInit {
   };
 
   ngOnInit() {
-    if (this.resultsService.isBayesian()) {
-      if (this.resultsService.bayesianTableData() === null) return;
-    } else {
-      const frequentistData = this.resultsService.getFrequentistTableData();
-      if (frequentistData === null) return;
-      this.frequentistData = frequentistData;
-    }
+    if (this.tableData() === null) return;
 
     this.dashboardInfo = {
       method: this.resultsService.getMethod(),
@@ -74,12 +62,25 @@ export class Results implements OnInit {
     };
 
     this.dotData = this.resultsService.getDotData();
-    this.tableDataLoaded = true;
+    this.globalLegendMax = this.computeLegendMax(this.tableData()!);
     this.success = true;
+  }
+
+  onPageChange(event: { pageIndex: number; pageSize: number }) {
+    void this.resultsService.loadAnalysisPage(event.pageIndex, event.pageSize);
   }
 
   selectTab(tab: string) {
     this.selectedChart = tab;
+  }
+
+  private computeLegendMax(data: RowData[]): number {
+    if (!data || data.length === 0) return 1;
+    const values = this.resultsService.isBayesian()
+      ? data.map(d => d.score)
+      : data.map(d => -Math.log10(d.score));
+    const max = Math.max(...values);
+    return isFinite(max) && max > 0 ? max : 1;
   }
 }
 
