@@ -1,4 +1,4 @@
 # Ontologizer
 
 
-to do.
+to do. Tutorial for Ontologizer GUI.
