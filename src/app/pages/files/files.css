@@ -34,8 +34,7 @@ ul.upload-step-ul li {
     border: 2px solid var(--md-sys-color-outline);
     color: var(--md-sys-color-outline);
     display: flex;
-    padding: 0.5rem;
-    padding-right: 1rem;
+    padding: 0.5rem 1.0rem 0.5rem 0.5rem;
     align-items: center;
     gap: 0.8rem;
     font-size: var(--font-standard);
@@ -44,7 +43,6 @@ ul.upload-step-ul li {
 nav ul li.active {
     background-color: var(--md-sys-color-primary);
     color: white !important;
-    border-color: var(--md-sys-color-secondary);
     transition: 0.2s ease;
 }
 
@@ -120,7 +118,7 @@ nav ul li.upload-success {
 #next:not([hidden]), #prev:not([hidden]) {
     position: absolute;
     top: 12rem;
-    left: min(7rem, calc(50% - 17rem));
+    left: min(6rem, calc(50% - 18rem));
     z-index: 4;
     transform: translateY(-50%);
     background-color: var(--md-sys-color-primary);
@@ -134,11 +132,11 @@ nav ul li.upload-success {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px var(--shadow-header);
+    box-shadow: 0 0.13rem 0.8rem var(--shadow-header);
 }
 
 #next:not([hidden]) {
-    left: max(calc(100% - 7rem), calc(50% + 16rem));
+    left: max(calc(100% - 8rem), calc(50% + 16rem));
 }
 
 #next:hover, #prev:hover {
@@ -161,7 +159,6 @@ nav ul li.upload-success {
 
     ul.upload-step-ul {
         flex-direction: column;
-        align-items: left;
         gap: 1rem;
     }
 

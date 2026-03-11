@@ -171,7 +171,7 @@ a.nav-item {
   flex-direction: column;
   padding: 0 5vw 0rem 5vw;
   box-shadow: 0 2px 4px var(--shadow-header);
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   background-color: var(--md-sys-color-on-primary);
 }
 
@@ -182,6 +182,7 @@ a.nav-item {
 .mat-divider {
   margin: 1rem 0.5rem;
   color: var(--md-sys-color-primary);
+  font-size: var(--font-standard)
 }
 
 ::ng-deep.mat-mdc-button .mat-mdc-button-persistent-ripple::before {

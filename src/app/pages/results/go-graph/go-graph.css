@@ -8,6 +8,7 @@ div.go-graph-container {
     border-radius: 1rem;
     height: 50cqw;
     border: 1px solid var(--md-sys-color-outline);
+    background-color: var(--md-sys-color-on-primary);
     padding: 1.5rem;
     gap: 1rem;
     max-height: 800px;
@@ -27,9 +28,9 @@ div.go-graph-container {
     height: 100%;
     overflow: auto;
     flex: 1;
-    background-color: var(--md-sys-color-on-primary);
-    box-shadow: var(--shadow-header) 0px 0.13rem 0.3rem;
-    background-color: var(--md-sys-color-on-primary);
+    border: 1px solid var(--md-sys-color-outline);
+    box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
+    background-color: transparent;
     border-radius: 1rem;
     cursor: pointer;
     max-height: 40cqw;

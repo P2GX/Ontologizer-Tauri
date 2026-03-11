@@ -113,8 +113,8 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
     for (const node of significant_nodes) {
       const [fillColor, fontColor] = this.pvalToColor(node.p_val);
-      const tooltip = `${node.id} <br/> p.adj: ${this.formatPValue(node.p_val)}<br/> Study: ${node.study_count}<br/> Population: ${node.population_count}`;
-      const attrs = `label="${this.wrapLabel(node.label, 15)}", tooltip="${tooltip}", fillcolor="${fillColor}", style=filled, fontname="Arial", fontcolor="${fontColor}", fixedsize=false, shape=box`;
+      const tooltip = `${node.id} <br/> p: ${this.formatPValue(node.p_val)}<br/> Study: ${node.study_count}<br/> Population: ${node.population_count}`;
+      const attrs = `label="${this.wrapLabel(node.label, 15)}", tooltip="${tooltip}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
       compressed_dot += `"${node.id}" [${attrs}];\n`;
     }
     for (const edge of edges_compressed) {
@@ -124,8 +124,8 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
     for (const node of all_nodes) {
       const [fillColor, fontColor] = this.pvalToColor(node.p_val);
-      const tooltip = `${node.id} <br/> p.adj: ${this.formatPValue(node.p_val)}<br/> Study: ${node.study_count}<br/> Population: ${node.population_count}`;
-      const attrs = `label="${this.wrapLabel(node.label, 15)}", tooltip="${tooltip}", fillcolor="${fillColor}", style=filled, fontname="Arial", fontcolor="${fontColor}", fixedsize=false, shape=box`;
+      const tooltip = `${node.id} <br/> p: ${this.formatPValue(node.p_val)}<br/> Study: ${node.study_count}<br/> Population: ${node.population_count}`;
+      const attrs = `label="${this.wrapLabel(node.label, 15)}", tooltip="${tooltip}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
       full_dot += `"${node.id}" [${attrs}];\n`;
     }
     for (const edge of edges_full) {
@@ -149,23 +149,23 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
       ? Math.min(1, Math.max(0, this.isBayesian ? score / max : -Math.log10(score) / max))
       : 0;
     const fill = this.interpolateGoldToRed(t);
-    const fontColor = t >= 0.55 ? '#ffffff' : '#003754';
+    const fontColor = '#003754';
     return [fill, fontColor];
   }
 
   private interpolateGoldToRed(t: number): string {
-    // 3-stop gradient: light gold #F0DC8C → signal red #EA5451 → dark maroon #5C0B10
+    // 3-stop gradient matching legend: white #FFFFFF → light pink #FBDDDC → gold #9D7220
     let r: number, g: number, b: number;
     if (t <= 0.5) {
       const s = t * 2;
-      r = Math.round(0xF0 + (0xEA - 0xF0) * s);
-      g = Math.round(0xDC + (0x54 - 0xDC) * s);
-      b = Math.round(0x8C + (0x51 - 0x8C) * s);
+      r = Math.round(0xFF + (0xFB - 0xFF) * s);
+      g = Math.round(0xFF + (0xDD - 0xFF) * s);
+      b = Math.round(0xFF + (0xDC - 0xFF) * s);
     } else {
       const s = (t - 0.5) * 2;
-      r = Math.round(0xEA + (0x5C - 0xEA) * s);
-      g = Math.round(0x54 + (0x0B - 0x54) * s);
-      b = Math.round(0x51 + (0x10 - 0x51) * s);
+      r = Math.round(0xFB + (0x9D - 0xFB) * s);
+      g = Math.round(0xDD + (0x72 - 0xDD) * s);
+      b = Math.round(0xDC + (0x20 - 0xDC) * s);
     }
     return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   }
@@ -212,6 +212,9 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   setupGraph(container: any, subgraph: 'MF' | 'BP' | 'CC', compressed: boolean) {
     const svg = container.select('svg');
     svg.attr('width', '100%').attr('height', '100%').style('align', 'center').attr('pad', '20').attr('cursor', 'pointer');
+
+    // Remove the white background polygon graphviz injects
+    svg.select('g').select('polygon').attr('fill', 'none').attr('stroke', 'none');
 
     const nodes = svg.selectAll('g.node');
     nodes.each((d: any, i: number, nodesArray: any) => {

@@ -7,7 +7,7 @@
     padding: 0.6rem 1rem;
     background-color: var(--md-sys-color-on-primary);
     box-shadow: 0 4px 16px var(--shadow-header);
-    border: 1px solid var(--md-sys-color-outline-variant);
+    border: 1px solid;
     box-sizing: border-box;
 }
 
@@ -24,7 +24,6 @@
     align-items: baseline;
     gap: 1.5rem;
     padding: 0.35rem 0;
-    border-bottom: 1px solid var(--md-sys-color-outline);
     font-size: var(--font-small);
 }
 
@@ -112,8 +111,8 @@ app-tooltip {
 /* === Upload Card Wrapper === */
 .file-upload-card {
     display: flex;
-    flex-direction: row;
-    margin-bottom: 1em;
+    margin-top : 2em;
+    margin-bottom: 2em;
     gap: 1em;
     flex-wrap: wrap;
     max-width: 100%;
@@ -126,7 +125,8 @@ app-tooltip {
     background: var(--md-sys-color-on-primary);
     display: flex;
     flex-direction: column;
-    border-radius: 0.8em;
+    border: 2px solid var(--md-sys-color-outline);
+    border-radius: 1rem;
     padding: 1.5em;
     box-shadow: 0 0.13rem 0.8rem var(--shadow-header);
 }

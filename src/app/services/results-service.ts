@@ -11,12 +11,14 @@ export class ResultsService {
   public isFrequentist = computed(() => this.currentMethod()?.method === 'frequentist');
   public frequentistTableData = signal<FrequentistRowData[] | null>(null);
   public bayesianTableData = signal<RowData[] | null>(null);
+  public barChartData = signal<RowData[] | null>(null);
   public frequentistTotalCount = signal<number>(0);
   public bayesianTotalCount = signal<number>(0);
 
   clearResults() {
     this.frequentistTableData.set(null);
     this.bayesianTableData.set(null);
+    this.barChartData.set(null);
     this.frequentistTotalCount.set(0);
     this.bayesianTotalCount.set(0);
     this.dotData = null;
@@ -66,20 +68,26 @@ export class ResultsService {
   async loadAnalysisOutput() {
     try {
       if (this.currentMethod()?.method === 'bayesian') {
-        const result = await invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 25 });
-        const items = JSON.parse(result.items);
+        const [firstPage, barPage] = await Promise.all([
+          invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 10 }),
+          invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 100 })
+        ]);
+        const items = JSON.parse(firstPage.items);
         this.bayesianTableData.set(this.parseBayesianResults(items));
-        this.bayesianTotalCount.set(result.total);
-        this.resultsLength = result.total;
+        this.bayesianTotalCount.set(firstPage.total);
+        this.resultsLength = firstPage.total;
+        this.barChartData.set(this.parseBayesianResults(JSON.parse(barPage.items)));
       } else {
-        const [summary, firstPage] = await Promise.all([
+        const [summary, firstPage, barPage] = await Promise.all([
           invoke<AnalysisSummaryResponse>('get_analysis_summary'),
-          invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 25 })
+          invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 10 }),
+          invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 100 })
         ]);
         const items = JSON.parse(firstPage.items);
         this.frequentistTableData.set(this.parseAnalysisResults(items));
         this.frequentistTotalCount.set(summary.total);
         this.resultsLength = summary.total;
+        this.barChartData.set(this.parseAnalysisResults(JSON.parse(barPage.items)));
         this.proportionData = {
           total: { significant: summary.proportionData.total.significant, nonSignificant: summary.proportionData.total.nonSignificant },
           BP: { significant: summary.proportionData.bp.significant, nonSignificant: summary.proportionData.bp.nonSignificant },

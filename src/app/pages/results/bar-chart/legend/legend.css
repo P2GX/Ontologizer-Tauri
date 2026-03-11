@@ -20,7 +20,7 @@
 .legend-gradient {
   height: 12px;
   border-radius: 6px;
-  background: linear-gradient(to right, #F0DC8C, #EA5451, #5C0B10);
+  background: linear-gradient(to right, #FFFFFF, #FBDDDC, #9D7220);
 }
 
 .legend-ticks {

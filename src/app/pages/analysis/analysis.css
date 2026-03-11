@@ -6,7 +6,7 @@
     margin-bottom: 2rem;
 }
 
-.analysis-settings {
+.analysis-container {
     border-radius: 1rem;
     width: 80cqw;
     box-sizing: border-box;
@@ -26,7 +26,7 @@
 .category-cards {
     display: flex;
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .method-card {
@@ -35,18 +35,20 @@
     border-radius: 1rem;
     padding: 1.5rem;
     cursor: pointer;
+    gap: 0.5rem;
+    box-shadow: 0 0.13rem 0.8rem var(--shadow-header);
     transition: all 0.2s ease;
-    background-color: var(--md-sys-color-primary-container);
+    background-color: var(--md-sys-color-on-primary);
     display: flex;
     flex-direction: column;
     font-size: var(--font-standard);
+    color: var(--md-sys-color-primary);
 }
 
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
 }
 
 .card-header h3 {
@@ -77,19 +79,18 @@
 
 .method-card:hover {
     border-color: var(--md-sys-color-primary);
-    background-color: var(--md-sys-color-primary-container);
+    background-color: var(--md-sys-color-on-primary);
 }
 
 .method-card.active {
     border-color: var(--md-sys-color-success);
-    background-color: var(--md-sys-color-primary-container);
+    background-color: var(--md-sys-color-on-primary);
 }
 
 /* === Dropdowns === */
 .nested-settings {
     display: flex;
     flex-direction: column;
-    padding-top: 1.5rem;
     width: 100%;
 }
 
@@ -102,7 +103,7 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    margin-top: 1.5rem;
+    margin-top: 0.0rem;
 }
 
 .illustration-container svg {

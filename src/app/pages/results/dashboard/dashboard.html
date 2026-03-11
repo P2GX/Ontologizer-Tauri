@@ -1,4 +1,4 @@
-<div class="dashboard-body">
+<div class="dashboard-container">
     <div class="row-container">
 
         <div class="dashboard-card" id="summary">
@@ -16,37 +16,35 @@
                 <p>Method:</p>
                 <p>{{ methodLabel }}</p>
             </div>
-            <div class="summary-item" *ngIf="isFrequentist">
-                <p>Correction:</p>
-                <p>{{ correctionLabel }}</p>
-            </div>
-            <div class="summary-item" *ngIf="isFrequentist">
-                <p>Significance threshold:</p>
-                <p>0.05</p>
-            </div>
+            @if (isFrequentist) {
+                <div class="summary-item">
+                    <p>Background:</p>
+                    <p>{{ backgroundLabel }}</p>
+                </div>
+                <div class="summary-item">
+                    <p>Correction:</p>
+                    <p>{{ correctionLabel }}</p>
+                </div>
+                <div class="summary-item">
+                    <p>Significance threshold:</p>
+                    <p>0.05</p>
+                </div>
+            }
         </div>
         <div class="column-container" id="term-info">
-            <div class="dashboard-card" id="terms">
-                <div class="card-header">
-                    <h3>{{dashboardInfo.resultsLength.toLocaleString('de-DE')}}</h3>
-                    <!-- <div class="help-icon" (mouseover)="showTooltip = true" (mouseout)="showTooltip = false">?</div> -->
-                </div>
+            <div class="dashboard-card term-card">
+                <h3>{{dashboardInfo.resultsLength.toLocaleString('de-DE')}}</h3>
                 <p>of {{dashboardInfo.goTerms.toLocaleString('de-DE')}} GO-terms tested</p>
             </div>
-            <div class="dashboard-card" id="terms">
+            <div class="dashboard-card term-card">
                 <h3>{{dashboardInfo.proportionData.total.significant.toLocaleString('de-DE')}}</h3>
                 <p>of {{dashboardInfo.resultsLength.toLocaleString('de-DE')}} GO-terms significant</p>
             </div>
         </div>
 
         <div class="column-container" id="charts">
-            <div class="DoughnutChartContainer">
-                <canvas #DoughnutChartA style="width:100%; height: 100%;"></canvas>
-            </div>
-            <div class="DoughnutChartContainer">
-                <canvas #DoughnutChartB style="width:100%; height: 100%;"></canvas>
-            </div>
-
+            <div class="DoughnutChartContainer" #chartA></div>
+            <div class="DoughnutChartContainer" #chartB></div>
         </div>
 
     </div>

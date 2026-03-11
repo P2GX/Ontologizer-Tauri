@@ -1,0 +1,225 @@
+.table-container {
+  width: 80cqw;
+  box-sizing: border-box;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background-color: var(--md-sys-color-on-primary);
+  box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
+}
+
+.results-table {
+  height: 35rem;
+  overflow: auto;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Header row */
+.results-table .mat-mdc-header-row {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--md-sys-color-primary) !important;
+}
+
+:host ::ng-deep .mat-mdc-header-cell {
+  color: var(--md-sys-color-on-primary) !important;
+  font-size: var(--font-small) !important;
+  font-family: "Trebuchet MS", Trebuchet, sans-serif !important;
+}
+
+:host ::ng-deep .mat-sort-header-arrow {
+  color: var(--md-sys-color-on-primary) !important;
+}
+
+/* Body rows */
+:host ::ng-deep .mat-mdc-cell {
+  font-size: var(--font-small) !important;
+  font-family: "Trebuchet MS", Trebuchet, sans-serif !important;
+  color: var(--md-sys-color-on-primary-container) !important;
+  border-bottom: 1px solid var(--md-sys-color-outline) !important;
+}
+
+:host ::ng-deep .mat-mdc-row {
+  min-height: 48px;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  background-color: var(--md-sys-color-primary-container);
+}
+
+/* Column widths */
+.results-table .mat-column-label  { flex: 4; }
+.results-table .mat-column-id     { flex: 2; }
+.results-table .mat-column-aspect { flex: 1; }
+.results-table .mat-column-k
+.results-table .mat-column-n      { flex: 1; justify-content: center; }
+.results-table .mat-column-score  { flex: 1.5; }
+.results-table .mat-column-expand { flex: 0.4; justify-content: center; }
+
+.results-table .mat-mdc-cell,
+.results-table .mat-mdc-header-cell {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-height: inherit;
+  padding: 0 0.75rem;
+}
+
+/* Significant p-value badge */
+:host ::ng-deep .significant-pval {
+  background-color: var(--md-sys-color-success-container);
+  color: var(--md-sys-color-success);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  font-weight: 600;
+  font-size: var(--font-small);
+  border: 1px solid var(--md-sys-color-tertiary-container);
+}
+
+/* Expand row */
+.element-row {
+  cursor: pointer;
+}
+
+.element-row:not(.expanded-row):active {
+  background-color: var(--md-sys-color-primary-container);
+}
+
+.element-row td {
+  border-bottom-width: 0;
+}
+
+.detail-row {
+  min-height: 0;
+  height: auto;
+  padding: 0;
+}
+
+.element-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 0.5rem;
+  font-size: var(--font-small);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.element-detail-wrapper {
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 0fr;
+  grid-template-columns: 100%;
+}
+
+.element-detail-wrapper-expanded {
+  grid-template-rows: 1fr;
+  padding: 0.75rem 0;
+}
+
+.material-symbols-outlined.expanded {
+  transform: scaleY(-1);
+  transition: all 0.3s ease;
+}
+
+.material-symbols-outlined {
+  transition: all 0.3s ease;
+  color: var(--md-sys-color-on-primary-container);
+  font-size: 1.2rem;
+}
+
+.gene-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.5rem 0 0;
+  list-style: none;
+  margin: 0;
+}
+
+.gene-list li {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border-radius: 3px;
+  padding: 0.1rem 0.4rem;
+  font-size: var(--font-small);
+}
+
+/* Bottom bar: search + paginator */
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  gap: 1rem;
+}
+
+/* Search field */
+:host ::ng-deep .mat-mdc-form-field {
+  font-family: "Trebuchet MS", Trebuchet, sans-serif;
+  font-size: var(--font-small);
+}
+
+:host ::ng-deep .mdc-notched-outline {
+  display: none !important;
+}
+
+:host ::ng-deep .mat-mdc-text-field-wrapper {
+  height: 2rem !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: var(--md-sys-color-primary-container) !important;
+  border-radius: 4px !important;
+}
+
+:host ::ng-deep .mdc-text-field--outlined .mat-mdc-form-field-infix,
+:host ::ng-deep .mdc-text-field--no-label .mat-mdc-form-field-infix {
+  padding: 0 !important;
+  min-height: 0 !important;
+  align-content: center !important;
+}
+
+:host ::ng-deep .mat-mdc-form-field-subscript-wrapper,
+:host ::ng-deep .mat-mdc-form-field-bottom-align::before {
+  display: none !important;
+}
+
+:host ::ng-deep .mat-mdc-input-element {
+  font-family: "Trebuchet MS", Trebuchet, sans-serif !important;
+  font-size: var(--font-small) !important;
+  color: var(--md-sys-color-on-primary-container) !important;
+}
+
+/* Paginator */
+:host ::ng-deep .mat-mdc-paginator {
+  font-family: "Trebuchet MS", Trebuchet, sans-serif !important;
+  font-size: var(--font-small) !important;
+  color: var(--md-sys-color-on-primary-container) !important;
+  background: transparent !important;
+}
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-select {
+  width: 2.1rem !important;
+}
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-select .mat-mdc-select-trigger {
+  width: 3.5rem !important;
+}
+
+:host ::ng-deep .mat-mdc-select-value {
+  padding: 0 0.5rem !important;
+  font-size: var(--font-small) !important;
+}
+
+:host ::ng-deep .mat-mdc-paginator-page-size {
+  align-items: center !important;
+}
+
+:host ::ng-deep .mat-mdc-select-panel {
+  background-color: var(--md-sys-color-on-primary) !important;
+}
+
+:host ::ng-deep .mat-mdc-form-field-type-mat-select:not(.mat-form-field-disabled) .mat-mdc-text-field-wrapper {
+  align-items: center !important;
+  align-content: center !important;
+}

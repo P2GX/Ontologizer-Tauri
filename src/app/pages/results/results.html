@@ -57,10 +57,10 @@
         </app-go-graph>
     }
 
-    @if (tableData() !== null && success) {
+    @if (resultsService.barChartData() !== null && success) {
         <app-bar-chart
             [hidden]="selectedChart !== 'bar-plot'"
-            [PlotData]="tableData()!"
+            [PlotData]="resultsService.barChartData()!"
             [isBayesian]="resultsService.isBayesian()"
             [legendMaxValue]="globalLegendMax">
         </app-bar-chart>

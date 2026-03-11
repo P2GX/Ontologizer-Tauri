@@ -1,21 +1,33 @@
-.dashboard-body {
+:host {
+    display: block;
+    width: 100%;
+}
+
+:host([hidden]) {
+    display: none;
+}
+
+.dashboard-container {
     display: flex;
     justify-content: center;
+    border-radius: 1rem;
+    container-type: inline-size;
+    width: 80cqw;
+    margin: 0 auto;
 }
 
 .row-container {
     display: flex;
     flex-direction: row;
-    width: 80cqw;
+    width: 100%;
     padding: 1.5rem;
     border-radius: 1rem;
+    background-color: var(--md-sys-color-on-primary);
     border: 1px solid var(--md-sys-color-outline);
     height: 30cqw;
     max-height: 400px;
     min-width: fit-content;
     box-sizing: border-box;
-    max-width: 1400px;
-    min-height: 330px;
     gap: 1rem;
 }
 
@@ -28,18 +40,38 @@
     background-color: var(--md-sys-color-on-primary);
     gap: 0.5rem;
     box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
+    font-size: var(--font-standard);
+    color: var(--md-sys-color-primary);
 }
 
-.DoughnutChartContainer,
-.BarPlotContainer {
-    padding: 1rem;
+.DoughnutChartContainer {
     flex: 1 1 0;
-    cursor: pointer;
     min-height: 0;
+    position: relative;
+    overflow: hidden;
     border: 1px solid var(--md-sys-color-outline);
     background-color: var(--md-sys-color-on-primary);
     border-radius: 1rem;
     box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
+}
+
+.chart-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--md-sys-color-on-primary);
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 0.5rem;
+    padding: 6px 10px;
+    font-size: var(--font-small);
+    color: var(--md-sys-color-primary);
+    box-shadow: 0 2px 8px var(--shadow-header);
+    opacity: 0;
+    transition: opacity 0.1s ease;
+    white-space: nowrap;
+}
+
+.chart-tooltip.visible {
+    opacity: 1;
 }
 
 p {
@@ -48,14 +80,16 @@ p {
 
 h3 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: var(--font-highlight);
+    color: var(--md-sys-color-primary);
 }
 
 .summary-item {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--md-sys-color-outline);
+    padding: 0.25rem 0;
+    font-size: var(--font-standard);
+    color: var(--md-sys-color-primary);
 }
 
 .summary-item:last-child {
@@ -64,7 +98,6 @@ h3 {
 
 #summary {
     flex: 2 1 0;
-    min-width: 260px;
     display: flex;
     justify-content: space-between;
 }
@@ -79,51 +112,30 @@ h3 {
 .column-container#charts {
     flex: 2 1 0;
     min-width: 260px;
+    font-size: var(--font-standard);
+    color: var(--md-sys-color-primary);
 }
 
 .column-container#term-info {
     flex: 1 1 0;
 }
 
-#terms {
+.term-card {
     height: 100%;
     flex: 1;
 }
 
-/* 
-@media (max-width: 1000px) {
+@container (max-width: 800px) {
     .row-container {
         flex-direction: column;
         height: auto;
-        max-width: 100%;
+        width: 100%;
     }
 
-
-} */
-
-.help-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-    margin-left: 1em;
-    border-radius: 50%;
-    font-size: 1rem;
-    background-color: var(--md-sys-color-secondary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
-
-.help-icon:hover {
-    background-color: var(--md-sys-color-secondary-hover);
-    transition: background-color 0.2s ease;
-}
-
-.card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    #summary,
+    #charts,
+    #term-info {
+        flex: unset;
+        width: 100%;
+    }
 }

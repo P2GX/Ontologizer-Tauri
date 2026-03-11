@@ -23,10 +23,10 @@ export class BarChart implements AfterViewInit, OnChanges {
 
   viewInitialized = false;
 
-  plotOptions: string[] = ['-Log10(p.adj)', 'Enrichment ratio', 'Study counts'];
+  plotOptions: string[] = ['-Log10(p)', 'Enrichment ratio', 'Study counts'];
   subgraphs: string[] = ['All', 'Molecular Function', 'Biological Process', 'Cellular Component'];
 
-  selectedPlotOption = '-Log10(p.adj)';
+  selectedPlotOption = '-Log10(p)';
   selectedSubgraph = 'All';
   selectedTopN = 'Significant';
 
@@ -176,31 +176,31 @@ export class BarChart implements AfterViewInit, OnChanges {
 
   pvalToColor(adj_pval: number): string {
     const max = this.legendMaxValue;
-    if (max <= 0) return '#F0DC8C';
+    if (max <= 0) return '#FFFFFF';
     const t = Math.min(1, Math.max(0, -Math.log10(adj_pval) / max));
     return this.interpolateGoldToRed(t);
   }
 
   postProbToColor(post_prob: number): string {
     const max = this.legendMaxValue;
-    if (max <= 0) return '#F0DC8C';
+    if (max <= 0) return '#FFFFFF';
     const t = Math.min(1, Math.max(0, post_prob / max));
     return this.interpolateGoldToRed(t);
   }
 
   private interpolateGoldToRed(t: number): string {
-    // 3-stop gradient: light gold #F0DC8C → signal red #EA5451 → dark maroon #5C0B10
+    // 3-stop gradient matching legend: white #FFFFFF → light pink #FBDDDC → gold #9D7220
     let r: number, g: number, b: number;
     if (t <= 0.5) {
       const s = t * 2;
-      r = Math.round(0xF0 + (0xEA - 0xF0) * s);
-      g = Math.round(0xDC + (0x54 - 0xDC) * s);
-      b = Math.round(0x8C + (0x51 - 0x8C) * s);
+      r = Math.round(0xFF + (0xFB - 0xFF) * s);
+      g = Math.round(0xFF + (0xDD - 0xFF) * s);
+      b = Math.round(0xFF + (0xDC - 0xFF) * s);
     } else {
       const s = (t - 0.5) * 2;
-      r = Math.round(0xEA + (0x5C - 0xEA) * s);
-      g = Math.round(0x54 + (0x0B - 0x54) * s);
-      b = Math.round(0x51 + (0x10 - 0x51) * s);
+      r = Math.round(0xFB + (0x9D - 0xFB) * s);
+      g = Math.round(0xDD + (0x72 - 0xDD) * s);
+      b = Math.round(0xDC + (0x20 - 0xDC) * s);
     }
     return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   }
