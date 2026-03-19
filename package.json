@@ -1,6 +1,6 @@
 {
   "name": "ontologizer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -34,6 +34,7 @@
     "@tauri-apps/cli": "^2.7.1",
     "@tauri-apps/plugin-dialog": "^2.3.2",
     "@tauri-apps/plugin-fs": "^2.4.1",
+    "@tauri-apps/plugin-opener": "^2.5.2",
     "@viz-js/viz": "^3.17.0",
     "chart.js": "^4.5.0",
     "chartjs-plugin-annotation": "^3.1.0",
