@@ -24,9 +24,8 @@
     border-radius: 1rem;
     background-color: var(--md-sys-color-on-primary);
     border: 1px solid var(--md-sys-color-outline);
-    height: 30cqw;
-    max-height: 400px;
-    min-width: fit-content;
+    min-height: min(30cqw, 400px);
+    min-width: 260px;
     box-sizing: border-box;
     gap: 1rem;
 }
@@ -44,15 +43,33 @@
     color: var(--md-sys-color-primary);
 }
 
-.DoughnutChartContainer {
+.chart-card {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--md-sys-color-on-primary);
+    border-radius: 1rem;
+    box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
+    overflow: hidden;
+}
+
+.chart-label {
+    margin: 0;
+    padding: 0.5rem 0.85rem;
+    font-size: var(--font-small);
+    font-weight: 600;
+    color: var(--md-sys-color-primary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.chart-figure {
     flex: 1 1 0;
     min-height: 0;
     position: relative;
     overflow: hidden;
-    border: 1px solid var(--md-sys-color-outline);
-    background-color: var(--md-sys-color-on-primary);
-    border-radius: 1rem;
-    box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
 }
 
 .chart-tooltip {

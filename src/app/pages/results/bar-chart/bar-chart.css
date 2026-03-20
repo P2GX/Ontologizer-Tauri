@@ -16,11 +16,16 @@
 
 .control-panel {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 1rem;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
   z-index: 10;
   width: 100%;
+}
+
+.control-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
   flex-wrap: wrap;
 }

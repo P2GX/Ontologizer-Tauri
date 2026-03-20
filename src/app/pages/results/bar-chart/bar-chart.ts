@@ -23,7 +23,7 @@ export class BarChart implements AfterViewInit, OnChanges {
 
   viewInitialized = false;
 
-  plotOptions: string[] = ['-Log10(p)', 'Enrichment ratio', 'Study counts'];
+  plotOptions: string[] = ['-Log10(p)', 'Enrichment ratio', 'Study count'];
   subgraphs: string[] = ['All', 'Molecular Function', 'Biological Process', 'Cellular Component'];
 
   selectedPlotOption = '-Log10(p)';
@@ -120,7 +120,7 @@ export class BarChart implements AfterViewInit, OnChanges {
           const f = r as FrequentistRowData;
           return (f.k / f.n) / (f.K / f.N);
         }),
-        'Study counts': displayData.map(r => (r as FrequentistRowData).k)
+        'Study count': displayData.map(r => (r as FrequentistRowData).k)
       };
       yData = yValues[this.selectedPlotOption] ?? yValues['-Log10(p.adj)'];
     }
@@ -144,6 +144,12 @@ export class BarChart implements AfterViewInit, OnChanges {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
+          x: {
+            ticks: {
+              maxRotation: 45,
+              minRotation: 45,
+            }
+          },
           y: { beginAtZero: true, title: { display: true, text: yAxisLabel } }
         },
         plugins: {

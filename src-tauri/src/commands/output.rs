@@ -106,6 +106,41 @@ pub fn get_analysis_results_page(
     Ok(PagedResults { items: items_json, total })
 }
 
+// Returns the top `n` items per GO aspect (BP/MF/CC) from the pre-sorted results.
+// results.items is already sorted by score (ascending p-val or descending posterior) by run_analysis.
+// This gives at most 3*n items, covering any Top-N-per-aspect query in the bar chart.
+#[tauri::command]
+pub fn get_bar_chart_data(state: tauri::State<AppState>, n: usize) -> Result<String, String> {
+    let results_lock = state
+        .results
+        .read()
+        .map_err(|e| format!("Failed to lock results: {}", e))?;
+    let results = results_lock.as_ref().ok_or("No analysis results loaded")?;
+
+    let mut bp_count = 0usize;
+    let mut mf_count = 0usize;
+    let mut cc_count = 0usize;
+    let mut top_items = Vec::new();
+
+    for item in &results.items {
+        let count = match item.aspect.as_str() {
+            "BP" => &mut bp_count,
+            "MF" => &mut mf_count,
+            "CC" => &mut cc_count,
+            _ => continue,
+        };
+        if *count < n {
+            *count += 1;
+            top_items.push(item);
+        }
+        if bp_count >= n && mf_count >= n && cc_count >= n {
+            break;
+        }
+    }
+
+    serde_json::to_string(&top_items).map_err(|e| format!("Serialization error: {}", e))
+}
+
 // Retrieves the table analysis results from the shared app state and returns them as a JSON string.
 #[tauri::command]
 pub fn get_analysis_results(state: tauri::State<AppState>) -> Result<String, String> {
@@ -153,11 +188,12 @@ impl DotGraph {
     }
 }
 
-// Nodes holds the significant nodes and non significant ancestor nodes of the significant nodes
+// Nodes holds the significant nodes, non-significant ancestor nodes, and all tested nodes
 #[derive(Serialize, Deserialize, Clone)]
 struct Nodes {
     significant: HashMap<String, NodeData>,
     ancestors: HashMap<String, NodeData>,
+    tested: HashMap<String, NodeData>, // all tested terms for this aspect (for Top N seeding)
 }
 
 // Edges holds the edges of the compressed graph (skipping non-significant nodes) and the full graph starting from significant nodes
@@ -183,6 +219,7 @@ impl Nodes {
         Self {
             significant: HashMap::new(),
             ancestors: HashMap::new(),
+            tested: HashMap::new(),
         }
     }
 
@@ -313,7 +350,7 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
                 root.to_string(),
                 NodeData {
                     id: root.to_string(),
-                    label: root_info.id.clone(),
+                    label: root_info.label.clone(),
                     study_count: root_info.associated_genes.len() as u32,
                     population_count: root_info.associated_genes.len() as u32,
                     depth: 0,
@@ -377,18 +414,12 @@ fn traverse_term(
     let is_significant = significant_terms.contains_key(term);
     let mut keep = is_significant; // ob dieser Knoten oder ein Kind behalten wird
 
-    // durch alle Kinder iterieren
     for child in go.iter_child_ids(term) {
         if !tested_terms.contains_key(child) {
             continue;
         }
 
-        // Rekursion: wenn current term signifikant ist, wird er zum neuen "significant_parent"
-        let next_parent = if is_significant {
-            term
-        } else {
-            significant_parent
-        };
+        let next_parent = if is_significant { term } else { significant_parent };
 
         let child_keep = traverse_term(
             child,
@@ -402,26 +433,26 @@ fn traverse_term(
             depth + 1,
         );
 
-        // Falls ein Child behalten wird → Kante in full Graph
-        if child_keep {
-            keep = true;
-            edges.add_edge(EdgeData::new(child.to_string(), term.to_string(), 0), false);
-        }
+        if child_keep { keep = true; }
+
+        // Always add edge for tested children so the full tested subgraph is available for Top N seeding
+        edges.add_edge(EdgeData::new(child.to_string(), term.to_string(), 0), false);
     }
 
-    // Add visible nodes (significant + ancestors on the path).
-    // Guard against terms not present in tested_terms (e.g. the virtual root in Bayesian).
-    if keep {
-        if let Some(node_result) = tested_terms.get(term) {
-            let node_data = NodeData {
-                id: term.to_string(),
-                label: node_result.id.clone(),
-                depth,
-                p_val: node_result.score as f32,
-                study_count: node_result.associated_genes.len() as u32,
-                population_count: node_result.associated_genes.len() as u32,
-            };
+    if let Some(node_result) = tested_terms.get(term) {
+        let node_data = NodeData {
+            id: term.to_string(),
+            label: node_result.label.clone(),
+            depth,
+            p_val: node_result.score as f32,
+            study_count: node_result.associated_genes.len() as u32,
+            population_count: node_result.associated_genes.len() as u32,
+        };
 
+        // Always populate the tested pool (used for Top N seeding in the frontend)
+        nodes.tested.insert(term.to_string(), node_data.clone());
+
+        if keep {
             if is_significant {
                 nodes.add_node(term.to_string(), node_data, true);
                 edges.add_edge(
@@ -432,8 +463,6 @@ fn traverse_term(
                 nodes.add_node(term.to_string(), node_data, false);
             }
         }
-
-        visited.insert(term.clone());
     }
 
     keep

@@ -35,6 +35,7 @@
 
     @if (success) {
         <app-dashboard [dashboardInfo]="dashboardInfo"
+            [pValueData]="resultsService.barChartData()"
             [hidden]="selectedChart !== 'dashboard'" [visible]="selectedChart === 'dashboard'">
         </app-dashboard>
     }
@@ -57,10 +58,10 @@
         </app-go-graph>
     }
 
-    @if (resultsService.barChartData() !== null && success) {
+    @if (resultsService.barPlotData() !== null && success) {
         <app-bar-chart
             [hidden]="selectedChart !== 'bar-plot'"
-            [PlotData]="resultsService.barChartData()!"
+            [PlotData]="resultsService.barPlotData()!"
             [isBayesian]="resultsService.isBayesian()"
             [legendMaxValue]="globalLegendMax">
         </app-bar-chart>

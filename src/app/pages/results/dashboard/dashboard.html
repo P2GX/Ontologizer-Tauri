@@ -30,6 +30,20 @@
                     <p>0.05</p>
                 </div>
             }
+            @else {
+                <div class="summary-item">
+                    <p>Term prior:</p>
+                    <p>{{ backgroundLabel }}</p>
+                </div>
+                <div class="summary-item">
+                    <p>False positive prior:</p>
+                    <p>0.05</p>
+                </div>
+                <div class="summary-item">
+                    <p>False negative prior:</p>
+                    <p>0.10</p>
+                </div>
+            }
         </div>
         <div class="column-container" id="term-info">
             <div class="dashboard-card term-card">
@@ -43,8 +57,14 @@
         </div>
 
         <div class="column-container" id="charts">
-            <div class="DoughnutChartContainer" #chartA></div>
-            <div class="DoughnutChartContainer" #chartB></div>
+            <div class="chart-card">
+                <p class="chart-label">Term ranking</p>
+                <div class="chart-figure" #chartA></div>
+            </div>
+            <div class="chart-card">
+                <p class="chart-label">Significant Terms by Aspect</p>
+                <div class="chart-figure" #chartB></div>
+            </div>
         </div>
 
     </div>
