@@ -116,3 +116,27 @@ body { margin: 0; font-family: "Trebuchet MS", Trebuchet, sans-serif; }
     width: 35%;
     color: var(--md-sys-color-outline);
 }
+
+
+/* A modern, interactive link badge */
+.external-link {
+  @apply inline-flex items-center gap-1 px-2 py-0.5 
+         rounded bg-blue-50 text-blue-700 font-medium 
+         border border-blue-200 cursor-pointer transition-all 
+         duration-200 ease-in-out hover:bg-blue-600 
+         hover:text-white hover:border-blue-600 focus:outline-none;
+  
+  /* Resetting default button styling just in case */
+  appearance: none;
+  text-decoration: none;
+}
+
+/* Adding a subtle icon via CSS to keep the HTML clean */
+.external-link::after {
+  content: "↗";
+  @apply text-[10px] ml-0.5 opacity-70;
+}
+
+.external-link:hover::after {
+  @apply opacity-100;
+}

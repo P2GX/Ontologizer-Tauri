@@ -20,6 +20,7 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init()) // activate Dialog plugin for file dialogs (open file, save file)
         .plugin(tauri_plugin_fs::init()) // activate File System plugin for file operations.
+        .plugin(tauri_plugin_opener::init())
         .manage(AppState {
             // shared state across the application that can be accessed from different commands
             ontology: RwLock::new(None),

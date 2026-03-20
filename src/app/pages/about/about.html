@@ -1,7 +1,6 @@
 <div class="page-header">
-    <h1 class="page-title">About</h1>
+    <h1 class="page-title">Help</h1>
     <div style="margin-left:2rem; display:flex; gap:2em;">
-        <h2 class="sub-title">Learn more about how the Ontologizer works</h2>
     </div>
 </div>
 <div class="about-body">
@@ -10,47 +9,88 @@
             <button class="tab-button" [class.active]="selectedTab === 'introduction'"
                 (click)="selectTab('introduction')">Introduction</button>
             <mat-divider class="vertical" [vertical]="true"></mat-divider>
-            <button class="tab-button" [class.active]="selectedTab === 'table'" (click)="selectTab('table')">File
-                Input</button>
+            <button class="tab-button" [class.active]="selectedTab === 'table'" 
+                (click)="selectTab('table')">File Input</button>
             <mat-divider class="vertical" [vertical]="true"></mat-divider>
             <button class="tab-button" [class.active]="selectedTab === 'go-graph'"
                 (click)="selectTab('go-graph')">Statistics & Methods</button>
             <mat-divider class="vertical" [vertical]="true"></mat-divider>
             <button class="tab-button" [class.active]="selectedTab === 'bar-plot'"
-                (click)="selectTab('bar-plot')">Output
-            </button>
+                (click)="selectTab('bar-plot')">Output</button>
         </div>
 
-        <p>
-            A number of methods have been developed to analyze microarray and other high-throughput data derived from
-            measurements of hundreds or thousands of genes or proteins. Depending on the method, the results of analysis
-            consist of a list of many differentially regulated genes or a partitioning of many or all of the genes in
-            the
-            data set into clusters (groups) that putatively share some functionally relevant characteristic. Among the
-            many
-            uses to which the Gene Ontology (GO) has been put is to provide a summary of such lists of genes/proteins
-            according to functional role, biochemical reaction, or location of the gene product in the cell. This kind
-            of
-            analysis is also known as GO term enrichment analysis
-        </p>
-        <img src="assets/icons/about_ontologizer2.svg" alt="onto" />
-        <mat-divider class="horizontal"  style="width: 100%;margin: 2rem 0;"></mat-divider>
-        <p>
-            Ontologizer a is versatile application for the GO term enrichment analysis that comes in different flavours
-            depending on the user’s need. It is available with a user interface based on Eclipse’s Standard Widget
-            Toolkit,
-            a command line interface, and a Web interface sorely based on Javascript. Thus, it is directly executed on
-            the
-            users computer similar to the traditional desktop application.
-            <br><br>
-            Ontologizer supports not only the standard approach to GO term enrichment analysis but also our parent-child
-            method as described by Grossmann, topology based methods as described by Alexa and our more recent
-            model-based
-            approach.
-            <br><br>
-            The following pages present a brief introduction to the Gene Ontology, the standard “term-for-term” approach
-            to
-            statistical analysis, and the the parent child approach.
-        </p>
+        @switch (selectedTab) {
+            @case ('introduction') {
+                <p>
+                   The  <button 
+                        type="button"
+                        (click)="openExternalLink('https://www.geneontology.org/')"
+                        class="go-external-link">
+                        Gene Ontology (GO)
+                        </button>
+                    is a controlled vocabulary that describes functions, roles, and locations of gene products.
+                   A widespread application is the identification of annotation-enriched GO terms in a list of genes that share some biological characteristic, the so-called study set (e.g., genes that are overexpressed in an experiment), compared to a larger list of genes, the population set (e.g., all genes measured in the experiment). These terms are often interpreted as representing the salient biological features of the genes in the study set.
+                    </p>
+                <img src="assets/icons/about_ontologizer2.svg" alt="onto" />
+                <mat-divider class="horizontal" style="width: 100%; margin: 2rem 0;"></mat-divider>
+                <p>This application is the third edition of the Ontologizer, following <button 
+                        type="button"
+                        (click)="openExternalLink('https://pubmed.ncbi.nlm.nih.gov/14764576/')"
+                        class="go-external-link">
+                        Version 1
+                        </button>
+                 in 2004 and <button 
+                        type="button"
+                        (click)="openExternalLink('https://pubmed.ncbi.nlm.nih.gov/18511468/')"
+                        class="go-external-link">
+                        Version 2
+                        </button>
+                        in 2008, both of which were created in Java. Ontologizer V3 was created as a Tauri application that makes use of an efficient backend in Rust and a modern frontend that uses the Angular framework.</p>
+            }
+
+            @case ('table') {
+                <div class="tab-content">
+                    
+                    <p>Ontologizer requires four files to run</p>
+                    <ol>
+                        <li>go-basic.json <button 
+                        type="button"
+                        (click)="openExternalLink('https://www.geneontology.org/docs/download-ontology/')"
+                        class="go-external-link">
+                        download page
+                        </button></li>
+                         <li>GO annotation file (GAF)<button 
+                        type="button"
+                        (click)="openExternalLink('https://www.geneontology.org/docs/download-go-annotations/')"
+                        class="go-external-link">
+                        download page
+                        </button></li>
+                        <li>Study set: Gene symbols of interest (e.g., differentially expressed), one to a line</li>
+                        <li>Population set: All gene symbols from the examined population, one to a line</li>
+                    </ol>
+                    TODO more information is available in the ONLINE DOC SITE
+                </div>
+            }
+
+            @case ('go-graph') {
+                <div class="tab-content">
+                    <h2>Statistics & Methods</h2>
+                    <p>The Term-for-Term method with Bonferroni correction for multiple testing is the classic GO overrepresentation algorithm.</p>
+                    <p>Ontologizer additionally implements the parent-child algorithms and Model-Based Geneset Analysis (MGSA).</p>
+                    <p>TODO ONLINE DOCs</p>
+                </div>
+            }
+
+            @case ('bar-plot') {
+                <div class="tab-content">
+                    <h2>Output Visualizations</h2>
+                    <p>Information on how to interpret the generated bar plots.</p>
+                </div>
+            }
+
+            @default {
+                <p>Select a tab to learn more.</p>
+            }
+        }
     </div>
 </div>
