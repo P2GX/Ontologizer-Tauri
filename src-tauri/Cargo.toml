@@ -21,7 +21,7 @@ tauri-build = { version = "2", features = [] }
 tauri-plugin-fs = "2"
 oboannotation = { git = "https://github.com/P2GX/oboannotation.git", tag = "v0.1.2" }
 tauri-plugin-dialog = "2"
-ontologizer = { git = "https://github.com/P2GX/ontologizer.git", branch = "master" }
+ontologizer = { git = "https://github.com/P2GX/ontologizer.git" }
 
 tokio = { version = "1", features = ["full"] }
 

@@ -56,7 +56,7 @@
 
             <!-- Bayesian Card -->
             <div class="method-card"
-                 [class.active]="selectedMethod?.method === 'bayesian'"
+                 [class.active]="selectedMethod?.method === 'Bayesian'"
                  (click)="setCategory('Bayesian')">
                 <div class="card-header">
                     <h3>Bayesian Inference</h3>
@@ -100,7 +100,7 @@
                         {{ isAnalysing ? 'autorenew' : 'expand_circle_right' }}
                     </span>
                 </button>
-                @if (isAnalysing && selectedMethod?.method === 'bayesian') {
+                @if (isAnalysing && selectedMethod?.method === 'Bayesian') {
                     <span class="analysis-warning">
                         <span class="material-symbols-outlined warning-icon">schedule</span>
                         This may take some time.

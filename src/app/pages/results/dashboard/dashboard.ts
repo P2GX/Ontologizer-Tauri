@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, AfterViewInit, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 import { DashboardInfo } from '../results';
-import { TOPOLOGY_NAMES, CORRECTION_NAMES } from '../../../services/analysis-service';
+import { BACKGROUND_NAMES, CORRECTION_NAMES } from '../../../services/analysis-service';
 
 interface DonutConfig {
   title: string;
@@ -27,26 +27,26 @@ export class Dashboard implements OnChanges, AfterViewInit {
   viewInitialized: boolean = false;
 
   get isFrequentist(): boolean {
-    return this.dashboardInfo?.method?.method === 'frequentist';
+    return this.dashboardInfo?.method?.method === 'Frequentist';
   }
 
   get methodLabel(): string {
     const m = this.dashboardInfo?.method;
     if (!m) return '';
-    if (m.method === 'bayesian') return 'Inference';
+    if (m.method === 'Bayesian') return 'Inference';
     else return 'Testing';
   }
 
   get backgroundLabel(): string {
     const m = this.dashboardInfo?.method;
     if (!m) return '';
-    if (m.method === 'bayesian') return '';
-    return TOPOLOGY_NAMES[m.topology];
+    if (m.method === 'Bayesian') return '';
+    return BACKGROUND_NAMES[m.background];
   }
 
   get correctionLabel(): string {
     const m = this.dashboardInfo?.method;
-    if (!m || m.method === 'bayesian') return '';
+    if (!m || m.method === 'Bayesian') return '';
     return CORRECTION_NAMES[m.correction];
   }
 

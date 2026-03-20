@@ -7,8 +7,8 @@ import { Method } from './analysis-service';
 })
 export class ResultsService {
   public currentMethod = signal<Method | null>(null);
-  public isBayesian = computed(() => this.currentMethod()?.method === 'bayesian');
-  public isFrequentist = computed(() => this.currentMethod()?.method === 'frequentist');
+  public isBayesian = computed(() => this.currentMethod()?.method === 'Bayesian');
+  public isFrequentist = computed(() => this.currentMethod()?.method === 'Frequentist');
   public frequentistTableData = signal<FrequentistRowData[] | null>(null);
   public bayesianTableData = signal<RowData[] | null>(null);
   public barChartData = signal<RowData[] | null>(null);
@@ -67,7 +67,7 @@ export class ResultsService {
 
   async loadAnalysisOutput() {
     try {
-      if (this.currentMethod()?.method === 'bayesian') {
+      if (this.currentMethod()?.method === 'Bayesian') {
         const [firstPage, barPage] = await Promise.all([
           invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 10 }),
           invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 100 })
@@ -108,7 +108,7 @@ export class ResultsService {
     try {
       const result = await invoke<{ items: string; total: number }>('get_analysis_results_page', { page, pageSize });
       const items = JSON.parse(result.items);
-      if (this.currentMethod()?.method === 'bayesian') {
+      if (this.currentMethod()?.method === 'Bayesian') {
         this.bayesianTableData.set(this.parseBayesianResults(items));
       } else {
         this.frequentistTableData.set(this.parseAnalysisResults(items));

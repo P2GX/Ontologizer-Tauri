@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenu } from '../../shared/dropdown-menu/dropdown-menu';
-import { AnalysisService, Method, Topology, Correction, TOPOLOGY_NAMES, CORRECTION_NAMES } from '../../services/analysis-service';
+import { AnalysisService, Method, Background, Correction, BACKGROUND_NAMES, CORRECTION_NAMES } from '../../services/analysis-service';
 import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { FilesService } from '../../services/files-service';
@@ -20,7 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class Analysis {
 
   selectedMethod: Method | null = null;
-  topology: Topology = 'Standard';
+  topology: Background = 'Standard';
   correction: Correction = 'None';
   isAnalysing = false;
   private justCompleted = false;
@@ -32,14 +32,14 @@ export class Analysis {
     return 'Start Analysis';
   }
 
-  readonly topologyOptions: Topology[] =  ['Standard', 'ParentUnion', 'ParentIntersection'];
+  readonly topologyOptions: Background[] =  ['Standard', 'ParentUnion', 'ParentIntersection'];
   readonly correctionOptions: Correction[] = ['Bonferroni', 'BonferroniHolm', 'BenjaminHochberg', 'None'];
 
-  readonly topologyNames = TOPOLOGY_NAMES;
+  readonly topologyNames = BACKGROUND_NAMES;
   readonly correctionNames = CORRECTION_NAMES;
 
   get isFrequentist(): boolean {
-    return this.selectedMethod?.method === 'frequentist';
+    return this.selectedMethod?.method === 'Frequentist';
   }
 
   constructor(
@@ -52,17 +52,17 @@ export class Analysis {
 
   setCategory(category: 'Frequentist' | 'Bayesian') {
     if (category === 'Bayesian') {
-      this.selectedMethod = { method: 'bayesian' };
+      this.selectedMethod = { method: 'Bayesian' };
     } else {
-      this.selectedMethod = { method: 'frequentist', topology: this.topology, correction: this.correction };
+      this.selectedMethod = { method: 'Frequentist', background: this.topology, correction: this.correction };
     }
     void this.analysisService.saveSettings(this.selectedMethod);
   }
 
   selectTopology(topology: string) {
-    this.topology = topology as Topology;
+    this.topology = topology as Background;
     if (this.isFrequentist) {
-      this.selectedMethod = { method: 'frequentist', topology: this.topology, correction: this.correction! };
+      this.selectedMethod = { method: 'Frequentist', background: this.topology, correction: this.correction! };
       void this.analysisService.saveSettings(this.selectedMethod);
     }
   }
@@ -70,7 +70,7 @@ export class Analysis {
   selectCorrection(correction: string) {
     this.correction = correction as Correction;
     if (this.isFrequentist) {
-      this.selectedMethod = { method: 'frequentist', topology: this.topology!, correction: this.correction };
+      this.selectedMethod = { method: 'Frequentist', background: this.topology!, correction: this.correction };
       void this.analysisService.saveSettings(this.selectedMethod);
     }
   }

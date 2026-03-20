@@ -1,7 +1,7 @@
 use crate::appstate::AppState;
 use std::time::Instant;
 
-use ontologizer::{bayesian_analysis, frequentist_analysis, Method, Topology, Correction};
+use ontologizer::{bayesian_analysis, frequentist_analysis, Method};
 
 #[tauri::command]
 pub async fn run_analysis(state: tauri::State<'_, AppState>) -> Result<(), String> {
@@ -38,7 +38,7 @@ pub async fn run_analysis(state: tauri::State<'_, AppState>) -> Result<(), Strin
         let start_time = Instant::now();
 
         let mut result = match settings.method.clone() {
-            Method::Frequentist { topology, correction } => frequentist_analysis(ontology, annotation_index, study_genes.recognized_genes(), &topology, &correction),
+            Method::Frequentist { background, correction } => frequentist_analysis(ontology, annotation_index, study_genes.recognized_genes(), &background, &correction),
             Method::Bayesian => bayesian_analysis(ontology, annotation_index, study_genes.recognized_genes()),
         };
 
