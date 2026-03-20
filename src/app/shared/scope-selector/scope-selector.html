@@ -1,0 +1,65 @@
+<div class="scope-sentence" role="group" aria-label="Display scope">
+
+    <span class="scope-word" aria-hidden="true">Show</span>
+
+    <div class="scope-token" [class.open]="openDropdown === 'size'">
+        <button type="button" class="scope-btn"
+            [attr.aria-label]="'Size: ' + selectedSize"
+            [attr.aria-expanded]="openDropdown === 'size'"
+            aria-haspopup="listbox"
+            (click)="toggle('size')"
+            (keydown)="onTokenKeydown($event, 'size')">
+            <span class="scope-btn-text">{{ selectedSize }}</span>
+            <svg class="caret" [class.flipped]="openDropdown === 'size'" width="10" height="6"
+                viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+                <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.8"
+                    fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+        @if (openDropdown === 'size') {
+            <ul class="scope-menu" role="listbox" [attr.aria-label]="'Size options'">
+                @for (opt of sizeOptions; track opt) {
+                    <li role="option"
+                        [attr.aria-selected]="opt === selectedSize"
+                        tabindex="0"
+                        (click)="select(opt, 'size')"
+                        (keydown)="onOptionKeydown($event, opt, 'size')">
+                        {{ opt }}
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    <span class="scope-word" aria-hidden="true">in</span>
+
+    <div class="scope-token" [class.open]="openDropdown === 'aspect'">
+        <button type="button" class="scope-btn"
+            [attr.aria-label]="'Aspect: ' + selectedAspect"
+            [attr.aria-expanded]="openDropdown === 'aspect'"
+            aria-haspopup="listbox"
+            (click)="toggle('aspect')"
+            (keydown)="onTokenKeydown($event, 'aspect')">
+            <span class="scope-btn-text">{{ selectedAspect }}</span>
+            <svg class="caret" [class.flipped]="openDropdown === 'aspect'" width="10" height="6"
+                viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+                <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.8"
+                    fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+        @if (openDropdown === 'aspect') {
+            <ul class="scope-menu" role="listbox" [attr.aria-label]="'Aspect options'">
+                @for (opt of aspectOptions; track opt) {
+                    <li role="option"
+                        [attr.aria-selected]="opt === selectedAspect"
+                        tabindex="0"
+                        (click)="select(opt, 'aspect')"
+                        (keydown)="onOptionKeydown($event, opt, 'aspect')">
+                        {{ opt }}
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+</div>

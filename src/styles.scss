@@ -43,10 +43,45 @@ body { margin: 0; font-family: "Trebuchet MS", Trebuchet, sans-serif; }
     /* === Shadows === */
     --shadow-header: rgba(0, 0, 0, 0.1);
 
+    /* === Primary Container Sizing === */
+    --container-width: 80cqw;
+    --container-min-width: 700px;
+    --container-max-width: 1400px;
+
     /* === Typography Scale === */
     --font-small: 0.8rem;
     --font-standard: 1.0rem;
     --font-highlight: 1.2rem;
+    --font-display: 2.2rem;     /* headline metric numbers, page titles */
+}
+
+/* ===== Empty State ===== */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 5rem;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    color: var(--md-sys-color-outline);
+}
+
+.empty-state h2 {
+    margin: 0;
+    font-weight: 400;
+    font-size: 1.4rem;
+    color: var(--md-sys-color-on-primary-container);
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--md-sys-color-outline);
 }
 
 /* ===== Shared Button ===== */
@@ -118,25 +153,3 @@ body { margin: 0; font-family: "Trebuchet MS", Trebuchet, sans-serif; }
 }
 
 
-/* A modern, interactive link badge */
-.external-link {
-  @apply inline-flex items-center gap-1 px-2 py-0.5 
-         rounded bg-blue-50 text-blue-700 font-medium 
-         border border-blue-200 cursor-pointer transition-all 
-         duration-200 ease-in-out hover:bg-blue-600 
-         hover:text-white hover:border-blue-600 focus:outline-none;
-  
-  /* Resetting default button styling just in case */
-  appearance: none;
-  text-decoration: none;
-}
-
-/* Adding a subtle icon via CSS to keep the HTML clean */
-.external-link::after {
-  content: "↗";
-  @apply text-[10px] ml-0.5 opacity-70;
-}
-
-.external-link:hover::after {
-  @apply opacity-100;
-}

@@ -2,7 +2,8 @@
     <h1 class="page-title">Analysis</h1>
 </div>
 
-<div class="analysis-content">
+<div class="analysis-body">
+    @if (filesService.userFilesReady()) {
     <div class="analysis-container">
 
         <!-- Category Selection Cards -->
@@ -110,4 +111,13 @@
             <mat-divider class="horizontal" />
         </div>
     </div>
+    }
+
+    @if (!filesService.userFilesReady()) {
+        <div class="empty-state">
+            <span class="material-symbols-outlined empty-state-icon">folder_open</span>
+            <h2>No files yet</h2>
+            <p>Upload your files on the <strong>Files</strong> page.</p>
+        </div>
+    }
 </div>

@@ -4,6 +4,20 @@
 
 <div class="file-container">
     <div class="files-settings">
+
+        <div class="go-status-bar">
+            @if (filesService.goState() === 'loading') {
+                <span class="material-symbols-outlined go-status-icon spinning">progress_activity</span>
+                <span class="go-status-text">Loading Gene Ontology…</span>
+            } @else if (filesService.goState() === 'loaded') {
+                <span class="material-symbols-outlined go-status-icon go-status-ok">check_circle</span>
+                <span class="go-status-text go-status-ok">Gene Ontology ready</span>
+            } @else if (filesService.goState() === 'error') {
+                <span class="material-symbols-outlined go-status-icon go-status-err">error</span>
+                <span class="go-status-text go-status-err">Gene Ontology failed to load</span>
+            }
+        </div>
+
         <nav class="step-nav">
             <ul class="upload-step-ul">
                 @for (step of uploadSteps; track step.type; let i = $index) {
@@ -47,8 +61,10 @@
             <button class="button" [disabled]="!allFilesLoaded()" (click)="processFiles()">
                 {{ isProcessingAll() ? 'Processing...' : (isFinished() ? 'Finished!' : 'Process Files') }}
             </button>
+            @if (!allFilesLoaded() && filesService.goState() === 'loading') {
+                <p class="go-wait-hint">Waiting for Gene Ontology to finish loading…</p>
+            }
             <mat-divider class="horizontal" />
         </div>
     </div>
 </div>
-

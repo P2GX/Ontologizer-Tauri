@@ -1,66 +1,83 @@
-<!-- Added autosize so the main content adjusts automatically to width changes -->
-<mat-sidenav-container class="sidenav-container" autosize>
+<div class="app-shell">
 
-    <!-- Sidebar Navigation -->
-    <!-- We keep the drawer open at all times, but toggle the 'collapsed' CSS class -->
-    <mat-sidenav class="sidenav" [class.collapsed]="isCollapsed()" fixedInViewport="true" mode="side" [opened]="true">
-
-        <!-- Header in Sidebar -->
-        <div class="sidenav-header">
-            <!-- Burger menu calls toggleMenu() instead of drawer.toggle() -->
-            <button mat-icon-button (click)="toggleMenu()" class="menu-button" aria-label="Toggle sidenav">
-                <mat-icon>menu</mat-icon>
+    <!-- Custom title bar (replaces native OS decorations) -->
+    <div class="titlebar" (mousedown)="startDrag($event)">
+<div class="titlebar-controls" (mousedown)="$event.stopPropagation()">
+            <button class="titlebar-btn" (click)="minimizeWindow()" aria-label="Minimize">
+                <mat-icon>remove</mat-icon>
             </button>
+            <button class="titlebar-btn" (click)="toggleMaximize()" aria-label="Maximize">
+                <mat-icon>crop_square</mat-icon>
+            </button>
+            <button class="titlebar-btn titlebar-btn--close" (click)="closeWindow()" aria-label="Close">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
 
-            <div class="logo-title">
-                <img src="assets/icons/ontology.svg" alt="onto" class="logo-icon" />
-                <h2>Ontologizer</h2>
+    <!-- Added autosize so the main content adjusts automatically to width changes -->
+    <mat-sidenav-container class="sidenav-container" autosize>
+
+        <!-- Sidebar Navigation -->
+        <!-- We keep the drawer open at all times, but toggle the 'collapsed' CSS class -->
+        <mat-sidenav class="sidenav" [class.collapsed]="isCollapsed()" mode="side" [opened]="true">
+
+            <!-- Header in Sidebar -->
+            <div class="sidenav-header">
+                <!-- Burger menu calls toggleMenu() instead of drawer.toggle() -->
+                <button mat-icon-button (click)="toggleMenu()" class="menu-button" aria-label="Toggle sidenav">
+                    <mat-icon>menu</mat-icon>
+                </button>
+
+                <div class="logo-title">
+                    <img src="assets/icons/ontology.svg" alt="onto" class="logo-icon" />
+                    <h2>Ontologizer</h2>
+                </div>
             </div>
-        </div>
 
-        <!-- Navigation Menu -->
-        <mat-nav-list>
-            <a mat-list-item routerLink="/files" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
-               class="nav-item">
-                <mat-icon matListItemIcon>upload_file</mat-icon>
-                <span matListItemTitle>Files</span>
-            </a>
-            <a mat-list-item routerLink="/analysis" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
-               class="nav-item">
-                <mat-icon matListItemIcon>model_training</mat-icon>
-                <span matListItemTitle>Analysis</span>
-            </a>
+            <!-- Navigation Menu -->
+            <mat-nav-list>
+                <a mat-list-item routerLink="/files" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+                   class="nav-item">
+                    <mat-icon matListItemIcon>upload_file</mat-icon>
+                    <span matListItemTitle>Files</span>
+                </a>
+                <a mat-list-item routerLink="/analysis" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+                   class="nav-item">
+                    <mat-icon matListItemIcon>model_training</mat-icon>
+                    <span matListItemTitle>Analysis</span>
+                </a>
 
-            <a mat-list-item routerLink="/results" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
-               class="nav-item">
-                <mat-icon matListItemIcon>bar_chart_4_bars</mat-icon>
-                <span matListItemTitle>Results</span>
-            </a>
-            <mat-divider></mat-divider>
-            <a mat-list-item routerLink="/about" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
-               class="nav-item">
-                <mat-icon matListItemIcon>info</mat-icon>
-                <span matListItemTitle>About</span>
-            </a>
+                <a mat-list-item routerLink="/results" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+                   class="nav-item">
+                    <mat-icon matListItemIcon>bar_chart_4_bars</mat-icon>
+                    <span matListItemTitle>Results</span>
+                </a>
+                <mat-divider></mat-divider>
+                <a mat-list-item routerLink="/about" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+                   class="nav-item">
+                    <mat-icon matListItemIcon>info</mat-icon>
+                    <span matListItemTitle>About</span>
+                </a>
 
-            <a mat-list-item routerLink="/contact" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
-               class="nav-item">
-                <mat-icon matListItemIcon>contact_mail</mat-icon>
-                <span matListItemTitle>Contact</span>
-            </a>
-        </mat-nav-list>
+                <a mat-list-item routerLink="/contact" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+                   class="nav-item">
+                    <mat-icon matListItemIcon>contact_mail</mat-icon>
+                    <span matListItemTitle>Contact</span>
+                </a>
+            </mat-nav-list>
 
-    </mat-sidenav>
+        </mat-sidenav>
 
-    <!-- Main Content Area -->
-    <mat-sidenav-content class="main-content">
-        <!-- Floating header is fully removed since the sidebar never fully vanishes -->
+        <!-- Main Content Area -->
+        <mat-sidenav-content class="main-content">
+            <!-- Page Content -->
+            <div class="content">
+                <router-outlet></router-outlet>
+            </div>
 
-        <!-- Page Content -->
-        <div class="content">
-            <router-outlet></router-outlet>
-        </div>
+        </mat-sidenav-content>
 
-    </mat-sidenav-content>
+    </mat-sidenav-container>
 
-</mat-sidenav-container>
+</div>

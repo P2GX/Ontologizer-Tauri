@@ -8,25 +8,25 @@
             <div class="tabs-container">
                 <button class="tab-button" [class.active]="selectedChart === 'dashboard'"
                     (click)="selectTab('dashboard')">
-                    <span class="material-symbols-outlined tab-icon">dashboard</span>
+                    <span class="material-symbols-outlined tab-icon" aria-hidden="true">dashboard</span>
                     Dashboard
                 </button>
                 <mat-divider class="vertical" [vertical]="true"></mat-divider>
                 <button class="tab-button" [class.active]="selectedChart === 'table'"
                     (click)="selectTab('table')">
-                    <span class="material-symbols-outlined tab-icon">data_table</span>
+                    <span class="material-symbols-outlined tab-icon" aria-hidden="true">data_table</span>
                     Table
                 </button>
                 <mat-divider class="vertical" [vertical]="true"></mat-divider>
                 <button class="tab-button" [class.active]="selectedChart === 'go-graph'"
                     (click)="selectTab('go-graph')">
-                    <span class="material-symbols-outlined tab-icon">graph_4</span>
+                    <span class="material-symbols-outlined tab-icon" aria-hidden="true">graph_4</span>
                     GO-Graph
                 </button>
                 <mat-divider class="vertical" [vertical]="true"></mat-divider>
                 <button class="tab-button" [class.active]="selectedChart === 'bar-plot'"
                     (click)="selectTab('bar-plot')">
-                    <span class="material-symbols-outlined tab-icon">finance</span>
+                    <span class="material-symbols-outlined tab-icon" aria-hidden="true">finance</span>
                     Bar Plot
                 </button>
             </div>

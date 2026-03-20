@@ -1,16 +1,39 @@
-<div class="dropdown-container">
-    <h4>{{ label }}</h4>
-    <ul class="settings-menu">
-        <li (click)="toggleMenu()" class="settings-menu-header">
-            <p>{{ displayOf(selected) }}</p>
-            <img src="assets/icons/arrow-down.svg" alt="Arrow Icon" [class.down]="menuOpen" />
-
-        </li>
-        <ul class="settings-submenu" [class.open]="menuOpen">
+<div class="select-field" [class.open]="menuOpen" [class.filled]="isFilled">
+    <button type="button" class="select-trigger"
+        [attr.aria-label]="label + (isFilled ? ': ' + displayOf(selected) : '')"
+        [attr.aria-expanded]="menuOpen"
+        [attr.aria-controls]="menuId"
+        aria-haspopup="listbox"
+        (click)="toggleMenu()"
+        (keydown)="onTriggerKeydown($event)">
+        <span class="select-label" aria-hidden="true">{{ label }}</span>
+        <span class="select-value" aria-hidden="true">{{ displayOf(selected) }}</span>
+        <svg class="select-caret" [class.flipped]="menuOpen"
+            width="10" height="6" viewBox="0 0 10 6"
+            aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.8"
+                fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    @if (menuOpen) {
+        <ul class="select-menu" [id]="menuId" role="listbox" [attr.aria-label]="label">
             @for (opt of options; track opt) {
-                <li (click)="selectOption(opt)">{{ displayOf(opt) }}</li>
+                <li class="select-option"
+                    role="option"
+                    [attr.aria-selected]="opt === selected"
+                    tabindex="0"
+                    (click)="selectOption(opt)"
+                    (keydown)="onOptionKeydown($event, opt)">
+                    <span class="select-option-text">{{ displayOf(opt) }}</span>
+                    @if (opt === selected) {
+                        <svg class="select-check" width="14" height="14" viewBox="0 0 14 14"
+                            aria-hidden="true" focusable="false">
+                            <path d="M2 7l4 4 6-6" stroke="currentColor" stroke-width="1.8"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    }
+                </li>
             }
         </ul>
-
-    </ul>
+    }
 </div>

@@ -17,31 +17,35 @@
                 <p>{{ methodLabel }}</p>
             </div>
             @if (isFrequentist) {
-                <div class="summary-item">
+                <div class="summary-item indented">
                     <p>Background:</p>
                     <p>{{ backgroundLabel }}</p>
                 </div>
-                <div class="summary-item">
+                <div class="summary-item indented">
                     <p>Correction:</p>
                     <p>{{ correctionLabel }}</p>
                 </div>
-                <div class="summary-item">
+                <div class="summary-item indented">
                     <p>Significance threshold:</p>
                     <p>0.05</p>
                 </div>
             }
             @else {
-                <div class="summary-item">
-                    <p>Term prior:</p>
-                    <p>{{ backgroundLabel }}</p>
-                </div>
-                <div class="summary-item">
+                <div class="summary-item indented">
                     <p>False positive prior:</p>
                     <p>0.05</p>
                 </div>
-                <div class="summary-item">
+                <div class="summary-item indented">
                     <p>False negative prior:</p>
                     <p>0.10</p>
+                </div>
+                <div class="summary-item indented">
+                    <p>Prior:</p>
+                    <p>{{ backgroundLabel }}</p>
+                </div>
+                <div class="summary-item indented">
+                    <p>Posterior threshold:</p>
+                    <p>0.50</p>
                 </div>
             }
         </div>
@@ -58,7 +62,7 @@
 
         <div class="column-container" id="charts">
             <div class="chart-card">
-                <p class="chart-label">Term ranking</p>
+                <p class="chart-label">Score distribution</p>
                 <div class="chart-figure" #chartA></div>
             </div>
             <div class="chart-card">

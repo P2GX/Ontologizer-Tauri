@@ -1,14 +1,10 @@
-<div class="legend-wrapper">
-  <span class="legend-label">{{ isBayesian ? 'Post. Prob.' : '-log₁₀(p)' }}</span>
-  <div class="legend-scale">
-    <div class="legend-gradient"></div>
-    <div class="legend-ticks">
-      @for (tick of ticks; track tick.label) {
-        <div class="legend-tick" [style.left.%]="tick.position">
-          <div class="tick-line"></div>
-          <span class="tick-label">{{ tick.label }}</span>
+<div class="colorbar">
+    <span class="colorbar-title">{{ isBayesian ? 'Posterior' : '−log₁₀(p)' }}</span>
+    <div class="colorbar-body">
+        <div class="colorbar-bar"></div>
+        <div class="colorbar-range">
+            <span>0</span>
+            <span>{{ maxLabel }}</span>
         </div>
-      }
     </div>
-  </div>
 </div>

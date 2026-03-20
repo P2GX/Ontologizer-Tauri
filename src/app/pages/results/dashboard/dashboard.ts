@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, AfterViewInit, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, AfterViewInit, SimpleChanges, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import * as d3 from 'd3';
 import { DashboardInfo } from '../results';
 import { RowData } from '../../../services/results-service';
@@ -13,13 +13,15 @@ interface DonutConfig {
 
 const FONT = 'Trebuchet MS, Trebuchet, sans-serif';
 const COLOR = '#003754';
+const COLOR_SIG = '#9D7220';
 
 @Component({
   selector: 'app-dashboard',
   imports: [],
   templateUrl: './dashboard.html',
   standalone: true,
-  styleUrl: './dashboard.css'
+  styleUrl: './dashboard.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Dashboard implements OnChanges, AfterViewInit, OnDestroy {
 
@@ -32,6 +34,9 @@ export class Dashboard implements OnChanges, AfterViewInit, OnDestroy {
   viewInitialized: boolean = false;
 
   private pendingDraw: ReturnType<typeof setTimeout> | null = null;
+  // Unique per-instance ID avoids SVG defs collisions if Angular ever keeps
+  // two instances in the DOM simultaneously (e.g. during route transitions)
+  private readonly distGradId = `dist-strip-grad-${Math.random().toString(36).slice(2)}`;
 
   get isFrequentist(): boolean {
     return this.dashboardInfo?.method?.method === 'Frequentist';
@@ -106,7 +111,7 @@ export class Dashboard implements OnChanges, AfterViewInit, OnDestroy {
   private redrawCharts(updateData = false): void {
     if (updateData) this.updateChartData();
     this.drawDistributionChart();
-    this.drawChart('B');
+    this.drawDonutChart();
   }
 
   // --- D3 style helpers ---
@@ -145,83 +150,146 @@ export class Dashboard implements OnChanges, AfterViewInit, OnDestroy {
     const data = this.pValueData;
     if (!data || data.length === 0) return;
 
-    const top = data.slice(0, 100);
-    const values = this.isFrequentist
-      ? top.map(d => (d.score > 0 ? -Math.log10(d.score) : 0))
-      : top.map(d => d.score);
-    const maxVal = Math.max(...values);
+    // Map each term onto a shared "significance" axis: higher x = more significant
+    const threshold = this.isFrequentist ? -Math.log10(0.05) : 0.5;
+    const toX = (score: number): number =>
+      this.isFrequentist ? (score > 0 ? -Math.log10(score) : 0) : score;
+    const isSig = (score: number): boolean =>
+      this.isFrequentist ? score <= 0.05 : score >= 0.5;
 
-    const M = { top: 8, right: 12, bottom: 36, left: 46 };
-    const chartW = width - M.left - M.right;
-    const chartH = height - M.top - M.bottom;
+    type Pt = { x: number; sig: boolean; i: number };
+    const points: Pt[] = data.map((d, i) => ({ x: toX(d.score), sig: isSig(d.score), i }));
+    const sigPts = points.filter(p => p.sig);
+
+    // Cap the fog at 2 000 dots — visual density is identical beyond this count
+    // and it prevents frame-rate collapse on large datasets (40 000+ terms)
+    const MAX_FOG = 2000;
+    const allNonSig = points.filter(p => !p.sig);
+    const fogPts = allNonSig.length > MAX_FOG
+      ? allNonSig.filter((_, i) => i % Math.ceil(allNonSig.length / MAX_FOG) === 0)
+      : allNonSig;
+
+    const maxScore = points.reduce((m, p) => Math.max(m, p.x), 0);
+    // Always show the threshold line even when no term clears it
+    const xMax = Math.max(maxScore, threshold * 1.18);
+
+    const M = { top: 22, right: 14, bottom: 22, left: 14 };
+    const W = width - M.left - M.right;
+    const H = height - M.top - M.bottom;
+    const stripH = Math.min(H * 0.45, 30);
+    const cy = H / 2;
 
     const svg = d3.select<HTMLDivElement, unknown>(containerEl)
       .append<SVGSVGElement>('svg')
       .attr('width', width)
-      .attr('height', height);
+      .attr('height', height)
+      // Screen-reader summary of what the chart shows
+      .attr('role', 'img')
+      .attr('aria-label',
+        `Score distribution: ${sigPts.length.toLocaleString('de-DE')} of ` +
+        `${points.length.toLocaleString('de-DE')} terms are significant`);
 
+    // Horizontal gradient: barely-there on the left (low scores), slightly more
+    // solid on the right (high scores) — subtly reinforces direction
+    const defs = svg.append('defs');
+    const grad = defs.append('linearGradient')
+      .attr('id', this.distGradId)
+      .attr('x1', '0%').attr('x2', '100%')
+      .attr('y1', '0%').attr('y2', '0%');
+    grad.append('stop').attr('offset', '0%').attr('stop-color', COLOR).attr('stop-opacity', 0.03);
+    grad.append('stop').attr('offset', '100%').attr('stop-color', COLOR).attr('stop-opacity', 0.08);
 
     const g = svg.append<SVGGElement>('g').attr('transform', `translate(${M.left},${M.top})`);
+    const xScale = d3.scaleLinear().domain([0, xMax]).range([0, W]);
 
-    const n = top.length;
-    const pointSpacing = chartW / n;
+    // Pill-shaped strip background
+    g.append('rect')
+      .attr('x', 0).attr('y', cy - stripH / 2)
+      .attr('width', W).attr('height', stripH)
+      .attr('rx', stripH / 2)
+      .attr('fill', `url(#${this.distGradId})`);
 
-    const yScale = d3.scaleLinear()
-      .domain([0, maxVal])
-      .range([chartH, 0])
-      .nice();
+    // Deterministic y-jitter — sin-hash keeps every dot in the same spot
+    // on re-renders without needing to store per-point positions
+    const jitter = (i: number): number =>
+      (((Math.sin(i * 127.1 + 311.7) * 43758.5453) % 1 + 1) % 1 - 0.5) * (stripH - 6);
 
-    const niceMax = yScale.domain()[1];
-    const step = d3.tickStep(0, niceMax, 5);
-    const yTickVals = d3.range(0, niceMax + step * 0.01, step);
+    // Non-significant fog: additive transparency creates density from overlapping dots
+    g.selectAll<SVGCircleElement, Pt>('.ns-dot')
+      .data(fogPts)
+      .join('circle')
+      .attr('cx', d => xScale(d.x))
+      .attr('cy', d => cy + jitter(d.i))
+      .attr('r', 1.5)
+      .attr('fill', COLOR)
+      .attr('opacity', 0.09);
 
-    const areaGen = d3.area<number>()
-      .x((_, i) => i * pointSpacing + pointSpacing / 2)
-      .y0(chartH)
-      .y1(d => yScale(d))
-      .curve(d3.curveMonotoneX);
+    // Soft glow halo behind each significant dot — radiates outward from the pill
+    g.selectAll<SVGCircleElement, Pt>('.sig-glow')
+      .data(sigPts)
+      .join('circle')
+      .attr('cx', d => xScale(d.x))
+      .attr('cy', d => cy + jitter(d.i))
+      .attr('r', 7)
+      .attr('fill', COLOR_SIG)
+      .attr('opacity', 0.18);
 
-    const lineGen = d3.line<number>()
-      .x((_, i) => i * pointSpacing + pointSpacing / 2)
-      .y(d => yScale(d))
-      .curve(d3.curveMonotoneX);
+    // Significant dots — prominent gold, clearly distinguishable from the fog
+    g.selectAll<SVGCircleElement, Pt>('.sig-dot')
+      .data(sigPts)
+      .join('circle')
+      .attr('cx', d => xScale(d.x))
+      .attr('cy', d => cy + jitter(d.i))
+      .attr('r', 3)
+      .attr('fill', COLOR_SIG);
 
-    g.append('path').datum(values).attr('d', areaGen).attr('fill', '#9D7220').attr('opacity', 0.25);
-    g.append('path').datum(values).attr('d', lineGen).attr('fill', 'none').attr('stroke', '#9D7220').attr('stroke-width', 2);
+    // Threshold divider
+    const tx = xScale(threshold);
+    g.append('line')
+      .attr('x1', tx).attr('x2', tx)
+      .attr('y1', cy - stripH / 2 - 8)
+      .attr('y2', cy + stripH / 2 + 4)
+      .attr('stroke', COLOR).attr('stroke-width', 1)
+      .attr('stroke-dasharray', '3,3').attr('opacity', 0.28);
 
-    // Y-axis
-    const yAxisG = g.append<SVGGElement>('g').call(d3.axisLeft(yScale).tickValues(yTickVals).tickSize(0));
-    yAxisG.select('.domain').remove();
-    this.styleAxisGroup(yAxisG);
+    // Labels anchor to the less-crowded side of the threshold line;
+    // clamped so they never spill outside the SVG bounds
+    const anchor = tx > W * 0.72 ? 'end' : 'start';
+    const lx = Math.max(6, Math.min(W - 6, anchor === 'start' ? tx + 5 : tx - 5));
 
+    // Threshold label — above the divider
     this.styleText(
       g.append<SVGTextElement>('text')
-        .attr('transform', 'rotate(-90)')
-        .attr('x', -chartH / 2)
-        .attr('y', -38)
-        .attr('text-anchor', 'middle'),
-      '11px'
-    ).text(this.isFrequentist ? '-log₁₀(p)' : 'Posterior');
+        .attr('x', lx).attr('y', cy - stripH / 2 - 11)
+        .attr('text-anchor', anchor),
+      '10px'
+    ).attr('opacity', 0.38)
+      .text(this.isFrequentist ? 'p = 0.05' : 'Post. ≥ 0.5');
 
-    // X-axis
-    const xScale = d3.scaleLinear().domain([0, n]).range([0, chartW]);
-    const xAxisG = g.append<SVGGElement>('g')
-      .attr('transform', `translate(0,${chartH})`)
-      .call(d3.axisBottom(xScale).tickValues(d3.range(10, n + 1, 10)).tickFormat(d => String(d)).tickSize(3));
-    xAxisG.select('.domain').remove();
-    this.styleAxisGroup(xAxisG);
-
+    // Count label — below the divider; gold when terms are significant, muted otherwise
     this.styleText(
-      g.append<SVGTextElement>('text').attr('x', chartW / 2).attr('y', chartH + 30).attr('text-anchor', 'middle'),
-      '11px'
-    ).text('Rank');
+      g.append<SVGTextElement>('text')
+        .attr('x', lx).attr('y', cy + stripH / 2 + 16)
+        .attr('text-anchor', anchor),
+      '10px'
+    ).attr('fill', sigPts.length > 0 ? COLOR_SIG : COLOR)
+      .attr('opacity', sigPts.length > 0 ? 0.9 : 0.35)
+      .text(`${sigPts.length.toLocaleString('de-DE')} significant`);
+
+    // Directional hint — anchored well inside the chart area to avoid clipping
+    this.styleText(
+      g.append<SVGTextElement>('text')
+        .attr('x', W).attr('y', H - 4)
+        .attr('text-anchor', 'end'),
+      '10px'
+    ).attr('opacity', 0.25).text('more significant →');
   }
 
-  private drawChart(type: 'A' | 'B'): void {
-    const containerEl = (type === 'A' ? this.chartContainerA : this.chartContainerB)?.nativeElement;
+  private drawDonutChart(): void {
+    const containerEl = this.chartContainerB?.nativeElement;
     if (!containerEl) return;
 
-    const config = this.chartConfigs[type];
+    const config = this.chartConfigs['B'];
     d3.select(containerEl).selectAll('*').remove();
 
     const width = containerEl.clientWidth;

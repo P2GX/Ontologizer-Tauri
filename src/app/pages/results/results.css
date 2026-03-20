@@ -16,40 +16,12 @@
     color: white;
 }
 
-.empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 5rem;
-    color: var(--md-sys-color-on-primary-container);
-    text-align: center;
-}
-
-.empty-state-icon {
-    font-size: 4rem;
-    color: var(--md-sys-color-outline) !important;
-}
-
-.empty-state h2 {
-    margin: 0;
-    font-weight: 400;
-    font-size: 1.4rem;
-    color: var(--md-sys-color-on-primary-container);
-}
-
-.empty-state p {
-    margin: 0;
-    font-size: 0.95rem;
-    color: var(--md-sys-color-outline);
-}
 
 h2 {
     font-weight: 200;
     margin-bottom: 0.5rem;
     margin-top: 0;
-    font-size: 1.3rem;
+    font-size: var(--font-highlight);
 }
 
 
@@ -72,7 +44,7 @@ button.tab-button {
 
 button.tab-button.active {
     background-color: var(--md-sys-color-primary-container);
-    color: black;
+    color: var(--md-sys-color-on-primary-container);
 }
 
 button.tab-button:hover:not(.active) {
@@ -96,6 +68,12 @@ button.tab-button:hover:not(.active) {
 
     to {
         top: 0rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tabs-container {
+        animation: none;
     }
 }
 
@@ -140,7 +118,7 @@ button.tab-button:hover:not(.active) {
 
 .analyze-button-container.hide {
     margin-top: 0;
-    transition: all 0.3s ease;
+    transition: margin-top 0.3s ease;
 }
 
 .mat-divider {
@@ -151,10 +129,10 @@ button.tab-button:hover:not(.active) {
 .control-header {
     display: flex;
     justify-content: center;
-    width: 80cqw;
+    width: var(--container-width);
+    min-width: var(--container-min-width);
+    max-width: var(--container-max-width);
     margin: 0 auto 1.5rem;
     padding: 0 1.5rem;
-    min-width: 700px;
-    max-width: 1400px;
 }
 

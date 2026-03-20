@@ -1,10 +1,10 @@
 .chart-container {
   height: 32rem;
-  width: 80cqw;
+  width: var(--container-width);
+  min-width: var(--container-min-width);
+  max-width: var(--container-max-width);
   flex-direction: column;
   box-sizing: border-box;
-  min-width: 700px;
-  max-width: 1400px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,20 +12,37 @@
   border: 1px solid var(--md-sys-color-outline);
   border-radius: 1rem;
   background-color: var(--md-sys-color-on-primary);
+  contain: layout style;
 }
 
-.control-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  z-index: 10;
+
+.container-body {
   width: 100%;
+  max-width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  scrollbar-gutter: stable;
 }
 
-.control-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+.container-body::-webkit-scrollbar {
+  height: 6px;
+}
+
+.container-body::-webkit-scrollbar-track {
+  background: var(--md-sys-color-primary-container);
+  border-radius: 3px;
+}
+
+.container-body::-webkit-scrollbar-thumb {
+  background: var(--md-sys-color-outline);
+  border-radius: 3px;
+}
+
+.container-body::-webkit-scrollbar-thumb:hover {
+  background: var(--md-sys-color-primary);
+}
+
+.chartDiv {
+  height: 100%;
+  cursor: pointer;
 }

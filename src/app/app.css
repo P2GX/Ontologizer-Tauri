@@ -1,13 +1,75 @@
-.sidenav-container {
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-}
-
 html,
 body {
   height: 100%;
   margin: 0;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ======================================================= */
+/* Custom title bar                                         */
+/* ======================================================= */
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 2rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.titlebar-controls {
+  display: flex;
+  height: 100%;
+}
+
+.titlebar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--md-sys-color-primary);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.titlebar-btn mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+}
+
+.titlebar-btn:hover {
+  background-color: rgba(0, 55, 84, 0.08);
+  color: var(--md-sys-color-primary);
+}
+
+.titlebar-btn--close:hover {
+  background-color: rgba(234, 84, 81, 0.12);
+  color: #ea5451;
+}
+
+/* ======================================================= */
+
+.sidenav-container {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .sidenav {
@@ -44,13 +106,13 @@ body {
 .sidenav-header h2 {
   margin: 0;
   font-weight: 300;
-  font-size: 1.3rem;
+  font-size: var(--font-highlight);
 }
 
 .nav-item {
   margin: 4px 8px;
   border-radius: 8px;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
   color: var(--md-sys-color-on-primary);
   white-space: nowrap; /* Prevents wrapping during collapse */
   overflow: hidden;
@@ -78,7 +140,7 @@ body {
   border-radius: 2em;
   transform: translateX(0.2em);
   color: var(--md-sys-color-on-primary); /* Reusing white */
-  transition: all 0.6s ease;
+  transition: background-color 0.6s ease, transform 0.6s ease;
 }
 
 .mdc-list {
@@ -147,21 +209,11 @@ a.nav-item {
   padding-top: 0;
 }
 
-.content-analysis {
-  padding: 12px !important;
-  overflow-x: auto !important;
-  overflow-y: auto !important;
-  background-color: red !important; /* Note: Left this hardcoded as it looks like a debug value */
-  height: 100vh;
-}
 
-* {
-  transition: all 0.2s ease-in-out;
-}
 
 ::ng-deep h1 {
   margin: 1rem;
-  font-size: 2.0rem;
+  font-size: var(--font-display);
   font-weight: 400;
   color: var(--md-sys-color-primary);
 }

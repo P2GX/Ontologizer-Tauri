@@ -76,10 +76,11 @@ export class Results implements OnInit {
 
   private computeLegendMax(data: RowData[]): number {
     if (!data || data.length === 0) return 1;
-    const values = this.resultsService.isBayesian()
-      ? data.map(d => d.score)
-      : data.map(d => -Math.log10(d.score));
-    const max = Math.max(...values);
+    const isBayesian = this.resultsService.isBayesian();
+    const max = data.reduce((acc, d) => {
+      const val = isBayesian ? d.score : -Math.log10(d.score);
+      return val > acc ? val : acc;
+    }, 0);
     return isFinite(max) && max > 0 ? max : 1;
   }
 }

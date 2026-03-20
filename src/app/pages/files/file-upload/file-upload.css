@@ -148,7 +148,7 @@ app-tooltip {
     flex-direction: column;
     border-radius: 5px;
     border: 2px solid var(--md-sys-color-outline);
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .upload-form:hover {

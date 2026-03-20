@@ -1,15 +1,15 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { RowData, FrequentistRowData } from '../../../services/results-service';
-import { Legend } from './legend/legend';
-import { DropdownMenu } from '../../../shared/dropdown-menu/dropdown-menu';
+import { ChartHeader } from '../../../shared/chart-header/chart-header';
 
 @Component({
   selector: 'app-bar-chart',
-  imports: [Legend, DropdownMenu],
+  imports: [ChartHeader],
   templateUrl: './bar-chart.html',
   styleUrl: './bar-chart.css',
-  standalone: true
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BarChart implements AfterViewInit, OnChanges {
 
@@ -24,6 +24,11 @@ export class BarChart implements AfterViewInit, OnChanges {
   viewInitialized = false;
 
   plotOptions: string[] = ['-Log10(p)', 'Enrichment ratio', 'Study count'];
+  readonly plotDisplayNames: Record<string, string> = {
+    '-Log10(p)': '−log₁₀(p)',
+    'Enrichment ratio': 'Enr. ratio',
+    'Study count': 'Count'
+  };
   subgraphs: string[] = ['All', 'Molecular Function', 'Biological Process', 'Cellular Component'];
 
   selectedPlotOption = '-Log10(p)';
@@ -115,14 +120,14 @@ export class BarChart implements AfterViewInit, OnChanges {
       yData = displayData.map(row => row.score);
     } else {
       const yValues: Record<string, number[]> = {
-        '-Log10(p.adj)': displayData.map(r => -Math.log10(r.score)),
+        '-Log10(p)': displayData.map(r => -Math.log10(r.score)),
         'Enrichment ratio': displayData.map(r => {
           const f = r as FrequentistRowData;
           return (f.k / f.n) / (f.K / f.N);
         }),
         'Study count': displayData.map(r => (r as FrequentistRowData).k)
       };
-      yData = yValues[this.selectedPlotOption] ?? yValues['-Log10(p.adj)'];
+      yData = yValues[this.selectedPlotOption] ?? yValues['-Log10(p)'];
     }
 
     const yAxisLabel = this.isBayesian ? 'Posterior Probability' : this.selectedPlotOption;

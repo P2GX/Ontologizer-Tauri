@@ -10,13 +10,46 @@
 
 .files-settings {
     border-radius: 1rem;
-    width: 80cqw;
+    width: var(--container-width);
+    min-width: var(--container-min-width);
+    max-width: var(--container-max-width);
     box-sizing: border-box;
     animation: mymove 0.5s;
     position: relative;
     background: var(--md-sys-color-on-primary);
     padding: 2rem;
     box-shadow: 0 4px 12px var(--shadow-header);
+}
+
+/* === Gene Ontology auto-load status === */
+.go-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 1.25rem;
+    font-size: var(--font-small);
+    color: var(--md-sys-color-outline);
+    min-height: 1.4rem;
+}
+
+.go-status-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.go-status-ok {
+    color: var(--md-sys-color-success);
+}
+
+.go-status-err {
+    color: var(--md-sys-color-error, #AF1821);
+}
+
+.go-wait-hint {
+    font-size: var(--font-small);
+    color: var(--md-sys-color-outline);
+    margin: 0.4rem 0 0;
+    text-align: center;
 }
 
 /* === Step Navigation === */

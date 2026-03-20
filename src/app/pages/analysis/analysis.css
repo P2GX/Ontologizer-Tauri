@@ -1,14 +1,15 @@
-.analysis-content {
+.analysis-body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100%;
     margin-bottom: 2rem;
 }
 
 .analysis-container {
     border-radius: 1rem;
-    width: 80cqw;
+    width: var(--container-width);
+    min-width: var(--container-min-width);
+    max-width: var(--container-max-width);
     box-sizing: border-box;
     animation: mymove 0.5s;
     position: relative;
@@ -37,7 +38,7 @@
     cursor: pointer;
     gap: 0.5rem;
     box-shadow: 0 0.13rem 0.8rem var(--shadow-header);
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
     background-color: var(--md-sys-color-on-primary);
     display: flex;
     flex-direction: column;
@@ -91,7 +92,9 @@
 .nested-settings {
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
     width: 100%;
+    margin-top: 1rem;
 }
 
 .nested-settings .settings {

@@ -20,8 +20,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class Analysis {
 
   selectedMethod: Method | null = null;
-  topology: Background = 'Standard';
-  correction: Correction = 'None';
+  topology: Background | null = null;
+  correction: Correction | null = null;
   isAnalysing = false;
   private justCompleted = false;
 
@@ -44,7 +44,7 @@ export class Analysis {
 
   constructor(
     private analysisService: AnalysisService,
-    private filesService: FilesService,
+    readonly filesService: FilesService,
     private resultsService: ResultsService,
     private snackBar: MatSnackBar,
     private router: Router
@@ -53,24 +53,27 @@ export class Analysis {
   setCategory(category: 'Frequentist' | 'Bayesian') {
     if (category === 'Bayesian') {
       this.selectedMethod = { method: 'Bayesian' };
-    } else {
+      void this.analysisService.saveSettings(this.selectedMethod);
+    } else if (this.topology && this.correction) {
       this.selectedMethod = { method: 'Frequentist', background: this.topology, correction: this.correction };
+      void this.analysisService.saveSettings(this.selectedMethod);
+    } else {
+      this.selectedMethod = null;
     }
-    void this.analysisService.saveSettings(this.selectedMethod);
   }
 
   selectTopology(topology: string) {
     this.topology = topology as Background;
-    if (this.isFrequentist) {
-      this.selectedMethod = { method: 'Frequentist', background: this.topology, correction: this.correction! };
+    if (this.isFrequentist && this.correction) {
+      this.selectedMethod = { method: 'Frequentist', background: this.topology, correction: this.correction };
       void this.analysisService.saveSettings(this.selectedMethod);
     }
   }
 
   selectCorrection(correction: string) {
     this.correction = correction as Correction;
-    if (this.isFrequentist) {
-      this.selectedMethod = { method: 'Frequentist', background: this.topology!, correction: this.correction };
+    if (this.isFrequentist && this.topology) {
+      this.selectedMethod = { method: 'Frequentist', background: this.topology, correction: this.correction };
       void this.analysisService.saveSettings(this.selectedMethod);
     }
   }
