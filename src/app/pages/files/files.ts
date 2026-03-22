@@ -108,12 +108,12 @@ export class Files implements AfterViewInit {
       const result = await invoke('build_annotation_index');
       console.log("Success:", result);
       this.isFinished.set(true);
-      setTimeout(() => this.router.navigate(['/analysis']), 1500);
     } catch (error) {
       console.error("Error building annotation index:", error);
       this.snackBar.open(`Failed to process files: ${error}`, 'Close', { panelClass: ['custom-snackbar'], duration: 8000 });
     } finally {
       this.isProcessingAll.set(false);
+      this.router.navigate(['/analysis']);
     }
   }
 }
