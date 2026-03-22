@@ -1,14 +1,18 @@
 <div class="chart-container">
     <div class="control-panel">
-        @if (!isBayesian) {
-            <app-dropdown-menu [label]="'Value to plot'" [options]="plotOptions" [selected]="selectedPlotOption"
-                (selectedChange)="selectPlotOption($event)"></app-dropdown-menu>
-        }
-        <app-dropdown-menu [label]="'Aspect'" [options]="subgraphs" [selected]="'All'"
-            (selectedChange)="selectSubgraph($event)"></app-dropdown-menu>
-        <app-dropdown-menu [label]="'Show'" [options]="topNOptions" [selected]="selectedTopN"
-            (selectedChange)="selectTopN($event)"></app-dropdown-menu>
-        <app-legend [maxValue]="legendMaxValue" [isBayesian]="isBayesian"></app-legend>
+        <div class="control-row">
+            @if (!isBayesian) {
+                <app-dropdown-menu [label]="'Statistic'" [options]="plotOptions" [selected]="selectedPlotOption"
+                    (selectedChange)="selectPlotOption($event)"></app-dropdown-menu>
+            }
+            <app-legend [maxValue]="legendMaxValue" [isBayesian]="isBayesian"></app-legend>
+        </div>
+        <div class="control-row">
+            <app-dropdown-menu [label]="'Aspect'" [options]="subgraphs" [selected]="'All'"
+                (selectedChange)="selectSubgraph($event)"></app-dropdown-menu>
+            <app-dropdown-menu [label]="'Size'" [options]="topNOptions" [selected]="selectedTopN"
+                (selectedChange)="selectTopN($event)"></app-dropdown-menu>
+        </div>
     </div>
 
     <div class="container-body" style="width:100%; max-width:100%; height: 100%; overflow-x: scroll;">

@@ -7,11 +7,12 @@ import { Method } from './analysis-service';
 })
 export class ResultsService {
   public currentMethod = signal<Method | null>(null);
-  public isBayesian = computed(() => this.currentMethod()?.method === 'bayesian');
-  public isFrequentist = computed(() => this.currentMethod()?.method === 'frequentist');
+  public isBayesian = computed(() => this.currentMethod()?.method === 'Bayesian');
+  public isFrequentist = computed(() => this.currentMethod()?.method === 'Frequentist');
   public frequentistTableData = signal<FrequentistRowData[] | null>(null);
   public bayesianTableData = signal<RowData[] | null>(null);
   public barChartData = signal<RowData[] | null>(null);
+  public barPlotData = signal<RowData[] | null>(null);
   public frequentistTotalCount = signal<number>(0);
   public bayesianTotalCount = signal<number>(0);
 
@@ -19,6 +20,7 @@ export class ResultsService {
     this.frequentistTableData.set(null);
     this.bayesianTableData.set(null);
     this.barChartData.set(null);
+    this.barPlotData.set(null);
     this.frequentistTotalCount.set(0);
     this.bayesianTotalCount.set(0);
     this.dotData = null;
@@ -67,27 +69,31 @@ export class ResultsService {
 
   async loadAnalysisOutput() {
     try {
-      if (this.currentMethod()?.method === 'bayesian') {
-        const [firstPage, barPage] = await Promise.all([
+      if (this.currentMethod()?.method === 'Bayesian') {
+        const [firstPage, barPage, barPlotJson] = await Promise.all([
           invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 10 }),
-          invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 100 })
+          invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 100 }),
+          invoke<string>('get_bar_chart_data', { n: 50 })
         ]);
         const items = JSON.parse(firstPage.items);
         this.bayesianTableData.set(this.parseBayesianResults(items));
         this.bayesianTotalCount.set(firstPage.total);
         this.resultsLength = firstPage.total;
         this.barChartData.set(this.parseBayesianResults(JSON.parse(barPage.items)));
+        this.barPlotData.set(this.parseBayesianResults(JSON.parse(barPlotJson)));
       } else {
-        const [summary, firstPage, barPage] = await Promise.all([
+        const [summary, firstPage, barPage, barPlotJson] = await Promise.all([
           invoke<AnalysisSummaryResponse>('get_analysis_summary'),
           invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 10 }),
-          invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 100 })
+          invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 100 }),
+          invoke<string>('get_bar_chart_data', { n: 50 })
         ]);
         const items = JSON.parse(firstPage.items);
         this.frequentistTableData.set(this.parseAnalysisResults(items));
         this.frequentistTotalCount.set(summary.total);
         this.resultsLength = summary.total;
         this.barChartData.set(this.parseAnalysisResults(JSON.parse(barPage.items)));
+        this.barPlotData.set(this.parseAnalysisResults(JSON.parse(barPlotJson)));
         this.proportionData = {
           total: { significant: summary.proportionData.total.significant, nonSignificant: summary.proportionData.total.nonSignificant },
           BP: { significant: summary.proportionData.bp.significant, nonSignificant: summary.proportionData.bp.nonSignificant },
@@ -108,7 +114,7 @@ export class ResultsService {
     try {
       const result = await invoke<{ items: string; total: number }>('get_analysis_results_page', { page, pageSize });
       const items = JSON.parse(result.items);
-      if (this.currentMethod()?.method === 'bayesian') {
+      if (this.currentMethod()?.method === 'Bayesian') {
         this.bayesianTableData.set(this.parseBayesianResults(items));
       } else {
         this.frequentistTableData.set(this.parseAnalysisResults(items));
@@ -210,6 +216,7 @@ export interface DotData {
 export interface Nodes {
   significant: { [termId: string]: NodeData };
   ancestors: { [termId: string]: NodeData };
+  tested: { [termId: string]: NodeData };
 }
 
 export interface NodeData {

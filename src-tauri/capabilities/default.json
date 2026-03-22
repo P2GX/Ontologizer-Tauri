@@ -17,6 +17,7 @@
     "dialog:allow-ask",
     "dialog:allow-confirm",
     "dialog:default",
+    "fs:default",
     "opener:default"
   ]
 }

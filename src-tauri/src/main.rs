@@ -13,7 +13,7 @@ use commands::{
     analysis::run_analysis,
     config::{save_settings, get_data_dir},
     loaders::{process_gaf_file, process_gene_file, process_go_file, build_annotation_index},
-    output::{build_go_graph_data, get_analysis_results, get_analysis_summary, get_analysis_results_page},
+    output::{build_go_graph_data, get_analysis_results, get_analysis_summary, get_analysis_results_page, get_bar_chart_data},
 };
 
 fn main() {
@@ -44,6 +44,7 @@ fn main() {
             get_analysis_summary,
             get_analysis_results_page,
             build_go_graph_data,
+            get_bar_chart_data,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

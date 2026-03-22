@@ -3,13 +3,13 @@ import { invoke } from '@tauri-apps/api/core';
 
 // These types mirror the Rust enums in src-tauri/src/commands/config.rs.
 // Keep them in sync when the Rust side changes.
-export type Topology = 'Standard' | 'ParentUnion' | 'ParentIntersection';
+export type Background = 'Standard' | 'ParentUnion' | 'ParentIntersection';
 export type Correction = 'Bonferroni' | 'BonferroniHolm' | 'BenjaminHochberg' | 'None';
 export type Method =
-    | { method: 'bayesian' }
-    | { method: 'frequentist'; topology: Topology; correction: Correction };
+    | { method: 'Bayesian' }
+    | { method: 'Frequentist'; background: Background; correction: Correction };
 
-export const TOPOLOGY_NAMES: Record<Topology, string> = {
+export const BACKGROUND_NAMES: Record<Background, string> = {
   Standard: 'Standard',
   ParentUnion: 'Parent Union',
   ParentIntersection: 'Parent Intersection',

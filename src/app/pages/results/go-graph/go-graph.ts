@@ -2,7 +2,7 @@ import { Component, SimpleChanges, Input, OnChanges, ElementRef, ViewChild, Afte
 import { DropdownMenu } from '../../../shared/dropdown-menu/dropdown-menu';
 import { Legend } from '../bar-chart/legend/legend';
 import { Tooltip } from '../../../shared/tooltip/tooltip';
-import { DotData } from '../../../services/results-service';
+import { DotData, NodeData } from '../../../services/results-service';
 import 'd3-graphviz';
 import * as d3 from 'd3';
 
@@ -23,36 +23,21 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('MFgraphvizContainer', { static: true }) MFgraphvizContainer!: ElementRef;
   @ViewChild('BPgraphvizContainer', { static: true }) BPgraphvizContainer!: ElementRef;
   @ViewChild('CCgraphvizContainer', { static: true }) CCgraphvizContainer!: ElementRef;
-  @ViewChild('MFgraphvizContainerFull', { static: true }) MFgraphvizContainerFull!: ElementRef;
-  @ViewChild('BPgraphvizContainerFull', { static: true }) BPgraphvizContainerFull!: ElementRef;
-  @ViewChild('CCgraphvizContainerFull', { static: true }) CCgraphvizContainerFull!: ElementRef;
 
   subgraphs: string[] = ['Molecular Function', 'Biological Process', 'Cellular Component'];
-  topNOptions: string[] = ['Significant', 'Top 10', 'Top 25', 'Top 50', 'Top 100'];
+  topNOptions: string[] = ['Significant', 'Top 10', 'Top 25', 'Top 50'];
 
   showTooltip: boolean = false;
-  showNonSignificant: boolean = false;
-  fullGraphsRendered: boolean = false;
-
   selectedChart: 'MF' | 'BP' | 'CC' = 'MF';
   selectedTopN: string = 'Significant';
 
-  dotStrings = {
-    BP: { compressed: '', full: '' },
-    MF: { compressed: '', full: '' },
-    CC: { compressed: '', full: '' }
-  };
+  dotStrings: Record<'BP' | 'MF' | 'CC', string> = { BP: '', MF: '', CC: '' };
 
-  toggleExpanded() {
-    this.showNonSignificant = !this.showNonSignificant;
-    if (this.showNonSignificant && !this.fullGraphsRendered) {
-      this.fullGraphsRendered = true;
-      setTimeout(() => {
-        this.renderFull('MF');
-        this.renderFull('BP');
-        this.renderFull('CC');
-      }, 0);
-    }
+  private updateOptionsForMethod(): void {
+    this.topNOptions = this.isBayesian
+      ? ['Posterior', 'Top 10', 'Top 25', 'Top 50']
+      : ['Significant', 'Top 10', 'Top 25', 'Top 50'];
+    this.selectedTopN = this.isBayesian ? 'Posterior' : 'Significant';
   }
 
   selectChart(chart: string) {
@@ -68,72 +53,80 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     this.generateDot('MF');
     this.generateDot('BP');
     this.generateDot('CC');
-    this.renderCompressed('MF');
-    this.renderCompressed('BP');
-    this.renderCompressed('CC');
-    if (this.showNonSignificant) {
-      setTimeout(() => {
-        this.renderFull('MF');
-        this.renderFull('BP');
-        this.renderFull('CC');
-      }, 0);
-    } else {
-      this.fullGraphsRendered = false;
-    }
+    this.renderGraph('MF');
+    this.renderGraph('BP');
+    this.renderGraph('CC');
   }
 
   generateDot(subgraph: 'MF' | 'BP' | 'CC'): void {
     if (!this.dotData) return;
 
-    let significant_nodes = Object.values(this.dotData[subgraph].nodes.significant);
-
-    // Sort by significance: frequentist = ascending p-value, bayesian = descending posterior prob
-    significant_nodes.sort((a, b) =>
-      this.isBayesian ? b.p_val - a.p_val : a.p_val - b.p_val
-    );
-
-    // Apply top-N filter
-    if (this.selectedTopN !== 'Significant') {
-      const n = parseInt(this.selectedTopN.replace('Top ', ''), 10);
-      significant_nodes = significant_nodes.slice(0, n);
+    // 1. Determine seed nodes based on selection
+    let seed_nodes: NodeData[];
+    if (this.selectedTopN === 'Significant' || this.selectedTopN === 'Posterior') {
+      // Use only terms that passed the significance threshold (applied by backend)
+      seed_nodes = Object.values(this.dotData[subgraph].nodes.significant);
+      seed_nodes.sort((a, b) => this.isBayesian ? b.p_val - a.p_val : a.p_val - b.p_val);
+    } else {
+      // Top N: pick from ALL tested terms (not just significant ones), sorted by score
+      const all_tested = Object.values(this.dotData[subgraph].nodes.tested);
+      all_tested.sort((a, b) => this.isBayesian ? b.p_val - a.p_val : a.p_val - b.p_val);
+      const n = this.selectedTopN === 'Top 10' ? 10 : this.selectedTopN === 'Top 25' ? 25 : 50;
+      seed_nodes = all_tested.slice(0, n);
     }
 
-    const significantIds = new Set(significant_nodes.map(nd => nd.id));
-    const ancestor_nodes = Object.values(this.dotData[subgraph].nodes.ancestors);
-    const all_nodes = [...significant_nodes, ...ancestor_nodes];
-    const allIds = new Set(all_nodes.map(nd => nd.id));
+    if (seed_nodes.length === 0) {
+      this.dotStrings[subgraph] = 'digraph { rankdir=BT; }';
+      return;
+    }
 
-    const edges_compressed = this.dotData[subgraph].edges.compressed
-      .filter(e => significantIds.has(e.source) && significantIds.has(e.target));
-    const edges_full = this.dotData[subgraph].edges.full
+    // 2. Build node pool from all tested terms (covers seeds and ancestors)
+    const nodePool = new Map<string, NodeData>();
+    for (const n of Object.values(this.dotData[subgraph].nodes.tested)) nodePool.set(n.id, n);
+    for (const n of Object.values(this.dotData[subgraph].nodes.ancestors)) nodePool.set(n.id, n);
+
+    // 3. Build child→parents adjacency from full edge set
+    const childToParents = new Map<string, string[]>();
+    for (const edge of this.dotData[subgraph].edges.full) {
+      if (!childToParents.has(edge.source)) childToParents.set(edge.source, []);
+      childToParents.get(edge.source)!.push(edge.target);
+    }
+
+    // 4. BFS upward from seeds to collect the correct ancestor set
+    const seedIds = new Set(seed_nodes.map(n => n.id));
+    const ancestorIds = new Set<string>();
+    const queue = Array.from(seedIds);
+    while (queue.length > 0) {
+      const curr = queue.shift()!;
+      for (const parent of childToParents.get(curr) ?? []) {
+        if (!seedIds.has(parent) && !ancestorIds.has(parent)) {
+          ancestorIds.add(parent);
+          queue.push(parent);
+        }
+      }
+    }
+
+    const ancestor_nodes = Array.from(ancestorIds)
+      .map(id => nodePool.get(id))
+      .filter((n): n is NodeData => n !== undefined);
+
+    // 5. Build DOT string
+    const allIds = new Set([...seedIds, ...ancestorIds]);
+    const edges = this.dotData[subgraph].edges.full
       .filter(e => allIds.has(e.source) && allIds.has(e.target));
 
-    let compressed_dot = 'digraph {\nrankdir=BT;\nranksep=1.2;\nnodesep=0.5;\n';
-    let full_dot = 'digraph {\nrankdir=BT;\nranksep=1.2;\nnodesep=0.5;\n';
-
-    for (const node of significant_nodes) {
+    let dot = 'digraph {\nrankdir=BT;\nranksep=1.2;\nnodesep=0.5;\n';
+    for (const node of [...seed_nodes, ...ancestor_nodes]) {
       const [fillColor, fontColor] = this.pvalToColor(node.p_val);
-      const tooltip = `${node.label} <br/> ${node.id} <br/> p: ${this.formatPValue(node.p_val)}<br/> Study: ${node.study_count}<br/> Population: ${node.population_count}`;
-      const attrs = `label="${this.wrapLabel(node.label, 15)}", tooltip="${tooltip}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
-      compressed_dot += `"${node.id}" [${attrs}];\n`;
+      const tooltip = `${node.label}<br/>${node.id}<br/>p: ${this.formatPValue(node.p_val)}<br/>Study: ${node.study_count}<br/>Population: ${node.population_count}`;
+      const attrs = `label="${node.id}", tooltip="${tooltip}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
+      dot += `"${node.id}" [${attrs}];\n`;
     }
-    for (const edge of edges_compressed) {
-      compressed_dot += `"${edge.source}" -> "${edge.target}" [style=${edge.nodes_skipped === 0 ? 'solid' : 'dashed'}];\n`;
+    for (const edge of edges) {
+      dot += `"${edge.source}" -> "${edge.target}";\n`;
     }
-    compressed_dot += '}\n';
-
-    for (const node of all_nodes) {
-      const [fillColor, fontColor] = this.pvalToColor(node.p_val);
-      const tooltip = `${node.id} <br/> p: ${this.formatPValue(node.p_val)}<br/> Study: ${node.study_count}<br/> Population: ${node.population_count}`;
-      const attrs = `label="${this.wrapLabel(node.label, 15)}", tooltip="${tooltip}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
-      full_dot += `"${node.id}" [${attrs}];\n`;
-    }
-    for (const edge of edges_full) {
-      full_dot += `"${edge.source}" -> "${edge.target}" [style=${edge.nodes_skipped === 0 ? 'solid' : 'dashed'}];\n`;
-    }
-    full_dot += '}\n';
-
-    this.dotStrings[subgraph] = { compressed: compressed_dot, full: full_dot };
+    dot += '}\n';
+    this.dotStrings[subgraph] = dot;
   }
 
   formatPValue(p: number): string {
@@ -143,18 +136,13 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
   pvalToColor(score: number): [string, string] {
     const max = this.legendMaxValue;
-    // Frequentist: t = -log10(p) / max   (lower p → higher t → darker)
-    // Bayesian:    t = post_prob / max    (higher prob → higher t → darker)
     const t = max > 0
       ? Math.min(1, Math.max(0, this.isBayesian ? score / max : -Math.log10(score) / max))
       : 0;
-    const fill = this.interpolateGoldToRed(t);
-    const fontColor = '#003754';
-    return [fill, fontColor];
+    return [this.interpolateGoldToRed(t), '#003754'];
   }
 
   private interpolateGoldToRed(t: number): string {
-    // 3-stop gradient matching legend: white #FFFFFF → light pink #FBDDDC → gold #9D7220
     let r: number, g: number, b: number;
     if (t <= 0.5) {
       const s = t * 2;
@@ -172,48 +160,39 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
   ngAfterViewInit(): void {
     this.viewInitialized = true;
-    if (this.dotData) {
-      this.renderAll();
-    }
+    this.updateOptionsForMethod();
+    if (this.dotData) this.renderAll();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['isBayesian'] && this.viewInitialized) {
+      this.updateOptionsForMethod();
+    }
     if (changes['dotData'] && this.dotData && this.viewInitialized) {
       this.renderAll();
     }
   }
 
   private renderAll(): void {
-    this.fullGraphsRendered = false;
     this.generateDot('MF');
     this.generateDot('BP');
     this.generateDot('CC');
-    this.renderCompressed('MF');
-    this.renderCompressed('BP');
-    this.renderCompressed('CC');
+    this.renderGraph('MF');
+    this.renderGraph('BP');
+    this.renderGraph('CC');
   }
 
-  renderCompressed(subgraph: 'MF' | 'BP' | 'CC'): void {
+  renderGraph(subgraph: 'MF' | 'BP' | 'CC'): void {
     const container = d3.select(this[`${subgraph}graphvizContainer`].nativeElement) as any;
     container
       .graphviz({ useWorker: false, zoom: true, fit: true })
-      .renderDot(this.dotStrings[subgraph].compressed)
-      .on('end', () => this.setupGraph(container, subgraph, true));
+      .renderDot(this.dotStrings[subgraph])
+      .on('end', () => this.setupGraph(container, subgraph));
   }
 
-  renderFull(subgraph: 'MF' | 'BP' | 'CC'): void {
-    const container = d3.select(this[`${subgraph}graphvizContainerFull`].nativeElement) as any;
-    container
-      .graphviz({ useWorker: false, zoom: true, fit: true })
-      .renderDot(this.dotStrings[subgraph].full)
-      .on('end', () => this.setupGraph(container, subgraph, false));
-  }
-
-  setupGraph(container: any, subgraph: 'MF' | 'BP' | 'CC', compressed: boolean) {
+  setupGraph(container: any, subgraph: 'MF' | 'BP' | 'CC') {
     const svg = container.select('svg');
     svg.attr('width', '100%').attr('height', '100%').style('align', 'center').attr('pad', '20').attr('cursor', 'pointer');
-
-    // Remove the white background polygon graphviz injects
     svg.select('g').select('polygon').attr('fill', 'none').attr('stroke', 'none');
 
     const nodes = svg.selectAll('g.node');
@@ -226,75 +205,37 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     nodes.selectAll('title').remove();
     svg.select('title').remove();
 
-    this.HoverNodeTooltip(nodes, subgraph, compressed);
+    this.hoverNodeTooltip(nodes, subgraph);
   }
 
-  HoverNodeTooltip(nodes: any, subgraph: 'MF' | 'BP' | 'CC', compressed: boolean = true): void {
+  hoverNodeTooltip(nodes: any, subgraph: 'MF' | 'BP' | 'CC'): void {
+    const containerEl = this[`${subgraph}graphvizContainer`].nativeElement;
+    const tooltipRef = d3.select(`#${subgraph}Tooltip`);
+
     nodes.on('mouseover', (event: any) => {
-      const current_node = event.currentTarget;
-
-      d3.select(event.currentTarget)
-        .select('polygon, rect')
-        .attr('stroke-width', 4);
-
-      const aTag = d3.select(current_node).select('g a');
+      d3.select(event.currentTarget).select('polygon, rect').attr('stroke-width', 4);
+      const aTag = d3.select(event.currentTarget).select('g a');
       const tooltipText = aTag.attr('data-tooltip');
       aTag.attr('title', null);
 
-      let containerRect = this[`${subgraph}graphvizContainer`].nativeElement.getBoundingClientRect();
-      let tooltipRef = d3.select(`#${subgraph}Tooltip`);
-      if (!compressed) {
-        containerRect = this[`${subgraph}graphvizContainerFull`].nativeElement.getBoundingClientRect();
-        tooltipRef = d3.select(`#${subgraph}TooltipFull`);
-      }
-      const nodeRect = current_node.getBoundingClientRect();
-      const left = nodeRect.x - containerRect.x + nodeRect.width + 10;
-      const top = nodeRect.y - containerRect.y;
-
+      const containerRect = containerEl.getBoundingClientRect();
+      const nodeRect = event.currentTarget.getBoundingClientRect();
       tooltipRef
         .style('opacity', 1)
         .style('padding', '4px 8px')
         .html(tooltipText)
-        .style('left', left + 'px')
-        .style('top', top + 'px');
+        .style('left', (nodeRect.x - containerRect.x + nodeRect.width + 10) + 'px')
+        .style('top', (nodeRect.y - containerRect.y) + 'px');
     })
-      .on('mouseout', (event: any) => {
-        let tooltipRef = d3.select(`#${subgraph}Tooltip`);
-        if (!compressed) {
-          tooltipRef = d3.select(`#${subgraph}TooltipFull`);
-        }
-        tooltipRef.style('opacity', 0);
-
-        d3.select(event.currentTarget)
-          .select('polygon, ellipse, rect')
-          .attr('stroke-width', '1');
-      });
-  }
-
-  wrapLabel(text: string, maxChars: number): string {
-    const words = text.split(/\s+/);
-    const lines: string[] = [];
-    let currentLine = '';
-    for (const word of words) {
-      if (!currentLine) {
-        currentLine = word;
-      } else if (currentLine.length + 1 + word.length <= maxChars) {
-        currentLine += ' ' + word;
-      } else {
-        lines.push(currentLine);
-        currentLine = word;
-      }
-    }
-    if (currentLine) lines.push(currentLine);
-    return lines.join('\\n');
+    .on('mouseout', (event: any) => {
+      tooltipRef.style('opacity', 0);
+      d3.select(event.currentTarget).select('polygon, ellipse, rect').attr('stroke-width', '1');
+    });
   }
 
   ngOnDestroy(): void {
     d3.select(this.MFgraphvizContainer.nativeElement).selectAll('*').remove();
     d3.select(this.BPgraphvizContainer.nativeElement).selectAll('*').remove();
     d3.select(this.CCgraphvizContainer.nativeElement).selectAll('*').remove();
-    d3.select(this.MFgraphvizContainerFull.nativeElement).selectAll('*').remove();
-    d3.select(this.BPgraphvizContainerFull.nativeElement).selectAll('*').remove();
-    d3.select(this.CCgraphvizContainerFull.nativeElement).selectAll('*').remove();
   }
 }
