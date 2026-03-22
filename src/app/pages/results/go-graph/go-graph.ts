@@ -113,7 +113,7 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
     for (const node of significant_nodes) {
       const [fillColor, fontColor] = this.pvalToColor(node.p_val);
-      const tooltip = `${node.id} <br/> p: ${this.formatPValue(node.p_val)}<br/> Study: ${node.study_count}<br/> Population: ${node.population_count}`;
+      const tooltip = `${node.label} <br/> ${node.id} <br/> p: ${this.formatPValue(node.p_val)}<br/> Study: ${node.study_count}<br/> Population: ${node.population_count}`;
       const attrs = `label="${this.wrapLabel(node.label, 15)}", tooltip="${tooltip}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
       compressed_dot += `"${node.id}" [${attrs}];\n`;
     }
