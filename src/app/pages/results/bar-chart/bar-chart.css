@@ -1,18 +1,19 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
 .chart-container {
-  height: 32rem;
-  width: var(--container-width);
-  min-width: var(--container-min-width);
-  max-width: var(--container-max-width);
-  flex-direction: column;
-  box-sizing: border-box;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem;
-  border: 1px solid var(--md-sys-color-outline);
-  border-radius: 1rem;
-  background-color: var(--md-sys-color-on-primary);
-  contain: layout style;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 

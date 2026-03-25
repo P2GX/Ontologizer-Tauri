@@ -1,10 +1,3 @@
-.all-results-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-}
-
 .analysis-body {
     display: flex;
     flex-direction: column;
@@ -12,19 +5,35 @@
     margin-bottom: 2rem;
 }
 
-.material-symbols-outlined {
-    color: white;
+/* ===== Shared tab container ===== */
+/* One card that is constant across all four tabs. */
+.tab-panel {
+    position: relative;
+    width: var(--container-width);
+    min-width: var(--container-min-width);
+    max-width: var(--container-max-width);
+    height: 42rem;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    background-color: var(--md-sys-color-on-primary);
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 1rem;
+    box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
 }
 
-
-h2 {
-    font-weight: 200;
-    margin-bottom: 0.5rem;
-    margin-top: 0;
-    font-size: var(--font-highlight);
+/* Each child component fills the panel fully */
+.tab-panel > * {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
+/* [hidden] takes the component out of flow */
+.tab-panel > *[hidden] {
+    display: none !important;
+}
 
+/* ===== Tab bar ===== */
 button.tab-button {
     font-size: 1rem;
     padding: 0.5rem 1rem;
@@ -39,7 +48,6 @@ button.tab-button {
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
-
 }
 
 button.tab-button.active {
@@ -62,31 +70,13 @@ button.tab-button:hover:not(.active) {
 }
 
 @keyframes mymove {
-    from {
-        top: -1rem;
-    }
-
-    to {
-        top: 0rem;
-    }
+    from { top: -1rem; }
+    to   { top: 0rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .tabs-container {
-        animation: none;
-    }
+    .tabs-container { animation: none; }
 }
-
-.hide {
-    display: none !important;
-}
-
-/* .mat-divider.horizontal {
-    width: 90%;
-    margin: 0.5rem 0;
-    color: color(srgb 0.815 0.815 0.815);
-    margin: 1rem 0;
-} */
 
 .mat-divider.vertical {
     width: 1px;
@@ -95,35 +85,14 @@ button.tab-button:hover:not(.active) {
     margin-bottom: 0.5em;
 }
 
-.all-results-container {
-    width: 100%;
+.mat-divider {
+    width: 40%;
+    color: var(--md-sys-color-outline);
 }
 
 .material-symbols-outlined.tab-icon {
     color: rgb(50, 50, 50);
     font-size: 20px;
-}
-
-.analyze-button-container {
-    display: flex;
-    width: 80cqw;
-    margin-top: 3rem;
-    gap: 1.5rem;
-    box-sizing: border-box;
-    align-items: center;
-    justify-content: center;
-    min-width: 700px;
-    max-width: 1400px;
-}
-
-.analyze-button-container.hide {
-    margin-top: 0;
-    transition: margin-top 0.3s ease;
-}
-
-.mat-divider {
-    width: 40%;
-    color: var(--md-sys-color-outline);
 }
 
 .control-header {
@@ -135,4 +104,3 @@ button.tab-button:hover:not(.active) {
     margin: 0 auto 1.5rem;
     padding: 0 1.5rem;
 }
-

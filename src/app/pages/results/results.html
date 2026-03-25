@@ -31,43 +31,37 @@
                 </button>
             </div>
         </div>
-    }
 
-    @if (success) {
-        <app-dashboard [dashboardInfo]="dashboardInfo"
-            [pValueData]="resultsService.barChartData()"
-            [hidden]="selectedChart !== 'dashboard'" [visible]="selectedChart === 'dashboard'">
-        </app-dashboard>
-    }
+        <div class="tab-panel">
+            <app-dashboard
+                [dashboardInfo]="dashboardInfo"
+                [pValueData]="resultsService.barChartData()"
+                [hidden]="selectedChart !== 'dashboard'"
+                [visible]="selectedChart === 'dashboard'">
+            </app-dashboard>
+            <app-result-table
+                [tableData]="tableData()!"
+                [totalCount]="totalCount()"
+                [isFrequentist]="resultsService.isFrequentist()"
+                [sortDirection]="resultsService.isBayesian() ? 'desc' : 'asc'"
+                [hidden]="selectedChart !== 'table'"
+                (pageChange)="onPageChange($event)">
+            </app-result-table>
+            <app-go-graph
+                [hidden]="selectedChart !== 'go-graph'"
+                [visible]="selectedChart === 'go-graph'"
+                [dotData]="dotData"
+                [legendMaxValue]="globalLegendMax"
+                [isBayesian]="resultsService.isBayesian()">
+            </app-go-graph>
+            <app-bar-chart
+                [hidden]="selectedChart !== 'bar-plot'"
+                [PlotData]="resultsService.barPlotData()"
+                [isBayesian]="resultsService.isBayesian()"
+                [legendMaxValue]="globalLegendMax">
+            </app-bar-chart>
+        </div>
 
-    @if (success && tableData() !== null && selectedChart === 'table') {
-        <app-result-table
-            [tableData]="tableData()!"
-            [totalCount]="totalCount()"
-            [isFrequentist]="resultsService.isFrequentist()"
-            [sortDirection]="resultsService.isBayesian() ? 'desc' : 'asc'"
-            (pageChange)="onPageChange($event)">
-        </app-result-table>
-    }
-
-    @if (dotData !== null) {
-        <app-go-graph [hidden]="selectedChart !== 'go-graph'"
-            [visible]="selectedChart === 'go-graph'" [dotData]="dotData"
-            [legendMaxValue]="globalLegendMax"
-            [isBayesian]="resultsService.isBayesian()">
-        </app-go-graph>
-    }
-
-    @if (resultsService.barPlotData() !== null && success) {
-        <app-bar-chart
-            [hidden]="selectedChart !== 'bar-plot'"
-            [PlotData]="resultsService.barPlotData()!"
-            [isBayesian]="resultsService.isBayesian()"
-            [legendMaxValue]="globalLegendMax">
-        </app-bar-chart>
-    }
-
-    @if (success) {
         <div class="action-button-container">
             <mat-divider class="horizontal" />
             <button class="button" (click)="saveResults()">

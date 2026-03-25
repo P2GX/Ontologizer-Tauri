@@ -1,15 +1,24 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
 .table-container {
-  width: 80cqw;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  background-color: var(--md-sys-color-on-primary);
-  box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
-  contain: layout style;
 }
 
 .results-table {
-  height: 35rem;
+  flex: 1;
+  min-height: 0;
   overflow: auto;
   overflow-x: hidden;
   width: 100%;
