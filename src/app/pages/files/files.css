@@ -209,3 +209,16 @@ nav ul li.upload-success {
     from { top: -1rem; opacity: 0; }
     to   { top: 0; opacity: 1; }
 }
+
+/* === Warning === */
+.analysis-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: var(--font-small);
+    color: var(--md-sys-color-on-primary-container);
+}
+
+.warning-icon {
+    font-size: var(--font-standard);
+}

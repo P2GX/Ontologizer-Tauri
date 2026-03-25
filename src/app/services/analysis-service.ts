@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 
 // These types mirror the Rust enums in src-tauri/src/commands/config.rs.
@@ -26,6 +26,11 @@ export const CORRECTION_NAMES: Record<Correction, string> = {
   providedIn: 'root'
 })
 export class AnalysisService {
+
+  readonly selectedMethod = signal<Method | null>(null);
+  readonly topology = signal<Background | null>(null);
+  readonly correction = signal<Correction | null>(null);
+  readonly isAnalysing = signal(false);
 
   async saveSettings(method: Method): Promise<void> {
     try {

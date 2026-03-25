@@ -67,6 +67,17 @@
         </app-bar-chart>
     }
 
+    @if (success) {
+        <div class="action-button-container">
+            <mat-divider class="horizontal" />
+            <button class="button" (click)="saveResults()">
+                Save Results
+                <span class="material-symbols-outlined icon">download</span>
+            </button>
+            <mat-divider class="horizontal" />
+        </div>
+    }
+
     @if (!success) {
         <div class="empty-state">
             <span class="material-symbols-outlined empty-state-icon">labs</span>

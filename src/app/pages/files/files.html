@@ -58,12 +58,18 @@
 
         <div class="action-button-container" [class.disabled-state]="!allFilesLoaded()">
             <mat-divider class="horizontal" />
-            <button class="button" [disabled]="!allFilesLoaded()" (click)="processFiles()">
-                {{ isProcessingAll() ? 'Processing...' : (isFinished() ? 'Finished!' : 'Process Files') }}
-            </button>
-            @if (!allFilesLoaded() && filesService.goState() === 'loading') {
-                <p class="go-wait-hint">Waiting for Gene Ontology to finish loading…</p>
-            }
+            <div class ="button-and-warning">
+                <button class="button" [disabled]="!allFilesLoaded()" (click)="processFiles()">
+                    {{ isProcessingAll() ? 'Processing...' : (isFinished() ? 'Finished!' : 'Process Files') }}
+                </button>
+
+                @if (!allFilesLoaded() && filesService.goState() === 'loading') {
+                    <span class="analysis-warning">
+                        <span class="material-symbols-outlined warning-icon">schedule</span>
+                        Waiting for Gene Ontology …
+                    </span>
+                }
+            </div>
             <mat-divider class="horizontal" />
         </div>
     </div>

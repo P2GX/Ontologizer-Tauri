@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenu } from '../../shared/dropdown-menu/dropdown-menu';
@@ -19,11 +19,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 export class Analysis {
 
-  selectedMethod: Method | null = null;
-  topology: Background | null = null;
-  correction: Correction | null = null;
-  isAnalysing = false;
   private justCompleted = false;
+
+  get selectedMethod() { return this.analysisService.selectedMethod(); }
+  get topology() { return this.analysisService.topology(); }
+  get correction() { return this.analysisService.correction(); }
+  get isAnalysing() { return this.analysisService.isAnalysing(); }
 
   get buttonLabel(): string {
     if (this.isAnalysing) return 'Analyzing...';
@@ -52,29 +53,29 @@ export class Analysis {
 
   setCategory(category: 'Frequentist' | 'Bayesian') {
     if (category === 'Bayesian') {
-      this.selectedMethod = { method: 'Bayesian' };
-      void this.analysisService.saveSettings(this.selectedMethod);
+      this.analysisService.selectedMethod.set({ method: 'Bayesian' });
+      void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
     } else if (this.topology && this.correction) {
-      this.selectedMethod = { method: 'Frequentist', background: this.topology, correction: this.correction };
-      void this.analysisService.saveSettings(this.selectedMethod);
+      this.analysisService.selectedMethod.set({ method: 'Frequentist', background: this.topology, correction: this.correction });
+      void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
     } else {
-      this.selectedMethod = null;
+      this.analysisService.selectedMethod.set(null);
     }
   }
 
   selectTopology(topology: string) {
-    this.topology = topology as Background;
+    this.analysisService.topology.set(topology as Background);
     if (this.isFrequentist && this.correction) {
-      this.selectedMethod = { method: 'Frequentist', background: this.topology, correction: this.correction };
-      void this.analysisService.saveSettings(this.selectedMethod);
+      this.analysisService.selectedMethod.set({ method: 'Frequentist', background: this.topology!, correction: this.correction });
+      void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
     }
   }
 
   selectCorrection(correction: string) {
-    this.correction = correction as Correction;
+    this.analysisService.correction.set(correction as Correction);
     if (this.isFrequentist && this.topology) {
-      this.selectedMethod = { method: 'Frequentist', background: this.topology, correction: this.correction };
-      void this.analysisService.saveSettings(this.selectedMethod);
+      this.analysisService.selectedMethod.set({ method: 'Frequentist', background: this.topology, correction: this.correction! });
+      void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
     }
   }
 
@@ -88,7 +89,7 @@ export class Analysis {
 
     this.resultsService.clearResults();
     this.resultsService.currentMethod.set(this.selectedMethod);
-    this.isAnalysing = true;
+    this.analysisService.isAnalysing.set(true);
 
     try {
       await this.resultsService.runAnalysis();
@@ -103,7 +104,7 @@ export class Analysis {
         : 'Failed to run analysis.';
       this.snackBar.open(msg, 'Close', { panelClass: ['custom-snackbar'], duration: 8000 });
     } finally {
-      this.isAnalysing = false;
+      this.analysisService.isAnalysing.set(false);
     }
   }
 }

@@ -284,6 +284,21 @@ impl Hash for EdgeData {
 
 impl Eq for EdgeData {}
 
+// Saves the analysis results to a CSV file at the given path.
+// Uses the same save_to_csv format as the CLI backend (with metadata comment lines).
+#[tauri::command]
+pub fn save_results(state: tauri::State<AppState>, path: String) -> Result<(), String> {
+    let results_lock = state
+        .results
+        .read()
+        .map_err(|e| format!("Failed to lock results: {}", e))?;
+    let results = results_lock.as_ref().ok_or("No analysis results loaded")?;
+
+    results
+        .save_to_csv(&path, true)
+        .map_err(|e| format!("Failed to save results to '{}': {}", path, e))
+}
+
 // Generates the compressed and "full" GO graph data in DOT format for each of the three GO categories (BP, MF, CC).
 #[tauri::command]
 pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, String> {
