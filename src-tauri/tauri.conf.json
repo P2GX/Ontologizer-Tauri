@@ -22,13 +22,17 @@
         "minHeight": 800,
         "resizable": true,
         "fullscreen": false,
-        "transparent": false
+        "transparent": false,
+        "decorations": false
       }
     ]
   },
   "bundle": {
     "active": true,
     "targets": "all",
+    "resources": {
+      "../data/go-basic.json": "go-basic.json"
+    },
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

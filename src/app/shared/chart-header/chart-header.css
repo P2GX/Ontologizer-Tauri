@@ -1,0 +1,97 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.chart-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.header-spacer {
+    flex: 1;
+    min-width: 0.25rem;
+}
+
+/* ── Statistic segmented control ─────────────────────────────── */
+
+.stat-picker {
+    display: inline-flex;
+    background: var(--md-sys-color-primary-container);
+    border-radius: 0.5rem;
+    padding: 3px;
+    gap: 2px;
+}
+
+.stat-pill {
+    padding: 0.22rem 0.7rem;
+    border-radius: 0.35rem;
+    border: none;
+    background: transparent;
+    color: var(--md-sys-color-outline);
+    font-family: inherit;
+    font-size: var(--font-small);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    white-space: nowrap;
+    line-height: 1.5;
+}
+
+.stat-pill.active {
+    background: var(--md-sys-color-on-primary);
+    color: var(--md-sys-color-primary);
+    box-shadow: 0 1px 3px rgba(0, 55, 84, 0.18);
+}
+
+.stat-pill:hover:not(.active) {
+    background: rgba(0, 55, 84, 0.07);
+    color: var(--md-sys-color-primary);
+}
+
+.stat-pill:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 1px;
+}
+
+/* ── Help button ─────────────────────────────────────────────── */
+
+.help-btn {
+    width: 1.5rem;
+    height: 1.5rem;
+    min-width: 1.5rem;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-primary);
+    font-family: inherit;
+    font-size: var(--font-standard);
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+}
+
+.help-btn:hover {
+    background: var(--md-sys-color-secondary-hover);
+}
+
+.help-btn:focus-visible {
+    outline: 2px solid var(--md-sys-color-secondary);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stat-pill,
+    .help-btn {
+        transition: none;
+    }
+}

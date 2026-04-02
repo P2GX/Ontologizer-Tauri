@@ -1,84 +1,168 @@
-.dropdown-container {
-    margin: 1em;
-}
-
-.settings-menu {
-    position: relative;
-    padding: 0 0.5em;
-    background-color: var(--md-sys-color-on-primary);
-    border: 1px solid var(--md-sys-color-primary);
-    border-radius: 0.5rem;
-    width: 12rem;
-    z-index: 2;
-}
-
-.settings-menu:has(.settings-submenu.open) {
-    z-index: 10;
-}
-
-.settings-menu li {
-    list-style: none;
-    display: flex;
-}
-
-p {
-    margin: 0.5em 0;
-}
-
-.settings-menu img.down {
-    transform: rotate(180deg);
-    transition: transform 0.3s ease;
-}
-
-li.settings-menu-header {
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    /* Elemente links und rechts verteilen */
-    align-items: center;
-}
-
-.settings-submenu li {
-    list-style: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.3em 0.2em 0.3em 0.2em;
-    color: var(--md-sys-color-primary);
-    border-radius: 0.5rem;
-    transition: background-color .2s ease;
-}
-
-h4 {
-    margin: 0;
-    font-weight: 500;
-}
-
-.settings-submenu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: var(--md-sys-color-on-primary);
-    border: 1px solid var(--md-sys-color-primary);
-    border-radius: 0.5rem;
-    cursor: pointer;
-    padding: 0.7rem;
-    font-weight: 300;
-    min-width: 100%;
-    box-sizing: border-box;
-}
-
-.settings-submenu.open {
+:host {
     display: block;
-    pointer-events: all;
+}
+
+/* ── Field wrapper ───────────────────────────────────────────── */
+
+.select-field {
+    position: relative;
+}
+
+/* ── Trigger button (the outlined box) ──────────────────────── */
+
+.select-trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 10rem;
+    padding: 1.05rem 0.75rem 0.4rem 0.65rem;
+    background-color: var(--md-sys-color-on-primary);
+    border: 2px solid var(--md-sys-color-outline);
+    border-radius: 0.4rem;
+    color: var(--md-sys-color-primary);
+    font-family: inherit;
+    font-size: var(--font-standard);
+    font-weight: 400;
+    cursor: pointer;
+    text-align: left;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease, border-width 0.15s ease;
+    white-space: nowrap;
+}
+
+/* ── Floating label ──────────────────────────────────────────── */
+
+.select-label {
+    position: absolute;
+    left: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    transform-origin: left center;
+    font-family: inherit;
+    font-size: var(--font-standard);
+    font-weight: 400;
+    color: var(--md-sys-color-outline);
+    background-color: var(--md-sys-color-on-primary);
+    padding: 0 0.2rem;
+    pointer-events: none;
+    transition: top 0.15s ease, transform 0.15s ease, color 0.15s ease, font-size 0.15s ease;
+    white-space: nowrap;
+    /* sit above the border line */
     z-index: 1;
 }
 
-.settings-submenu.open li:hover {
+/* Raised state: filled or open */
+.select-field.filled .select-label,
+.select-field.open .select-label {
+    top: 0;
+    transform: translateY(-50%) scale(0.78);
+    color: var(--md-sys-color-primary);
+}
+
+/* ── Selected value text ─────────────────────────────────────── */
+
+.select-value {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--md-sys-color-primary);
+}
+
+
+/* ── Caret icon ──────────────────────────────────────────────── */
+
+.select-caret {
+    flex-shrink: 0;
+    margin-left: 0.4rem;
+    color: var(--md-sys-color-outline);
+    transition: transform 0.18s ease;
+}
+
+.select-field.open .select-caret,
+.select-field.filled .select-caret {
+    color: var(--md-sys-color-primary);
+}
+
+.select-caret.flipped {
+    transform: rotate(180deg);
+}
+
+/* ── Dropdown menu ───────────────────────────────────────────── */
+
+.select-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 100%;
+    margin: 0;
+    padding: 0.35rem;
+    list-style: none;
+    background-color: var(--md-sys-color-on-primary);
+    border-radius: 0.5rem;
+    box-shadow:
+        0 4px 20px rgba(0, 55, 84, 0.14),
+        0 1px 4px rgba(0, 55, 84, 0.08),
+        0 0 0 1px rgba(0, 55, 84, 0.07);
+    z-index: 200;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+/* ── Options ─────────────────────────────────────────────────── */
+
+.select-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.4rem 0.65rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--font-standard);
+    font-weight: 400;
+    color: var(--md-sys-color-primary);
+    transition: background-color 0.12s ease;
+    list-style: none;
+}
+
+.select-option:hover {
     background-color: var(--md-sys-color-primary-container);
 }
 
-.settings-menu li:hover .settings-submenu {
-    display: block;
+.select-option:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: -2px;
+    background-color: var(--md-sys-color-primary-container);
+}
+
+.select-option[aria-selected="true"] {
+    font-weight: 600;
+    background-color: var(--md-sys-color-primary-container);
+}
+
+.select-option[aria-selected="true"]:hover {
+    background-color: var(--md-sys-color-outline);
+}
+
+.select-option-text {
+    flex: 1;
+}
+
+.select-check {
+    flex-shrink: 0;
+    color: var(--md-sys-color-primary);
+}
+
+/* ── Reduced motion ──────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .select-label,
+    .select-trigger,
+    .select-caret,
+    .select-option {
+        transition: none;
+    }
 }

@@ -12,8 +12,8 @@ mod commands;
 use commands::{
     analysis::run_analysis,
     config::{save_settings, get_data_dir},
-    loaders::{process_gaf_file, process_gene_file, process_go_file, build_annotation_index},
-    output::{build_go_graph_data, get_analysis_results, get_analysis_summary, get_analysis_results_page, get_bar_chart_data},
+    loaders::{process_gaf_file, process_gene_file, process_go_file, build_annotation_index, load_bundled_go},
+    output::{build_go_graph_data, get_analysis_results, get_analysis_summary, get_analysis_results_page, get_bar_chart_data, save_results},
 };
 
 fn main() {
@@ -34,6 +34,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             // register tauri-commands for frontend-backend communication
             process_go_file,
+            load_bundled_go,
             process_gaf_file,
             process_gene_file,
             build_annotation_index,
@@ -45,6 +46,7 @@ fn main() {
             get_analysis_results_page,
             build_go_graph_data,
             get_bar_chart_data,
+            save_results,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

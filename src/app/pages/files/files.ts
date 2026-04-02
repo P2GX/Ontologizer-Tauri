@@ -14,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class Files implements AfterViewInit {
 
-  constructor(private filesService: FilesService, private router: Router, private snackBar: MatSnackBar) {}
+  constructor(readonly filesService: FilesService, private router: Router, private snackBar: MatSnackBar) {}
 
   filesStatus = signal<FileStatus>({ study: false, pop: false, go: false, annotation: false });
   isProcessingAll = signal(false);
@@ -22,10 +22,12 @@ export class Files implements AfterViewInit {
   activeStep = signal(0);
   triggerReload = signal(0); // incremented when annotation is reloaded, triggers study/pop to reprocess
 
-  allFilesLoaded = computed(() => Object.values(this.filesStatus()).every(v => v));
+  allFilesLoaded = computed(() => {
+    const s = this.filesStatus();
+    return s.annotation && s.pop && s.study && this.filesService.goState() === 'loaded';
+  });
 
   uploadSteps = [
-    { type: 'go' as keyof FileStatus, title: 'Upload Gene Ontology', subtitle: 'Accepted File Types: .json', dependsOn: null, fileLoaded: () => this.filesStatus().go },
     { type: 'annotation' as keyof FileStatus, title: 'Upload Annotations', subtitle: 'Accepted File Types: .gaf', dependsOn: null, fileLoaded: () => this.filesStatus().annotation },
     { type: 'pop' as keyof FileStatus, title: 'Upload Population Genes', subtitle: 'Accepted File Types: .txt', dependsOn: 'annotation' as keyof FileStatus, fileLoaded: () => this.filesStatus().pop },
     { type: 'study' as keyof FileStatus, title: 'Upload Study Genes', subtitle: 'Accepted File Types: .txt', dependsOn: 'annotation' as keyof FileStatus, fileLoaded: () => this.filesStatus().study }

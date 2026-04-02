@@ -7,6 +7,9 @@ import { ResultTable } from './result-table/result-table';
 import { FilesService } from '../../services/files-service';
 import { ResultsService, DotData, ProportionData, RowData } from '../../services/results-service';
 import { Method } from '../../services/analysis-service';
+import { invoke } from '@tauri-apps/api/core';
+import { save } from '@tauri-apps/plugin-dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-results',
@@ -18,6 +21,7 @@ import { Method } from '../../services/analysis-service';
 export class Results implements OnInit {
   private filesService = inject(FilesService);
   public resultsService = inject(ResultsService);
+  private snackBar = inject(MatSnackBar);
 
   frequentistData = computed(() => this.resultsService.frequentistTableData());
   bayesianData = computed(() => this.resultsService.bayesianTableData());
@@ -74,12 +78,29 @@ export class Results implements OnInit {
     this.selectedChart = tab;
   }
 
+  async saveResults() {
+    const path = await save({
+      filters: [{ name: 'CSV', extensions: ['csv'] }],
+      defaultPath: 'enrichment_result.csv',
+    });
+    if (!path) return;
+
+    try {
+      await invoke('save_results', { path });
+      this.snackBar.open('Results saved.', 'Close', { panelClass: ['custom-snackbar'], duration: 4000 });
+    } catch (error) {
+      console.error('Error saving results:', error);
+      this.snackBar.open('Failed to save results.', 'Close', { panelClass: ['custom-snackbar'], duration: 8000 });
+    }
+  }
+
   private computeLegendMax(data: RowData[]): number {
     if (!data || data.length === 0) return 1;
-    const values = this.resultsService.isBayesian()
-      ? data.map(d => d.score)
-      : data.map(d => -Math.log10(d.score));
-    const max = Math.max(...values);
+    const isBayesian = this.resultsService.isBayesian();
+    const max = data.reduce((acc, d) => {
+      const val = isBayesian ? d.score : -Math.log10(d.score);
+      return val > acc ? val : acc;
+    }, 0);
     return isFinite(max) && max > 0 ? max : 1;
   }
 }

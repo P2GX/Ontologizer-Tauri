@@ -1,6 +1,5 @@
-import { Component, SimpleChanges, Input, OnChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { DropdownMenu } from '../../../shared/dropdown-menu/dropdown-menu';
-import { Legend } from '../bar-chart/legend/legend';
+import { Component, SimpleChanges, Input, OnChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { ChartHeader } from '../../../shared/chart-header/chart-header';
 import { Tooltip } from '../../../shared/tooltip/tooltip';
 import { DotData, NodeData } from '../../../services/results-service';
 import 'd3-graphviz';
@@ -8,9 +7,10 @@ import * as d3 from 'd3';
 
 @Component({
   selector: 'app-go-graph',
-  imports: [DropdownMenu, Legend, Tooltip],
+  imports: [ChartHeader, Tooltip],
   templateUrl: './go-graph.html',
-  styleUrl: './go-graph.css'
+  styleUrl: './go-graph.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   @Input() visible: boolean = false;
@@ -27,11 +27,19 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   subgraphs: string[] = ['Molecular Function', 'Biological Process', 'Cellular Component'];
   topNOptions: string[] = ['Significant', 'Top 10', 'Top 25', 'Top 50'];
 
+  private readonly SUBGRAPH_CODES: Record<string, 'MF' | 'BP' | 'CC'> = {
+    'Molecular Function': 'MF',
+    'Biological Process': 'BP',
+    'Cellular Component': 'CC',
+  };
+
   showTooltip: boolean = false;
   selectedChart: 'MF' | 'BP' | 'CC' = 'MF';
+  selectedSubgraph: string = 'Molecular Function';
   selectedTopN: string = 'Significant';
 
   dotStrings: Record<'BP' | 'MF' | 'CC', string> = { BP: '', MF: '', CC: '' };
+  private renderedAspects: Set<'MF' | 'BP' | 'CC'> = new Set();
 
   private updateOptionsForMethod(): void {
     this.topNOptions = this.isBayesian
@@ -41,21 +49,23 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   selectChart(chart: string) {
-    switch (chart) {
-      case 'Molecular Function': this.selectedChart = 'MF'; break;
-      case 'Biological Process': this.selectedChart = 'BP'; break;
-      case 'Cellular Component': this.selectedChart = 'CC'; break;
+    const code = this.SUBGRAPH_CODES[chart];
+    if (!code) return;
+    this.selectedSubgraph = chart;
+    this.selectedChart = code;
+    if (!this.renderedAspects.has(this.selectedChart)) {
+      this.generateDot(this.selectedChart);
+      this.renderGraph(this.selectedChart);
+      this.renderedAspects.add(this.selectedChart);
     }
   }
 
   selectTopN(option: string) {
     this.selectedTopN = option;
-    this.generateDot('MF');
-    this.generateDot('BP');
-    this.generateDot('CC');
-    this.renderGraph('MF');
-    this.renderGraph('BP');
-    this.renderGraph('CC');
+    this.renderedAspects.clear();
+    this.generateDot(this.selectedChart);
+    this.renderGraph(this.selectedChart);
+    this.renderedAspects.add(this.selectedChart);
   }
 
   generateDot(subgraph: 'MF' | 'BP' | 'CC'): void {
@@ -118,7 +128,7 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     let dot = 'digraph {\nrankdir=BT;\nranksep=1.2;\nnodesep=0.5;\n';
     for (const node of [...seed_nodes, ...ancestor_nodes]) {
       const [fillColor, fontColor] = this.pvalToColor(node.p_val);
-      const tooltip = `${node.label}<br/>${node.id}<br/>p: ${this.formatPValue(node.p_val)}<br/>Study: ${node.study_count}<br/>Population: ${node.population_count}`;
+      const tooltip = `${this.escapeHtml(node.label)}<br/>${node.id}<br/>p: ${this.formatPValue(node.p_val)}<br/>Study: ${node.study_count}<br/>Population: ${node.population_count}`;
       const attrs = `label="${node.id}", tooltip="${tooltip}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
       dot += `"${node.id}" [${attrs}];\n`;
     }
@@ -132,6 +142,10 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   formatPValue(p: number): string {
     if (p < 0.001) return p.toExponential(2);
     return p.toFixed(4);
+  }
+
+  private escapeHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   pvalToColor(score: number): [string, string] {
@@ -174,12 +188,10 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private renderAll(): void {
-    this.generateDot('MF');
-    this.generateDot('BP');
-    this.generateDot('CC');
-    this.renderGraph('MF');
-    this.renderGraph('BP');
-    this.renderGraph('CC');
+    this.renderedAspects.clear();
+    this.generateDot(this.selectedChart);
+    this.renderGraph(this.selectedChart);
+    this.renderedAspects.add(this.selectedChart);
   }
 
   renderGraph(subgraph: 'MF' | 'BP' | 'CC'): void {
@@ -234,8 +246,8 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    d3.select(this.MFgraphvizContainer.nativeElement).selectAll('*').remove();
-    d3.select(this.BPgraphvizContainer.nativeElement).selectAll('*').remove();
-    d3.select(this.CCgraphvizContainer.nativeElement).selectAll('*').remove();
+    for (const key of ['MF', 'BP', 'CC'] as const) {
+      d3.select(this[`${key}graphvizContainer`].nativeElement).selectAll('*').remove();
+    }
   }
 }

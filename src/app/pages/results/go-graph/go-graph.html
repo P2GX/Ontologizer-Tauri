@@ -1,12 +1,16 @@
 <div class="go-graph-container">
-    <div class="control-panel">
-        <app-dropdown-menu [label]="'Aspect'" [options]="subgraphs" [selected]="'Molecular Function'"
-            (selectedChange)="selectChart($event)"></app-dropdown-menu>
-        <app-dropdown-menu [label]="'Show'" [options]="topNOptions" [selected]="selectedTopN"
-            (selectedChange)="selectTopN($event)"></app-dropdown-menu>
-        <app-legend [maxValue]="legendMaxValue" [isBayesian]="isBayesian"></app-legend>
-        <div class="help-icon" (mouseover)="showTooltip = true" (mouseout)="showTooltip = false">?</div>
-    </div>
+    <app-chart-header
+        [isBayesian]="isBayesian"
+        [legendMaxValue]="legendMaxValue"
+        [sizeOptions]="topNOptions"
+        [selectedSize]="selectedTopN"
+        [aspectOptions]="subgraphs"
+        [selectedAspect]="selectedSubgraph"
+        (sizeChange)="selectTopN($event)"
+        (aspectChange)="selectChart($event)"
+        [showHelp]="true"
+        (helpActiveChange)="showTooltip = $event">
+    </app-chart-header>
 
     <div #MFgraphvizContainer class="graphviz-container" [hidden]="selectedChart !== 'MF'"></div>
     <div class="hover-node-tooltip" id="MFTooltip"></div>

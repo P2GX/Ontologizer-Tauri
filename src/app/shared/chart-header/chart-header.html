@@ -1,0 +1,38 @@
+<div class="chart-header">
+
+    <app-scope-selector
+        [sizeOptions]="sizeOptions"
+        [selectedSize]="selectedSize"
+        [aspectOptions]="aspectOptions"
+        [selectedAspect]="selectedAspect"
+        (sizeChange)="sizeChange.emit($event)"
+        (aspectChange)="aspectChange.emit($event)">
+    </app-scope-selector>
+
+    @if (statisticOptions && statisticOptions.length > 0) {
+        <div class="stat-picker" role="group" aria-label="Statistic">
+            @for (opt of statisticOptions; track opt) {
+                <button type="button" class="stat-pill"
+                    [class.active]="opt === selectedStatistic"
+                    [attr.aria-pressed]="opt === selectedStatistic"
+                    (click)="statisticChange.emit(opt)">
+                    {{ labelOf(opt) }}
+                </button>
+            }
+        </div>
+    }
+
+    <div class="header-spacer"></div>
+
+    <app-legend [maxValue]="legendMaxValue" [isBayesian]="isBayesian" />
+
+    @if (showHelp) {
+        <button type="button" class="help-btn"
+            aria-label="Show help"
+            (mouseenter)="helpActiveChange.emit(true)"
+            (mouseleave)="helpActiveChange.emit(false)"
+            (focus)="helpActiveChange.emit(true)"
+            (blur)="helpActiveChange.emit(false)">?</button>
+    }
+
+</div>

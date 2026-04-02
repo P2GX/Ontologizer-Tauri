@@ -30,6 +30,51 @@ pub async fn process_go_file(
     state: tauri::State<'_, AppState>,
     path: String,
 ) -> Result<String, String> {
+    load_go_from_path(state, path).await
+}
+
+#[tauri::command]
+pub async fn load_bundled_go(
+    state: tauri::State<'_, AppState>,
+    app: tauri::AppHandle,
+) -> Result<String, String> {
+    use tauri::Manager;
+
+    // Dev mode: look for go-basic.json inside a data/ sibling of cwd or its parent.
+    // This mirrors the heuristic used by get_data_dir.
+    let path = if let Ok(cwd) = std::env::current_dir() {
+        [
+            cwd.join("data/go-basic.json"),
+            cwd.join("../data/go-basic.json"),
+        ]
+        .iter()
+        .find_map(|p| p.canonicalize().ok())
+        .map(|p| p.to_string_lossy().into_owned())
+    } else {
+        None
+    };
+
+    // Production: resolve from the Tauri bundled resources directory.
+    let path = path
+        .or_else(|| {
+            app.path()
+                .resolve("go-basic.json", tauri::path::BaseDirectory::Resource)
+                .ok()
+                .filter(|p| p.exists())
+                .map(|p| p.to_string_lossy().into_owned())
+        })
+        .ok_or_else(|| {
+            "go-basic.json not found. Expected it in the data/ directory or bundled resources."
+                .to_string()
+        })?;
+
+    load_go_from_path(state, path).await
+}
+
+async fn load_go_from_path(
+    state: tauri::State<'_, AppState>,
+    path: String,
+) -> Result<String, String> {
     let ontology: FullCsrOntology = spawn_blocking(move || {
         OntologyLoaderBuilder::new()
             .obographs_parser()
@@ -37,8 +82,8 @@ pub async fn process_go_file(
             .load_from_path(&path)
             .map_err(|e| format!("Could not load GO file: {}", e))
     })
-        .await
-        .map_err(|e| format!("Task join error: {}", e))??;
+    .await
+    .map_err(|e| format!("Task join error: {}", e))??;
 
     let stats = vec![
         Stat::new("Version", ontology.version()),

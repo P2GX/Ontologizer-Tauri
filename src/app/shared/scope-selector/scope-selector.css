@@ -1,0 +1,137 @@
+:host {
+    display: block;
+}
+
+.scope-sentence {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+/* Connector words: "Show" and "in" */
+.scope-word {
+    font-size: var(--font-standard);
+    font-weight: 400;
+    /* Use outline color (≈ 3.5:1 on white) rather than opacity which
+       degrades contrast unpredictably across backgrounds */
+    color: var(--md-sys-color-outline);
+    user-select: none;
+    line-height: 1;
+}
+
+/* Wrapper that holds the button + dropdown — needed for position: relative */
+.scope-token {
+    position: relative;
+}
+
+/* The interactive chip */
+.scope-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.55rem 0.25rem 0.65rem;
+    /* Reserve enough width to avoid layout shift when label text changes length */
+    min-width: 5.5rem;
+    border: 1.5px solid transparent;
+    border-radius: 0.4rem;
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-primary);
+    font-family: inherit;
+    font-size: var(--font-standard);
+    font-weight: 600;
+    cursor: pointer;
+    line-height: 1.4;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+}
+
+.scope-btn:hover {
+    background-color: var(--md-sys-color-outline);
+    border-color: var(--md-sys-color-outline);
+}
+
+.scope-btn:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+}
+
+/* Token is open — give it a bordered active state */
+.scope-token.open .scope-btn {
+    background-color: var(--md-sys-color-primary-container);
+    border-color: var(--md-sys-color-primary);
+}
+
+.scope-btn-text {
+    /* Prevents layout shift when value changes between short/long labels */
+    display: inline-block;
+}
+
+/* Animated caret */
+.caret {
+    flex-shrink: 0;
+    transition: transform 0.18s ease;
+    opacity: 0.7;
+}
+
+.caret.flipped {
+    transform: rotate(180deg);
+}
+
+/* Dropdown list */
+.scope-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    min-width: 100%;
+    margin: 0;
+    padding: 0.35rem;
+    list-style: none;
+    background-color: var(--md-sys-color-on-primary);
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px var(--shadow-header);
+    z-index: 200;
+    white-space: nowrap;
+}
+
+.scope-menu li {
+    padding: 0.35rem 0.65rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    font-size: var(--font-standard);
+    font-weight: 400;
+    color: var(--md-sys-color-primary);
+    transition: background-color 0.12s ease;
+    list-style: none;
+}
+
+.scope-menu li:hover {
+    background-color: var(--md-sys-color-primary-container);
+}
+
+.scope-menu li:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: -2px;
+    background-color: var(--md-sys-color-primary-container);
+}
+
+/* Currently selected option */
+.scope-menu li[aria-selected="true"] {
+    font-weight: 600;
+    background-color: var(--md-sys-color-primary-container);
+}
+
+.scope-menu li[aria-selected="true"]:hover {
+    background-color: var(--md-sys-color-outline);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .caret,
+    .scope-btn {
+        transition: none;
+    }
+    .scope-menu li {
+        transition: none;
+    }
+}
