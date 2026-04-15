@@ -44,19 +44,45 @@ pub struct AnalysisSummary {
 
 #[tauri::command]
 pub fn get_analysis_summary(state: tauri::State<AppState>) -> Result<AnalysisSummary, String> {
+    let settings_lock = state
+        .settings
+        .lock()
+        .map_err(|e| format!("Failed to lock settings: {}", e))?;
+    let is_bayesian = settings_lock
+        .as_ref()
+        .map(|s| matches!(s.method, Method::Bayesian))
+        .unwrap_or(false);
+    drop(settings_lock);
+
     let results_lock = state
         .results
         .read()
         .map_err(|e| format!("Failed to lock results: {}", e))?;
     let results = results_lock.as_ref().ok_or("No analysis results loaded")?;
 
-    let mut bp = AspectCounts { significant: 0, non_significant: 0 };
-    let mut mf = AspectCounts { significant: 0, non_significant: 0 };
-    let mut cc = AspectCounts { significant: 0, non_significant: 0 };
-    let mut total_counts = AspectCounts { significant: 0, non_significant: 0 };
+    let mut bp = AspectCounts {
+        significant: 0,
+        non_significant: 0,
+    };
+    let mut mf = AspectCounts {
+        significant: 0,
+        non_significant: 0,
+    };
+    let mut cc = AspectCounts {
+        significant: 0,
+        non_significant: 0,
+    };
+    let mut total_counts = AspectCounts {
+        significant: 0,
+        non_significant: 0,
+    };
 
     for item in &results.items {
-        let is_significant = item.score <= 0.05;
+        let is_significant = if is_bayesian {
+            item.score >= 0.5
+        } else {
+            item.score <= 0.05
+        };
         let aspect_counts = match item.aspect.as_str() {
             "BP" => &mut bp,
             "MF" => &mut mf,
@@ -100,10 +126,13 @@ pub fn get_analysis_results_page(
     let end = (start + page_size).min(total);
     let page_items = &results.items[start..end];
 
-    let items_json = serde_json::to_string(page_items)
-        .map_err(|e| format!("Serialization error: {}", e))?;
+    let items_json =
+        serde_json::to_string(page_items).map_err(|e| format!("Serialization error: {}", e))?;
 
-    Ok(PagedResults { items: items_json, total })
+    Ok(PagedResults {
+        items: items_json,
+        total,
+    })
 }
 
 // Returns the top `n` items per GO aspect (BP/MF/CC) from the pre-sorted results.
@@ -316,7 +345,11 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
     drop(settings_lock);
 
     let is_significant = |score: f64| -> bool {
-        if is_bayesian { score >= 0.5 } else { score <= 0.05 }
+        if is_bayesian {
+            score >= 0.5
+        } else {
+            score <= 0.05
+        }
     };
 
     // Acquire read locks on the GO ontology and analysis results
@@ -360,7 +393,11 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
 
         // Add the root node only if it appears in the results (may be absent in Bayesian).
         // Either way we still traverse the ontology from this root to find all significant children.
-        if let Some(root_info) = results.items.iter().find(|item| item.id == root.to_string()) {
+        if let Some(root_info) = results
+            .items
+            .iter()
+            .find(|item| item.id == root.to_string())
+        {
             nodes.add_node(
                 root.to_string(),
                 NodeData {
@@ -391,7 +428,9 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
         // Remove compressed edges whose target is not a known significant node.
         // This can happen when the root term is absent from the results (Bayesian),
         // leaving top-level significant terms with a dangling edge to the virtual root.
-        edges.compressed.retain(|e| nodes.significant.contains_key(&e.target));
+        edges
+            .compressed
+            .retain(|e| nodes.significant.contains_key(&e.target));
 
         if root == BIOLOGICAL_PROCESS {
             dot_data.BP = DotGraph::new(nodes, edges);
@@ -434,7 +473,11 @@ fn traverse_term(
             continue;
         }
 
-        let next_parent = if is_significant { term } else { significant_parent };
+        let next_parent = if is_significant {
+            term
+        } else {
+            significant_parent
+        };
 
         let child_keep = traverse_term(
             child,
@@ -448,7 +491,9 @@ fn traverse_term(
             depth + 1,
         );
 
-        if child_keep { keep = true; }
+        if child_keep {
+            keep = true;
+        }
 
         // Always add edge for tested children so the full tested subgraph is available for Top N seeding
         edges.add_edge(EdgeData::new(child.to_string(), term.to_string(), 0), false);

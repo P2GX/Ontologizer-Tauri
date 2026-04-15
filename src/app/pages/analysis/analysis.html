@@ -2,9 +2,9 @@
     <h1 class="page-title">Analysis</h1>
 </div>
 
-<div class="analysis-body">
+<div class="page-body">
     @if (filesService.userFilesReady()) {
-    <div class="analysis-container">
+    <div class="page-panel">
 
         <!-- Category Selection Cards -->
         <div class="category-cards">
@@ -112,12 +112,11 @@
         </div>
     </div>
     }
-
     @if (!filesService.userFilesReady()) {
         <div class="empty-state">
             <span class="material-symbols-outlined empty-state-icon">folder_open</span>
             <h2>No files yet</h2>
             <p>Upload your files on the <strong>Files</strong> page.</p>
         </div>
-    }
+}
 </div>

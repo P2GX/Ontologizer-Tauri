@@ -8,25 +8,9 @@ import { invoke } from '@tauri-apps/api/core';
 // Service that handles file processing, tracks upload status, and stores file statistics.
 export class FilesService {
 
-  readonly goState = signal<'idle' | 'loading' | 'loaded' | 'error'>('idle');
-  readonly goError = signal<string | null>(null);
   readonly userFilesReady = signal(false);
 
   constructor() { }
-
-  async loadBundledGoFile(): Promise<void> {
-    if (this.goState() !== 'idle') return;
-    this.goState.set('loading');
-    try {
-      const jsonData = await invoke<string>('load_bundled_go');
-      this.fileStats.go = JSON.parse(jsonData);
-      this.fileStatus.go = true;
-      this.goState.set('loaded');
-    } catch (error) {
-      this.goState.set('error');
-      this.goError.set(String(error));
-    }
-  }
 
   private fileStatus: FileStatus = {
     study: false,
@@ -90,11 +74,11 @@ export class FilesService {
   }
 
   getStudyGenesCount(): number {
-    return Number(this.fileStats.study[0].value) || 0;
+    return Number(this.fileStats.study[0]?.value) || 0;
   }
 
   getPopGenesCount(): number {
-    return Number(this.fileStats.pop[0].value) || 0;
+    return Number(this.fileStats.pop[0]?.value) || 0;
   }
 
   updateFileStatus(newStatus: Partial<FileStatus>) {

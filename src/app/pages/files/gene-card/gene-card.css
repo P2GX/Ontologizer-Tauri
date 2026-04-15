@@ -1,0 +1,30 @@
+.gene-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--md-sys-color-outline);
+}
+
+.card-title {
+    font-size: var(--font-highlight);
+    color: var(--md-sys-color-primary);
+    margin: 0;
+}
+
+.card-subtitle {
+    font-size: var(--font-small);
+    color: var(--md-sys-color-on-primary-container);
+    margin: 0;
+}
+
+.select-button {
+    width: fit-content;
+}
+
+.file-path {
+    font-size: var(--font-small);
+    color: var(--md-sys-color-on-primary-container);
+    word-break: break-all;
+}

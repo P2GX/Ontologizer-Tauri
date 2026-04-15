@@ -7,7 +7,9 @@ use ontolius::ontology::csr::FullCsrOntology;
 use ontolius::ontology::{MetadataAware, OntologyTerms};
 use ontologizer::{AnnotationIndex, GeneSet};
 
+use flate2::read::GzDecoder;
 use serde::Serialize;
+use std::io::Read;
 use tokio::task::{block_in_place, spawn_blocking};
 
 #[derive(Serialize)]
@@ -30,44 +32,6 @@ pub async fn process_go_file(
     state: tauri::State<'_, AppState>,
     path: String,
 ) -> Result<String, String> {
-    load_go_from_path(state, path).await
-}
-
-#[tauri::command]
-pub async fn load_bundled_go(
-    state: tauri::State<'_, AppState>,
-    app: tauri::AppHandle,
-) -> Result<String, String> {
-    use tauri::Manager;
-
-    // Dev mode: look for go-basic.json inside a data/ sibling of cwd or its parent.
-    // This mirrors the heuristic used by get_data_dir.
-    let path = if let Ok(cwd) = std::env::current_dir() {
-        [
-            cwd.join("data/go-basic.json"),
-            cwd.join("../data/go-basic.json"),
-        ]
-        .iter()
-        .find_map(|p| p.canonicalize().ok())
-        .map(|p| p.to_string_lossy().into_owned())
-    } else {
-        None
-    };
-
-    // Production: resolve from the Tauri bundled resources directory.
-    let path = path
-        .or_else(|| {
-            app.path()
-                .resolve("go-basic.json", tauri::path::BaseDirectory::Resource)
-                .ok()
-                .filter(|p| p.exists())
-                .map(|p| p.to_string_lossy().into_owned())
-        })
-        .ok_or_else(|| {
-            "go-basic.json not found. Expected it in the data/ directory or bundled resources."
-                .to_string()
-        })?;
-
     load_go_from_path(state, path).await
 }
 
@@ -105,17 +69,33 @@ pub async fn process_gaf_file(
     path: String,
 ) -> Result<String, String> {
     let annotations: GoAnnotations = spawn_blocking(move || {
-        GoGafAnnotationLoader
-            .load_from_path(&path)
-            .map_err(|e| format!("Could not load GAF file: {}", e))
+        if path.ends_with(".gz") {
+            let compressed =
+                std::fs::read(&path).map_err(|e| format!("Could not read GAF file: {e}"))?;
+            let mut decoder = GzDecoder::new(&compressed[..]);
+            let mut decompressed = Vec::new();
+            decoder
+                .read_to_end(&mut decompressed)
+                .map_err(|e| format!("Could not decompress GAF file: {e}"))?;
+            GoGafAnnotationLoader
+                .load_from_read(std::io::Cursor::new(decompressed))
+                .map_err(|e| format!("Could not parse GAF file: {e}"))
+        } else {
+            GoGafAnnotationLoader
+                .load_from_path(&path)
+                .map_err(|e| format!("Could not load GAF file: {e}"))
+        }
     })
-        .await
-        .map_err(|e| format!("Task join error: {}", e))??;
+    .await
+    .map_err(|e| format!("Task join error: {}", e))??;
 
     let unique_genes = get_annotation_map(&annotations).len();
     let stats = vec![
         Stat::new("Version", &annotations.version),
-        Stat::new("Total annotations", annotations.annotations.len().to_string()),
+        Stat::new(
+            "Total annotations",
+            annotations.annotations.len().to_string(),
+        ),
         Stat::new("Unique genes", unique_genes.to_string()),
     ];
 
@@ -136,43 +116,60 @@ pub async fn process_gene_file(
     target: String,
 ) -> Result<String, String> {
     block_in_place(move || {
-        let raw_annotations_guard = state
-            .raw_annotations
-            .lock()
-            .map_err(|_| "Lock poisoned".to_string())?;
+        match target.as_str() {
+            "population" => {
+                // Population genes are valid gene IDs by definition — no annotation dependency.
+                let genes = GeneSet::from_file(&path, None)
+                    .map_err(|e| format!("Could not load GeneSet file: {}", e))?;
 
-        let raw_annotations = raw_annotations_guard.as_ref().ok_or_else(|| {
-            "Annotations have not been loaded yet! Please load a GAF file first.".to_string()
-        })?;
+                let stats = vec![Stat::new(
+                    "Population genes",
+                    genes.recognized_genes().len().to_string(),
+                )];
 
-        let genes = GeneSet::from_file(&path, &raw_annotations)
-            .map_err(|e| format!("Could not load GeneSet file: {}", e))?;
-        drop(raw_annotations_guard);
+                *state
+                    .pop_genes
+                    .lock()
+                    .map_err(|_| "Lock poisoned".to_string())? = Some(genes);
 
-        let stats = vec![
-            Stat::new(
-                "Positively annotated genes",
-                genes.recognized_genes().len().to_string(),
-            ),
-            Stat::new(
-                "Unannotated or NOT-annotated genes",
-                genes.unrecognized_genes().len().to_string(),
-            ),
-        ];
+                serde_json::to_string(&stats)
+                    .map_err(|e| format!("Failed to serialize population gene set stats: {}", e))
+            }
+            "study" => {
+                // Study genes are restricted to the population gene set.
+                let pop_guard = state
+                    .pop_genes
+                    .lock()
+                    .map_err(|_| "Lock poisoned".to_string())?;
+                let pop_genes = pop_guard.as_ref().ok_or_else(|| {
+                    "Population genes have not been loaded yet! Please load a population file first.".to_string()
+                })?;
 
-        let gene_set_mutex = match target.as_str() {
-            "study" => &state.study_genes,
-            "population" => &state.pop_genes,
-            _ => return Err("Unknown target specified. Please use 'study' or 'population'.".to_string()),
-        };
+                let genes = GeneSet::from_file(&path, Some(pop_genes))
+                    .map_err(|e| format!("Could not load GeneSet file: {}", e))?;
+                drop(pop_guard);
 
-        let mut genes_guard = gene_set_mutex
-            .lock()
-            .map_err(|_| "Failed to lock target mutex".to_string())?;
-        *genes_guard = Some(genes);
+                let stats = vec![
+                    Stat::new(
+                        "Genes in population",
+                        genes.recognized_genes().len().to_string(),
+                    ),
+                    Stat::new(
+                        "Genes not in population",
+                        genes.unrecognized_genes().len().to_string(),
+                    ),
+                ];
 
-        serde_json::to_string(&stats)
-            .map_err(|e| format!("Failed to serialize {} gene set stats: {}", target, e))
+                *state
+                    .study_genes
+                    .lock()
+                    .map_err(|_| "Lock poisoned".to_string())? = Some(genes);
+
+                serde_json::to_string(&stats)
+                    .map_err(|e| format!("Failed to serialize study gene set stats: {}", e))
+            }
+            _ => Err("Unknown target specified. Please use 'study' or 'population'.".to_string()),
+        }
     })
 }
 
@@ -181,21 +178,24 @@ pub async fn build_annotation_index(state: tauri::State<'_, AppState>) -> Result
     // Building the index is highly CPU-bound and holds multiple locks. block_in_place handles this efficiently.
     block_in_place(move || {
         let ontology_guard = state.ontology.read().map_err(|_| "RwLock poisoned")?;
-        let ontology = ontology_guard.as_ref().ok_or_else(|| "Ontology not loaded!".to_string())?;
+        let ontology = ontology_guard
+            .as_ref()
+            .ok_or_else(|| "Ontology not loaded!".to_string())?;
 
         let pop_genes_guard = state.pop_genes.lock().map_err(|_| "Mutex poisoned")?;
-        let pop_genes = pop_genes_guard.as_ref().ok_or_else(|| "Population genes not loaded!".to_string())?;
+        let pop_genes = pop_genes_guard
+            .as_ref()
+            .ok_or_else(|| "Population genes not loaded!".to_string())?;
 
         // Lock the raw annotations and `take()` them out (consuming them)
         let mut raw_guard = state.raw_annotations.lock().map_err(|_| "Mutex poisoned")?;
-        let go_annotations = raw_guard.take().ok_or_else(|| "GAF Annotations not loaded or already consumed!".to_string())?;
+        let go_annotations = raw_guard
+            .take()
+            .ok_or_else(|| "GAF Annotations not loaded or already consumed!".to_string())?;
 
         // Construct the actual index
-        let annotation_index = AnnotationIndex::new(
-            go_annotations,
-            ontology,
-            Some(pop_genes.recognized_genes())
-        );
+        let annotation_index =
+            AnnotationIndex::new(go_annotations, ontology, pop_genes.recognized_genes());
 
         // Save the finalized index to AppState
         *state.annotations.lock().map_err(|_| "Mutex poisoned")? = Some(annotation_index);

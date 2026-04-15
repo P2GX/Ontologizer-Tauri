@@ -1,10 +1,3 @@
-.analysis-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
 /* ===== Shared tab container ===== */
 /* One card that is constant across all four tabs. */
 .tab-panel {

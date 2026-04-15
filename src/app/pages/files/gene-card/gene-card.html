@@ -1,0 +1,14 @@
+<div class="gene-card">
+    <h3 class="card-title">{{ title }}</h3>
+    <p class="card-subtitle">{{ subtitle }}</p>
+
+    <button class="button select-button"
+            (click)="openFileDialog()"
+            [disabled]="!dependenciesLoaded || fileLoading()">
+        Select local file
+    </button>
+
+    <span class="file-path">
+        @if (filePath()) { {{ filePath() }} } @else { No file selected }
+    </span>
+</div>

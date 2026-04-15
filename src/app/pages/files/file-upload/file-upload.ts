@@ -81,9 +81,8 @@ export class FileUpload {
       await this.filesService.processFile(path, this.processFileType);
       this.fileStats = this.filesService.getFileStatsForType(this.processFileType);
 
-      if ((this.processFileType === 'pop' || this.processFileType === 'study')
-        && Number(this.fileStats[0]?.value) === 0) {
-        this.snackBar.open('⚠️ None of the uploaded genes have annotations in the current GAF file. Please check your files and try again.', 'Close', { panelClass: ['custom-snackbar'] });
+      if (this.processFileType === 'study' && Number(this.fileStats[0]?.value) === 0) {
+        this.snackBar.open('⚠️ None of the study genes are present in the population gene set. Please check your files and try again.', 'Close', { panelClass: ['custom-snackbar'] });
       }
 
       this.fileLoaded = true;
@@ -95,6 +94,5 @@ export class FileUpload {
       this.fileLoading = false;
     }
   }
-
 }
 

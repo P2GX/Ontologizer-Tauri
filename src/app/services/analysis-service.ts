@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 
-// These types mirror the Rust enums in src-tauri/src/commands/config.rs.
+// These types mirror the Rust enums in src-tauri/src/commands/settings.
 // Keep them in sync when the Rust side changes.
 export type Background = 'Standard' | 'ParentUnion' | 'ParentIntersection';
 export type Correction = 'Bonferroni' | 'BonferroniHolm' | 'BenjaminHochberg' | 'None';

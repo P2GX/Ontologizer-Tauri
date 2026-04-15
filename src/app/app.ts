@@ -4,7 +4,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule, MatDivider } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { FilesService } from './services/files-service';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
 @Component({
@@ -23,12 +22,6 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 })
 export class App {
   isCollapsed = signal(false);
-
-  constructor(filesService: FilesService) {
-    // Start loading the bundled Gene Ontology immediately on app start so it's
-    // ready (or close to ready) by the time the user reaches the Files page.
-    filesService.loadBundledGoFile();
-  }
 
   toggleMenu(): void {
     this.isCollapsed.set(!this.isCollapsed());

@@ -9,20 +9,31 @@ use appstate::AppState;
 use std::sync::Mutex;
 
 mod commands;
+use crate::commands::config::Config;
 use commands::{
     analysis::run_analysis,
-    config::{save_settings, get_data_dir},
-    loaders::{process_gaf_file, process_gene_file, process_go_file, build_annotation_index, load_bundled_go},
-    output::{build_go_graph_data, get_analysis_results, get_analysis_summary, get_analysis_results_page, get_bar_chart_data, save_results},
+    config::{get_config, set_gaf_file, set_go_file, set_population_file, set_study_file},
+    downloader::{download_gaf, download_go, get_available_organisms},
+    loaders::{
+        build_annotation_index, process_gaf_file, process_gene_file, process_go_file,
+    },
+    output::{
+        build_go_graph_data, get_analysis_results, get_analysis_results_page, get_analysis_summary,
+        get_bar_chart_data, save_results,
+    },
+    settings::{get_data_dir, save_settings},
 };
 
 fn main() {
+    let config = Config::load();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init()) // activate Dialog plugin for file dialogs (open file, save file)
         .plugin(tauri_plugin_fs::init()) // activate File System plugin for file operations.
         .plugin(tauri_plugin_opener::init())
         .manage(AppState {
             // shared state across the application that can be accessed from different commands
+            config: Mutex::new(config),
             ontology: RwLock::new(None),
             raw_annotations: Mutex::new(None),
             annotations: Mutex::new(None),
@@ -32,9 +43,18 @@ fn main() {
             results: RwLock::new(None),
         })
         .invoke_handler(tauri::generate_handler![
-            // register tauri-commands for frontend-backend communication
+            // config
+            get_config,
+            set_go_file,
+            set_gaf_file,
+            set_study_file,
+            set_population_file,
+            // downloader
+            download_go,
+            download_gaf,
+            get_available_organisms,
+            // loaders
             process_go_file,
-            load_bundled_go,
             process_gaf_file,
             process_gene_file,
             build_annotation_index,

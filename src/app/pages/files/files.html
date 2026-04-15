@@ -2,59 +2,31 @@
     <h1 class="page-title">Files</h1>
 </div>
 
-<div class="file-container">
-    <div class="files-settings">
+<div class="page-body">
+    <div class="page-panel">
 
-        <div class="go-status-bar">
-            @if (filesService.goState() === 'loading') {
-                <span class="material-symbols-outlined go-status-icon spinning">progress_activity</span>
-                <span class="go-status-text">Loading Gene Ontology…</span>
-            } @else if (filesService.goState() === 'loaded') {
-                <span class="material-symbols-outlined go-status-icon go-status-ok">check_circle</span>
-                <span class="go-status-text go-status-ok">Gene Ontology ready</span>
-            } @else if (filesService.goState() === 'error') {
-                <span class="material-symbols-outlined go-status-icon go-status-err">error</span>
-                <span class="go-status-text go-status-err">Gene Ontology failed to load</span>
-            }
+        <div class="upload-grid">
+            <app-file-upload processFileType="go"
+                             stepTitle="Upload Gene Ontology"
+                             subtitle="Accepted File Types: .json"
+                             (uploadSuccess)="onFileLoadedSuccess('go')" />
+
+            <app-file-upload processFileType="annotation"
+                             stepTitle="Upload Annotations"
+                             subtitle="Accepted File Types: .gaf"
+                             (uploadSuccess)="onFileLoadedSuccess('annotation')" />
+
+            <app-gene-card title="Population Gene File"
+                           subtitle="Accepted File Types: .txt"
+                           target="population"
+                           (uploadSuccess)="onFileLoadedSuccess('pop')" />
+
+            <app-gene-card title="Study Gene File"
+                           subtitle="Accepted File Types: .txt"
+                           target="study"
+                           (uploadSuccess)="onFileLoadedSuccess('study')" />
         </div>
 
-        <nav class="step-nav">
-            <ul class="upload-step-ul">
-                @for (step of uploadSteps; track step.type; let i = $index) {
-                    <li (click)="selectStep(i)" [class.active]="activeStep() === i && !step.fileLoaded()"
-                        [class.green-active]="step.fileLoaded() && activeStep() === i"
-                        [class.upload-success]="step.fileLoaded()">
-                        <span class="circle" [class.active]="activeStep() === i && !step.fileLoaded()"
-                              [class.upload-success]="step.fileLoaded()" [class.green-active]="step.fileLoaded() && activeStep() === i">
-                            @if (step.fileLoaded()) { ✓ } @else { {{ i + 1 }} }
-                        </span>
-                        {{ step.title }}
-                    </li>
-                    @if (i !== uploadSteps.length - 1) {
-                        <div class="bar"></div>
-                    }
-                }
-            </ul>
-        </nav>
-
-        <div class="upload-card-slider">
-            @for (step of uploadSteps; track step.type; let i = $index) {
-                <div class="slider-item" #sliderItem>
-                    <app-file-upload [processFileType]="step.type" [num]="i + 1" [stepTitle]="step.title"
-                                     [subtitle]="step.subtitle"
-                                     [dependenciesLoaded]="step.dependsOn ? filesStatus()[step.dependsOn] : true"
-                                     [triggerReload]="step.dependsOn ? triggerReload() : null"
-                                     (uploadSuccess)="onFileLoadedSuccess(step.type)" />
-                </div>
-            }
-
-            <button id="next" [hidden]="activeStep() === uploadSteps.length - 1" (click)="nextStep()">
-                <span class="material-symbols-outlined">chevron_right</span>
-            </button>
-            <button id="prev" [hidden]="activeStep() === 0" (click)="prevStep()">
-                <span class="material-symbols-outlined">chevron_left</span>
-            </button>
-        </div>
 
         <div class="action-button-container" [class.disabled-state]="!allFilesLoaded()">
             <mat-divider class="horizontal" />
@@ -62,15 +34,9 @@
                 <button class="button" [disabled]="!allFilesLoaded()" (click)="processFiles()">
                     {{ isProcessingAll() ? 'Processing...' : (isFinished() ? 'Finished!' : 'Process Files') }}
                 </button>
-
-                @if (!allFilesLoaded() && filesService.goState() === 'loading') {
-                    <span class="analysis-warning">
-                        <span class="material-symbols-outlined warning-icon">schedule</span>
-                        Waiting for Gene Ontology …
-                    </span>
-                }
             </div>
             <mat-divider class="horizontal" />
         </div>
     </div>
 </div>
+
