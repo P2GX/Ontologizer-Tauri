@@ -7,23 +7,23 @@ const GO_URL: &str = "http://purl.obolibrary.org/obo/go/go-basic.json";
 fn gaf_urls() -> HashMap<&'static str, &'static str> {
     HashMap::from([
         (
-            "Human",
+            "Homo sapiens (Human)",
             "https://current.geneontology.org/annotations/goa_human.gaf.gz",
         ),
         (
-            "Mouse",
+            "Mus musculus (Mouse)",
             "https://current.geneontology.org/annotations/mgi.gaf.gz",
         ),
         (
-            "Rat",
+            "Rattus norvegicus (Rat)",
             "https://current.geneontology.org/annotations/rgd.gaf.gz",
         ),
         (
-            "Yeast",
+            "Saccharomyces cerevisiae (Brewer's yYeseast)",
             "https://current.geneontology.org/annotations/sgd.gaf.gz",
         ),
         (
-            "Fly",
+            "Drosophila melanogaster (Fruit Fly)",
             "https://current.geneontology.org/annotations/fb.gaf.gz",
         ),
     ])

@@ -1,62 +1,66 @@
-import { Component, signal, computed } from '@angular/core';
-import { FileUpload } from './file-upload/file-upload';
+import { Component, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
+import { GafCard } from './gaf-card/gaf-card';
+import { GoCard } from './go-card/go-card';
 import { Router } from '@angular/router';
-import { FileStatus, FilesService } from '../../services/files-service';
+import { FilesService } from '../../services/files-service';
 import { invoke } from "@tauri-apps/api/core";
 import { MatDivider } from "@angular/material/list";
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {GeneCard} from "./gene-card/gene-card";
+import { GeneCard } from "./gene-card/gene-card";
+
+type Stat = { key: string; value: string };
 
 @Component({
   selector: 'app-files',
-  imports: [FileUpload, MatDivider, GeneCard],
+  imports: [GoCard, GafCard, MatDivider, GeneCard],
   templateUrl: './files.html',
   styleUrl: './files.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Files{
+export class Files {
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+  protected filesService = inject(FilesService);
 
-  constructor(readonly filesService: FilesService, private router: Router, private snackBar: MatSnackBar) {}
-
-  filesStatus = signal<FileStatus>({ study: false, pop: false, go: false, annotation: false });
   isProcessingAll = signal(false);
-  isFinished = signal(false);
-  triggerReload = signal(0); // incremented when population is reloaded, triggers study to reprocess
 
-  allFilesLoaded = computed(() => {
-    const s = this.filesStatus();
-    return s.go && s.annotation && s.pop && s.study;
-  });
-
-  uploadSteps = [
-    { type: 'go' as keyof FileStatus, title: "Upload Gene Ontology", subtitle: 'Accepted File Types: .json', dependsOn: null, fileLoaded: () => this.filesStatus().go },
-    { type: 'annotation' as keyof FileStatus, title: 'Upload Annotations', subtitle: 'Accepted File Types: .gaf', dependsOn: null, fileLoaded: () => this.filesStatus().annotation },
-    { type: 'pop' as keyof FileStatus, title: 'Upload Population Genes', subtitle: 'Accepted File Types: .txt', dependsOn: null, fileLoaded: () => this.filesStatus().pop },
-    { type: 'study' as keyof FileStatus, title: 'Upload Study Genes', subtitle: 'Accepted File Types: .txt', dependsOn: 'pop' as keyof FileStatus, fileLoaded: () => this.filesStatus().study }
-  ];
-
-  onFileLoadedSuccess(fileType: keyof FileStatus) {
-    this.filesStatus.update(status => ({ ...status, [fileType]: true }));
-    this.filesService.updateFileStatus({ [fileType]: true });
-
-    if (fileType === 'pop') {
-      this.triggerReload.update(v => v + 1);
-    }
-  }
+  allFilesLoaded = computed(() => this.filesService.allPathsSet());
 
   async processFiles() {
     if (!this.allFilesLoaded()) return;
 
     this.isProcessingAll.set(true);
     try {
-      const result = await invoke('build_annotation_index');
-      console.log("Success:", result);
-      this.isFinished.set(true);
+      let goStats: Stat[];
+      if (this.filesService.goLoadedForPath() !== this.filesService.goPath()) {
+        const json = await invoke<string>('process_go_file', { path: this.filesService.goPath() });
+        goStats = JSON.parse(json);
+      } else {
+        goStats = [];
+      }
+
+      await invoke('process_gaf_file', { path: this.filesService.annotationPath() });
+
+      const popJson = await invoke<string>('process_gene_file', { path: this.filesService.popPath(), target: 'population' });
+      const popStats: Stat[] = JSON.parse(popJson);
+
+      const studyJson = await invoke<string>('process_gene_file', { path: this.filesService.studyPath(), target: 'study' });
+      const studyStats: Stat[] = JSON.parse(studyJson);
+
+      await invoke('build_annotation_index');
+
+      const goTerms = goStats.length > 1 ? Number(goStats[1].value) : this.filesService.goTermCount();
+      const popGenes = popStats.length > 0 ? Number(popStats[0].value) : 0;
+      const studyGenes = studyStats.length > 0 ? Number(studyStats[0].value) : 0;
+      this.filesService.setAnalysisStats(goTerms, popGenes, studyGenes);
+      this.filesService.filesProcessed.set(true);
+
+      await this.router.navigate(['/analysis']);
     } catch (error) {
-      console.error("Error building annotation index:", error);
+      console.error("Error processing files:", error);
       this.snackBar.open(`Failed to process files: ${error}`, 'Close', { panelClass: ['custom-snackbar'], duration: 8000 });
     } finally {
       this.isProcessingAll.set(false);
-      this.router.navigate(['/analysis']);
     }
   }
 }

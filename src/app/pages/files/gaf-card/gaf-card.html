@@ -1,0 +1,42 @@
+<div class="gaf-card">
+
+    <app-card-header
+        cardTitle="GO Association File"
+        tooltipType="annotation"
+        [subtitle]="version()"
+        [ready]="!!filePath()" />
+
+    <p class="card-description"></p>
+
+    <app-dropdown-menu
+        label="Organism"
+        [options]="organisms()"
+        [selected]="selectedOrganism()"
+        (selectedChange)="onOrganismChange($event)" />
+
+    <div class="file-status" [class.file-loaded]="filePath()">
+        <span class="material-symbols-outlined file-icon">
+            {{ filePath() ? 'description' : 'folder_open' }}
+        </span>
+        <span class="file-name">{{ fileName() ?? 'No file selected' }}</span>
+    </div>
+
+    <div class="button-row">
+        <button class="download-button"
+                (click)="downloadGaf()"
+                [disabled]="downloading()">
+            <span class="material-symbols-outlined">download</span>
+            {{ downloading() ? 'Update' : 'Update' }}
+        </button>
+
+        <button class="pick-button"
+                (click)="openFileDialog()"
+                [disabled]="downloading()">
+            <span class="material-symbols-outlined">upload_file</span>
+            {{ filePath() ? '' : '' }}
+        </button>
+    </div>
+
+    <span class="format-hint">Accepted: .gaf, .gaf.gz</span>
+
+</div>

@@ -1,109 +1,58 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 
 @Injectable({
   providedIn: 'root'
 })
-
-// Service that handles file processing, tracks upload status, and stores file statistics.
 export class FilesService {
 
-  readonly userFilesReady = signal(false);
+  readonly goPath = signal<string | null>(null);
+  readonly annotationPath = signal<string | null>(null);
+  readonly popPath = signal<string | null>(null);
+  readonly studyPath = signal<string | null>(null);
 
-  constructor() { }
+  readonly allPathsSet = computed(() =>
+    !!this.goPath() && !!this.annotationPath() && !!this.popPath() && !!this.studyPath()
+  );
 
-  private fileStatus: FileStatus = {
-    study: false,
-    pop: false,
-    go: false,
-    annotation: false,
-  };
+  /** Set to true after processFiles() completes successfully. */
+  readonly filesProcessed = signal(false);
 
-  private fileStats: FileStats = {
-    go: [],
-    annotation: [],
-    study: [],
-    pop: []
-  };
+  /** Stats populated after processFiles() runs. */
+  readonly goTermCount = signal(0);
+  readonly popGeneCount = signal(0);
+  readonly studyGeneCount = signal(0);
 
-  getFileStats(): FileStats {
-    return this.fileStats;
-  }
+  /** Tracks which GO path is already loaded in backend state (used to skip re-processing). */
+  readonly goLoadedForPath = signal<string | null>(null);
 
-  async processFile(path: string, fileType: keyof FileStats): Promise<void> {
-    try {
-      let newStats: Stat[] = [];
-      let jsonData: string;
-      console.log(`Processing file of type ${fileType} at path ${path}`);
-      switch (fileType) {
-        case 'go':
-          jsonData = await invoke<string>('process_go_file', { path });
-          console.log('GO file processing result:', jsonData);
-          break;
-        case 'annotation':
-          jsonData = await invoke<string>('process_gaf_file', { path });
-          break;
-        case 'study':
-          jsonData = await invoke<string>('process_gene_file', { path, target: 'study' });
-          break;
-        case 'pop':
-          jsonData = await invoke<string>('process_gene_file', { path, target: 'population' });
-          break;
-        default:
-          throw new Error('Unkown file type');
-      }
-      newStats = JSON.parse(jsonData);
-      console.log(`File stats for ${fileType}:`, newStats);
-      this.fileStats[fileType] = newStats;
-    } catch (error) {
-      console.error('Error processing file:', error);
-      alert('Error processing file. Please check the file format and try again.');
+  private goGeneration = 0;
+
+  setPath(type: 'go' | 'annotation' | 'pop' | 'study', path: string): void {
+    switch (type) {
+      case 'go': this.goPath.set(path); break;
+      case 'annotation': this.annotationPath.set(path); break;
+      case 'pop': this.popPath.set(path); break;
+      case 'study': this.studyPath.set(path); break;
     }
   }
 
-  getFileStatsForType(fileType: keyof FileStats): Stat[] {
-    return this.fileStats[fileType];
+  startGoBackgroundLoad(path: string): void {
+    const generation = ++this.goGeneration;
+    invoke<string>('process_go_file', { path }).then(json => {
+      if (this.goGeneration === generation) {
+        this.goLoadedForPath.set(path);
+        const stats: { key: string; value: string }[] = JSON.parse(json);
+        if (stats.length > 1) this.goTermCount.set(Number(stats[1].value));
+      }
+    }).catch(err => {
+      console.error('Background GO load failed:', err);
+    });
   }
 
-  getGoTermsCount() {
-    return Number(this.fileStats.go[1].value) || 0;
+  setAnalysisStats(goTerms: number, popGenes: number, studyGenes: number): void {
+    this.goTermCount.set(goTerms);
+    this.popGeneCount.set(popGenes);
+    this.studyGeneCount.set(studyGenes);
   }
-
-  getFileStatus(): FileStatus {
-    return { ...this.fileStatus };
-  }
-
-  getStudyGenesCount(): number {
-    return Number(this.fileStats.study[0]?.value) || 0;
-  }
-
-  getPopGenesCount(): number {
-    return Number(this.fileStats.pop[0]?.value) || 0;
-  }
-
-  updateFileStatus(newStatus: Partial<FileStatus>) {
-    this.fileStatus = { ...this.fileStatus, ...newStatus };
-    const s = this.fileStatus;
-    this.userFilesReady.set(s.annotation && s.pop && s.study);
-  }
-
-}
-export interface FileStatus {
-  study: boolean;
-  pop: boolean;
-  go: boolean;
-  annotation: boolean;
-}
-
-// A stat is a key-value pair representing a statistic about a file --> one row in the file stats table
-export interface Stat {
-  key: string;
-  value: string;
-}
-
-export interface FileStats {
-  go: Stat[];
-  annotation: Stat[];
-  study: Stat[];
-  pop: Stat[];
 }

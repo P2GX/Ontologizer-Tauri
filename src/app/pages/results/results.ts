@@ -58,9 +58,9 @@ export class Results implements OnInit {
 
     this.dashboardInfo = {
       method: this.resultsService.getMethod(),
-      studyGenes: this.filesService.getStudyGenesCount(),
-      popGenes: this.filesService.getPopGenesCount(),
-      goTerms: this.filesService.getGoTermsCount(),
+      studyGenes: this.filesService.studyGeneCount(),
+      popGenes: this.filesService.popGeneCount(),
+      goTerms: this.filesService.goTermCount(),
       resultsLength: this.resultsService.getResultsLength(),
       proportionData: this.resultsService.getProportionData()
     };

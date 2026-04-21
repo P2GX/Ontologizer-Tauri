@@ -1,0 +1,18 @@
+<div class="card-header">
+    <div class="card-header-text">
+        <span class="card-title">{{ cardTitle() }}</span>
+        @if (ready()) {
+            <span class="ready-badge">
+                <span class="material-symbols-outlined">check_circle</span>
+                READY
+                @if (subtitle()) { <span class="version"> · {{ subtitle() }}</span> }
+            </span>
+        } @else if (subtitle()) {
+            <span class="card-subtitle">{{ subtitle() }}</span>
+        }
+    </div>
+    <div class="tooltip-trigger">
+        <button class="help-btn" type="button" aria-label="Help">?</button>
+        <app-tooltip [type]="tooltipType()" />
+    </div>
+</div>

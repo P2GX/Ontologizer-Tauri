@@ -108,6 +108,7 @@ impl Config {
         self.pop_file = Some(path);
         self.save()
     }
+
 }
 
 fn config_dir() -> Result<PathBuf, String> {

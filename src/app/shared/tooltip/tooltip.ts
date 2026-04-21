@@ -16,10 +16,11 @@ export class Tooltip {
   // linkCopied = false;
 
   tooltipText: { [key in 'annotation' | 'study' | 'pop' | 'go' | 'goGraphInfo']: string } = {
-    annotation: 'The GO Association File (GAF) contains annotations linking gene products to Gene Ontology terms. This file can be downloaded from the Gene Ontology homepage. Make sure the file corresponds to the organism in your dataset.',
-    study: 'The Study Set is a subset of the Population Set. Term enrichment is analysed with respect to this subset. Each gene must be on a separate line. All genes should be provided using their <span class="highlight">Official Gene Symbol</span>. Uploaded symbols will be compared with the object_symbol column in the provided GAF file.',
-    pop: 'The Population Set represents the background set of genes that defines the reference for enrichment analysis. Each gene must be on a separate line. All genes should be provided using their <span class="highlight">Official Gene Symbol</span>. Uploaded symbols will be compared with the object_symbol column in the provided GAF file.',
-    go: 'Upload the Gene Ontology in JSON format. The latest version can be downloaded at <em> https://geneontology.org/ </em>.',
+    go: 'Download the latest release automatically or select a local file. <br> The Gene Ontology (GO) is a standardised vocabulary of biological knowledge, made of <span class="highlight">terms</span> connected by defined <span class="highlight">relations</span>.',
+    annotation: 'Pick an organism, then download the latest release automatically or select a local file. <br> The GO Association File (GAF) links <span class="highlight">gene products</span> to GO <span class="highlight">terms</span>.',
+    study: 'Paste or upload your genes of interest — one symbol per line. <br> The <span class="highlight">study set</span> is the group of genes tested for GO term enrichment. Symbols are matched against the <em>DB Object Symbol</em> column of the GAF.',
+    pop: 'Paste or upload the reference gene list — one symbol per line. <br> The <span class="highlight">population set</span> is the background the study set is compared against (typically all genes measurable in your experiment). Symbols are matched against the <em>DB Object Symbol</em> column of the GAF.',
+
     goGraphInfo: 'The GO Graph visualization provides an interactive way to explore hierarchy of significant GO terms. Non-significant nodes have been skipped for clarity. Edges between nodes represent "is_a" relationships. <span class="highlight">Solid edges</span> indicate direct parent-child relationships, while <span class="highlight">dashed edges</span> indicate that intermediate nodes have been skipped. <br> <span class="highlight">Hover</span> over nodes to <span class="highlight">see more information</span>. <br> <br> The actual max depth of each term in the GO hierarchy is shown in the tooltip — Root has depth 0.'
   };
 

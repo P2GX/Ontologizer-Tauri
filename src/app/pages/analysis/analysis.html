@@ -3,7 +3,7 @@
 </div>
 
 <div class="page-body">
-    @if (filesService.userFilesReady()) {
+    @if (filesService.filesProcessed()) {
     <div class="page-panel">
 
         <!-- Category Selection Cards -->
@@ -112,7 +112,7 @@
         </div>
     </div>
     }
-    @if (!filesService.userFilesReady()) {
+    @if (!filesService.filesProcessed()) {
         <div class="empty-state">
             <span class="material-symbols-outlined empty-state-icon">folder_open</span>
             <h2>No files yet</h2>

@@ -82,7 +82,7 @@ export class Analysis {
   async startAnalysis() {
     if (!this.selectedMethod) return;
 
-    if (!Object.values(this.filesService.getFileStatus()).every(f => f === true)) {
+    if (!this.filesService.filesProcessed()) {
       this.snackBar.open('⚠️ Not all required files are loaded.', 'Close', { panelClass: ['custom-snackbar'] });
       return;
     }

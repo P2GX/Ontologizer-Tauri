@@ -6,25 +6,15 @@
     <div class="page-panel">
 
         <div class="upload-grid">
-            <app-file-upload processFileType="go"
-                             stepTitle="Upload Gene Ontology"
-                             subtitle="Accepted File Types: .json"
-                             (uploadSuccess)="onFileLoadedSuccess('go')" />
+            <app-go-card />
 
-            <app-file-upload processFileType="annotation"
-                             stepTitle="Upload Annotations"
-                             subtitle="Accepted File Types: .gaf"
-                             (uploadSuccess)="onFileLoadedSuccess('annotation')" />
+            <app-gaf-card />
 
-            <app-gene-card title="Population Gene File"
-                           subtitle="Accepted File Types: .txt"
-                           target="population"
-                           (uploadSuccess)="onFileLoadedSuccess('pop')" />
+            <app-gene-card cardTitle="Population Gene File"
+                           target="population" />
 
-            <app-gene-card title="Study Gene File"
-                           subtitle="Accepted File Types: .txt"
-                           target="study"
-                           (uploadSuccess)="onFileLoadedSuccess('study')" />
+            <app-gene-card cardTitle="Study Gene File"
+                           target="study" />
         </div>
 
 
@@ -32,11 +22,10 @@
             <mat-divider class="horizontal" />
             <div class ="button-and-warning">
                 <button class="button" [disabled]="!allFilesLoaded()" (click)="processFiles()">
-                    {{ isProcessingAll() ? 'Processing...' : (isFinished() ? 'Finished!' : 'Process Files') }}
+                    {{ isProcessingAll() ? 'Processing...' : 'Process Files' }}
                 </button>
             </div>
             <mat-divider class="horizontal" />
         </div>
     </div>
 </div>
-

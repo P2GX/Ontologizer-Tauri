@@ -3,7 +3,7 @@
     height: 100%;
 }
 
-.gene-card {
+.gaf-card {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -60,6 +60,17 @@
     color: var(--md-sys-color-primary);
 }
 
+.ready-badge {
+    flex-shrink: 0;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background-color: var(--md-sys-color-success-container);
+    color: var(--md-sys-color-success);
+    padding: 0.2rem 0.55rem;
+    border-radius: 1rem;
+    white-space: nowrap;
+}
+
 /* === Format hint === */
 .format-hint {
     font-size: var(--font-small);
@@ -67,19 +78,53 @@
     opacity: 0.7;
 }
 
-/* === Pick / Change File button === */
-.pick-button {
+/* === Button row === */
+.button-row {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* === Download button (primary) === */
+.download-button {
+    flex: 3;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 0.75rem;
+    border: none;
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    font-size: var(--font-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-family: "Trebuchet MS", Trebuchet, sans-serif;
+}
+
+.download-button:hover:not(:disabled) {
+    background-color: var(--md-sys-color-primary-hover);
+}
+
+.download-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* === Pick / Change File button (secondary) === */
+.pick-button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     padding: 0.7rem 1rem;
     border-radius: 0.75rem;
     border: 1px solid var(--md-sys-color-outline);
     background-color: var(--md-sys-color-primary-container);
     color: var(--md-sys-color-primary);
-    font-size: var(--font-standard);
+    font-size: var(--font-small);
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -96,7 +141,11 @@
     cursor: not-allowed;
 }
 
-.pick-icon {
-    font-size: var(--font-highlight);
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
 }
 
+.spinning {
+    animation: spin 1s linear infinite;
+}

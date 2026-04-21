@@ -15,7 +15,8 @@ use commands::{
     config::{get_config, set_gaf_file, set_go_file, set_population_file, set_study_file},
     downloader::{download_gaf, download_go, get_available_organisms},
     loaders::{
-        build_annotation_index, process_gaf_file, process_gene_file, process_go_file,
+        build_annotation_index, get_gaf_date, get_go_date, process_gaf_file, process_gene_file,
+        process_go_file,
     },
     output::{
         build_go_graph_data, get_analysis_results, get_analysis_results_page, get_analysis_summary,
@@ -58,6 +59,8 @@ fn main() {
             process_gaf_file,
             process_gene_file,
             build_annotation_index,
+            get_go_date,
+            get_gaf_date,
             save_settings,
             get_data_dir,
             run_analysis,

@@ -9,7 +9,7 @@ use ontologizer::{AnnotationIndex, GeneSet};
 
 use flate2::read::GzDecoder;
 use serde::Serialize;
-use std::io::Read;
+use std::io::{BufRead, BufReader, Read};
 use tokio::task::{block_in_place, spawn_blocking};
 
 #[derive(Serialize)]
@@ -103,7 +103,6 @@ pub async fn process_gaf_file(
         .raw_annotations
         .lock()
         .map_err(|_| "Lock poisoned".to_string())?;
-
     *raw_annotations_lock = Some(annotations);
 
     serde_json::to_string(&stats).map_err(|e| format!("Serialization error: {}", e))
@@ -202,4 +201,54 @@ pub async fn build_annotation_index(state: tauri::State<'_, AppState>) -> Result
 
         Ok("Annotation Index built successfully!".into())
     })
+}
+
+/// Reads just the first few KB of a go-basic.json file to extract the release date from the
+/// version URL (e.g. "http://.../releases/2026-03-25/go.owl" → "2026-03-25").
+#[tauri::command]
+pub fn get_go_date(path: String) -> Result<String, String> {
+    let mut file =
+        std::fs::File::open(&path).map_err(|e| format!("Could not open GO file: {e}"))?;
+    let mut buf = vec![0u8; 4096];
+    let n = file
+        .read(&mut buf)
+        .map_err(|e| format!("Could not read GO file: {e}"))?;
+    let text = String::from_utf8_lossy(&buf[..n]);
+
+    let marker = "releases/";
+    if let Some(pos) = text.find(marker) {
+        let date: String = text[pos + marker.len()..].chars().take(10).collect();
+        return Ok(date);
+    }
+    Err("Could not find release date in GO file".to_string())
+}
+
+/// Reads only the header lines of a GAF or GAF.gz file to extract the date-generated value.
+#[tauri::command]
+pub fn get_gaf_date(path: String) -> Result<String, String> {
+    const PREFIX: &str = "!date-generated: ";
+
+    let extract = |reader: &mut dyn BufRead| -> Result<String, String> {
+        for line in reader.lines() {
+            let line = line.map_err(|e| format!("Read error: {e}"))?;
+            if !line.starts_with('!') {
+                break;
+            }
+            if let Some(rest) = line.strip_prefix(PREFIX) {
+                return Ok(rest.to_string());
+            }
+        }
+        Err("Could not find date-generated in GAF file".to_string())
+    };
+
+    let file =
+        std::fs::File::open(&path).map_err(|e| format!("Could not open GAF file: {e}"))?;
+
+    if path.ends_with(".gz") {
+        let mut reader = BufReader::new(GzDecoder::new(file));
+        extract(&mut reader)
+    } else {
+        let mut reader = BufReader::new(file);
+        extract(&mut reader)
+    }
 }

@@ -1,67 +1,60 @@
-import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input, signal, computed } from '@angular/core';
 import { open } from '@tauri-apps/plugin-dialog';
-import { FilesService, Stat } from '../../../services/files-service';
+import { invoke } from '@tauri-apps/api/core';
+import { homeDir } from '@tauri-apps/api/path';
+import { FilesService } from '../../../services/files-service';
+import { shortenPath } from '../../../shared/utils/path';
+import { CardHeader } from '../../../shared/card-header/card-header';
 
 @Component({
     selector: 'app-gene-card',
-    imports: [],
+    imports: [CardHeader],
     templateUrl: './gene-card.html',
     styleUrl: './gene-card.css',
-    standalone: true
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeneCard {
     private filesService = inject(FilesService);
 
-    @Input() title!: string;
-    @Input() subtitle!: string;
-    @Input() target!: 'study' | 'population';
-    @Input() dependenciesLoaded = true;
-    @Output() uploadSuccess = new EventEmitter<void>();
+    cardTitle = input.required<string>();
+    target = input.required<'study' | 'population'>();
 
     filePath = signal<string | null>(null);
-    fileLoading = signal(false);
-    fileStats = signal<Stat[]>([]);
+    displayPath = signal<string | null>(null);
 
-    get icon(): string {
-        return this.target === 'population' ? 'groups' : 'biotech';
+    fileName = computed(() => this.displayPath() ?? this.filePath()?.split(/[/\\]/).pop() ?? null);
+
+    constructor() {
+        void this.loadSavedPath();
     }
 
-    get description(): string {
-        return this.target === 'population'
-            ? 'All genes in the background set — used as the reference for statistical enrichment testing.'
-            : 'Genes of interest to be tested for GO term enrichment against the background set.';
-    }
+    private async loadSavedPath() {
+        const config = await invoke<{ study_file: string | null; pop_file: string | null }>('get_config');
+        const saved = this.target() === 'population' ? config.pop_file : config.study_file;
+        if (!saved) return;
 
-    get fileName(): string | null {
-        const p = this.filePath();
-        if (!p) return null;
-        return p.split(/[/\\]/).pop() ?? p;
-    }
-
-    get geneCount(): string | null {
-        const stats = this.fileStats();
-        return stats.length > 0 ? stats[0].value : null;
+        const home = await homeDir();
+        this.filePath.set(saved);
+        this.displayPath.set(shortenPath(saved, home));
+        this.filesService.setPath(this.target() === 'population' ? 'pop' : 'study', saved);
     }
 
     async openFileDialog() {
+        const defaultPath = await homeDir();
         const path = await open({
             multiple: false,
+            defaultPath,
             filters: [{ name: 'Gene File', extensions: ['txt'] }]
         });
         if (!path) return;
-        this.filePath.set(path as string);
-        await this.processFile(path as string);
-    }
 
-    private async processFile(path: string) {
-        this.fileLoading.set(true);
-        try {
-            const fileType = this.target === 'population' ? 'pop' : 'study';
-            await this.filesService.processFile(path, fileType);
-            this.fileStats.set(this.filesService.getFileStatsForType(fileType));
-            this.uploadSuccess.emit();
-        } finally {
-            this.fileLoading.set(false);
-        }
+        const home = await homeDir();
+        this.filePath.set(path as string);
+        this.displayPath.set(shortenPath(path as string, home));
+
+        const fileType = this.target() === 'population' ? 'pop' : 'study';
+        const command = fileType === 'pop' ? 'set_population_file' : 'set_study_file';
+        await invoke(command, { path });
+        this.filesService.setPath(fileType, path as string);
     }
 }

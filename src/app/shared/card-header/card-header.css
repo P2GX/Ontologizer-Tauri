@@ -1,0 +1,87 @@
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.card-title {
+    font-size: var(--font-highlight);
+    font-weight: 700;
+    color: var(--md-sys-color-primary);
+    margin: 0;
+}
+
+.ready-badge {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    background-color: var(--md-sys-color-success-container);
+    color: var(--md-sys-color-success);
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    white-space: nowrap;
+    margin-top: 0.15rem;
+}
+
+.ready-badge .material-symbols-outlined {
+    font-size: 0.9rem;
+}
+
+.ready-badge .version {
+    font-weight: 500;
+    opacity: 0.85;
+}
+
+.card-subtitle {
+    font-size: var(--font-small);
+    color: var(--md-sys-color-on-primary-container);
+    opacity: 0.75;
+}
+
+/* === Tooltip trigger === */
+.tooltip-trigger {
+    position: relative;
+}
+
+app-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.tooltip-trigger:hover app-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* === Help button === */
+.help-btn {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-primary);
+    font-size: var(--font-standard);
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.help-btn:hover {
+    background: var(--md-sys-color-secondary-hover);
+}

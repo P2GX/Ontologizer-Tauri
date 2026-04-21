@@ -1,14 +1,23 @@
 <div class="gene-card">
-    <h3 class="card-title">{{ title }}</h3>
-    <p class="card-subtitle">{{ subtitle }}</p>
 
-    <button class="button select-button"
-            (click)="openFileDialog()"
-            [disabled]="!dependenciesLoaded || fileLoading()">
-        Select local file
+    <app-card-header
+        [cardTitle]="cardTitle()"
+        [tooltipType]="target() === 'population' ? 'pop' : 'study'"
+        [ready]="!!filePath()" />
+
+    <p class="card-description"></p>
+
+    <div class="file-status" [class.file-loaded]="filePath()">
+        <span class="material-symbols-outlined file-icon">
+            {{ filePath() ? 'description' : 'folder_open' }}
+        </span>
+        <span class="file-name">{{ fileName() ?? 'No file selected' }}</span>
+    </div>
+
+    <button class="pick-button" (click)="openFileDialog()">
+        <span class="material-symbols-outlined pick-icon">upload_file</span>
+        {{ filePath() ? 'Change File' : 'Select File' }}
     </button>
 
-    <span class="file-path">
-        @if (filePath()) { {{ filePath() }} } @else { No file selected }
-    </span>
+    <span class="format-hint">Accepted: .txt</span>
 </div>
