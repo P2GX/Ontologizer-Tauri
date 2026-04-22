@@ -4,37 +4,18 @@ use std::fs;
 
 const GO_URL: &str = "http://purl.obolibrary.org/obo/go/go-basic.json";
 
-fn gaf_urls() -> HashMap<&'static str, &'static str> {
-    HashMap::from([
-        (
-            "Homo sapiens (Human)",
-            "https://current.geneontology.org/annotations/goa_human.gaf.gz",
-        ),
-        (
-            "Mus musculus (Mouse)",
-            "https://current.geneontology.org/annotations/mgi.gaf.gz",
-        ),
-        (
-            "Rattus norvegicus (Rat)",
-            "https://current.geneontology.org/annotations/rgd.gaf.gz",
-        ),
-        (
-            "Saccharomyces cerevisiae (Brewer's yYeseast)",
-            "https://current.geneontology.org/annotations/sgd.gaf.gz",
-        ),
-        (
-            "Drosophila melanogaster (Fruit Fly)",
-            "https://current.geneontology.org/annotations/fb.gaf.gz",
-        ),
-    ])
-}
+const GAF_URLS: &[(&str, &str)] = &[
+    ("Homo sapiens (Human)",              "https://current.geneontology.org/annotations/goa_human.gaf.gz"),
+    ("Mus musculus (Mouse)",              "https://current.geneontology.org/annotations/mgi.gaf.gz"),
+    ("Rattus norvegicus (Rat)",           "https://current.geneontology.org/annotations/rgd.gaf.gz"),
+    ("Saccharomyces cerevisiae (Yeast)",  "https://current.geneontology.org/annotations/sgd.gaf.gz"),
+    ("Drosophila melanogaster (Fruit Fly)","https://current.geneontology.org/annotations/fb.gaf.gz"),
+];
 
 /// Returns the list of available organism names for display in the frontend.
 #[tauri::command]
 pub fn get_available_organisms() -> Vec<String> {
-    let mut organisms: Vec<String> = gaf_urls().keys().map(|k| k.to_string()).collect();
-    organisms.sort();
-    organisms
+    GAF_URLS.iter().map(|(name, _)| name.to_string()).collect()
 }
 
 /// Downloads go-basic.json from OBO and saves it to the path stored in config.
@@ -73,9 +54,10 @@ pub async fn download_gaf(
     organism: String,
 ) -> Result<String, String> {
     // 1. Look up the URL
-    let url = gaf_urls()
-        .get(organism.as_str())
-        .map(|u| u.to_string())
+    let url = GAF_URLS
+        .iter()
+        .find(|(name, _)| *name == organism.as_str())
+        .map(|(_, u)| u.to_string())
         .ok_or_else(|| format!("Unknown organism: '{organism}'"))?;
 
     // 2. Derive target path from the URL filename (keep .gz extension)

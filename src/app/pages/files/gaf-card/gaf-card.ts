@@ -79,6 +79,7 @@ export class GafCard {
             this.displayPath.set(shortenPath(path, home));
             await invoke('set_gaf_file', { path });
             this.filesService.setPath('annotation', path);
+            this.filesService.clearGeneFiles();
             this.version.set(null);
             void this.loadDate(path);
         } catch (error) {
@@ -102,6 +103,7 @@ export class GafCard {
         this.displayPath.set(shortenPath(path as string, home));
         await invoke('set_gaf_file', { path });
         this.filesService.setPath('annotation', path as string);
+        this.filesService.clearGeneFiles();
         this.version.set(null);
         void this.loadDate(path as string);
     }

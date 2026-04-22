@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, input, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input, signal, computed, effect } from '@angular/core';
 import { open } from '@tauri-apps/plugin-dialog';
 import { invoke } from '@tauri-apps/api/core';
 import { homeDir } from '@tauri-apps/api/path';
@@ -25,6 +25,14 @@ export class GeneCard {
     fileName = computed(() => this.displayPath() ?? this.filePath()?.split(/[/\\]/).pop() ?? null);
 
     constructor() {
+        let first = true;
+        effect(() => {
+            this.filesService.geneResetToken();
+            if (first) { first = false; return; }
+            this.filePath.set(null);
+            this.displayPath.set(null);
+        }, { allowSignalWrites: true });
+
         void this.loadSavedPath();
     }
 
