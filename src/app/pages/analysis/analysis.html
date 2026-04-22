@@ -1,5 +1,4 @@
 <div class="page-header">
-    <h1 class="page-title">Analysis</h1>
 </div>
 
 <div class="page-body">
@@ -12,10 +11,7 @@
             <div class="method-card"
                  [class.active]="isFrequentist"
                  (click)="setCategory('Frequentist')">
-                <div class="card-header">
-                    <h3>Statistical Testing</h3>
-                    <div class="help-icon">?</div>
-                </div>
+                <app-card-header cardTitle="Statistical Testing" />
                 <p>Evaluates terms using hypergeometric tests, defining specific topological backgrounds to reduce hierarchy bias.</p>
 
                 <div class="illustration-container">
@@ -59,10 +55,7 @@
             <div class="method-card"
                  [class.active]="selectedMethod?.method === 'Bayesian'"
                  (click)="setCategory('Bayesian')">
-                <div class="card-header">
-                    <h3>Bayesian Inference</h3>
-                    <div class="help-icon">?</div>
-                </div>
+                <app-card-header cardTitle="Bayesian Inference" />
                 <p>Model-based gene set analysis considering term overlaps jointly using a Bayesian hierarchical model.</p>
 
                 <div class="illustration-container">

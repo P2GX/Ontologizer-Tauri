@@ -21,38 +21,6 @@
     color: var(--md-sys-color-primary);
 }
 
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.card-header h3 {
-    font-size: var(--font-highlight);
-    font-weight: 400;
-    margin: 0;
-}
-
-.help-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    flex-shrink: 0;
-    border-radius: 50%;
-    font-size: var(--font-standard);
-    background-color: var(--md-sys-color-secondary);
-    color: var(--md-sys-color-on-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.help-icon:hover {
-    background-color: var(--md-sys-color-secondary-hover);
-    transition: background-color 0.2s ease;
-}
-
 .method-card:hover {
     border-color: var(--md-sys-color-primary);
     background-color: var(--md-sys-color-on-primary);

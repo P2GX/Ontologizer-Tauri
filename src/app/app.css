@@ -5,6 +5,7 @@ body {
 }
 
 .app-shell {
+  --titlebar-height: 2.0rem;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -18,7 +19,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  height: 2rem;
+  height: var(--titlebar-height);
   position: absolute;
   top: 0;
   left: 0;
@@ -206,7 +207,7 @@ a.nav-item {
   overflow-x: hidden;
   height: 100%;
   /* Padding removed to allow content to naturally hit the top of the viewport */
-  padding-top: 0;
+  padding-top: var(--titlebar-height);
 }
 
 

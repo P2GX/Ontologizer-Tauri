@@ -2,6 +2,7 @@ import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenu } from '../../shared/dropdown-menu/dropdown-menu';
+import { CardHeader } from '../../shared/card-header/card-header';
 import { AnalysisService, Method, Background, Correction, BACKGROUND_NAMES, CORRECTION_NAMES } from '../../services/analysis-service';
 import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
@@ -11,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-analysis',
-  imports: [CommonModule, MatSelectModule, DropdownMenu, MatDividerModule],
+  imports: [CommonModule, MatSelectModule, DropdownMenu, CardHeader, MatDividerModule],
   templateUrl: './analysis.html',
   styleUrl: './analysis.css',
   standalone: true

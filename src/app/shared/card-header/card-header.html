@@ -11,8 +11,10 @@
             <span class="card-subtitle">{{ subtitle() }}</span>
         }
     </div>
-    <div class="tooltip-trigger">
-        <button class="help-btn" type="button" aria-label="Help">?</button>
-        <app-tooltip [type]="tooltipType()" />
-    </div>
+    @if (tooltipType(); as type) {
+        <div class="tooltip-trigger">
+            <button class="help-btn" type="button" aria-label="Help">?</button>
+            <app-tooltip [type]="type" />
+        </div>
+    }
 </div>

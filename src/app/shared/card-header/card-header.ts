@@ -10,7 +10,7 @@ import { Tooltip } from '../tooltip/tooltip';
 })
 export class CardHeader {
     cardTitle = input.required<string>();
-    tooltipType = input.required<'go' | 'annotation' | 'study' | 'pop'>();
+    tooltipType = input<'go' | 'annotation' | 'study' | 'pop' | null>(null);
     subtitle = input<string | null>(null);
     ready = input<boolean>(false);
 }

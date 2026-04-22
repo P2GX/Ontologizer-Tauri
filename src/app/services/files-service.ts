@@ -11,6 +11,14 @@ export class FilesService {
   readonly popPath = signal<string | null>(null);
   readonly studyPath = signal<string | null>(null);
 
+  readonly geneResetToken = signal(0);
+
+  clearGeneFiles(): void {
+    this.popPath.set(null);
+    this.studyPath.set(null);
+    this.geneResetToken.update(n => n + 1);
+  }
+
   readonly allPathsSet = computed(() =>
     !!this.goPath() && !!this.annotationPath() && !!this.popPath() && !!this.studyPath()
   );
