@@ -26,13 +26,4 @@
 
     <app-legend [maxValue]="legendMaxValue" [isBayesian]="isBayesian" />
 
-    @if (showHelp) {
-        <button type="button" class="help-btn"
-            aria-label="Show help"
-            (mouseenter)="helpActiveChange.emit(true)"
-            (mouseleave)="helpActiveChange.emit(false)"
-            (focus)="helpActiveChange.emit(true)"
-            (blur)="helpActiveChange.emit(false)">?</button>
-    }
-
 </div>

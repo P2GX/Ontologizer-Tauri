@@ -48,6 +48,7 @@ export class GoCard {
         try {
             const date = await invoke<string>('get_go_date', { path });
             this.version.set(date);
+            this.filesService.goVersion.set(date);
         } catch {
             // version remains null if extraction fails
         }
@@ -65,6 +66,7 @@ export class GoCard {
             await invoke('set_go_file', { path });
             this.filesService.setPath('go', path);
             this.version.set(null);
+            this.filesService.goVersion.set(null);
             this.filesService.startGoBackgroundLoad(path);
             void this.loadDate(path);
         } catch (error) {
@@ -89,6 +91,7 @@ export class GoCard {
         await invoke('set_go_file', { path });
         this.filesService.setPath('go', path as string);
         this.version.set(null);
+        this.filesService.goVersion.set(null);
         this.filesService.startGoBackgroundLoad(path as string);
         void this.loadDate(path as string);
     }

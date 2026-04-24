@@ -30,10 +30,6 @@ export class ChartHeader {
   @Input() statisticDisplayNames: Record<string, string> = {};
   @Output() statisticChange = new EventEmitter<string>();
 
-  // Help button — only shown on GO-graph
-  @Input() showHelp = false;
-  @Output() helpActiveChange = new EventEmitter<boolean>();
-
   labelOf(opt: string): string {
     return this.statisticDisplayNames[opt] ?? opt;
   }

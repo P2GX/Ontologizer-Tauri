@@ -352,6 +352,26 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
         }
     };
 
+    // Frequentist diagnostics carry the contingency counts "(k, n, K, N)" where
+    // k = study hits, K = population hits. Bayesian items have no diagnostics, so
+    // population_count is reported as 0 and the frontend tooltip omits it.
+    let counts_for = |item: &EnrichmentItem| -> (u32, u32) {
+        let study = item.associated_genes.len() as u32;
+        if is_bayesian {
+            return (study, 0);
+        }
+        if let Some(diag) = &item.diagnostics {
+            let cleaned: String = diag.chars().filter(|c| *c != '(' && *c != ')').collect();
+            let parts: Vec<&str> = cleaned.split(',').map(str::trim).collect();
+            if parts.len() == 4 {
+                let k = parts[0].parse::<u32>().unwrap_or(study);
+                let big_k = parts[2].parse::<u32>().unwrap_or(study);
+                return (k, big_k);
+            }
+        }
+        (study, study)
+    };
+
     // Acquire read locks on the GO ontology and analysis results
     let ontology_lock = state
         .ontology
@@ -398,13 +418,14 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
             .iter()
             .find(|item| item.id == root.to_string())
         {
+            let (study_count, population_count) = counts_for(root_info);
             nodes.add_node(
                 root.to_string(),
                 NodeData {
                     id: root.to_string(),
                     label: root_info.label.clone(),
-                    study_count: root_info.associated_genes.len() as u32,
-                    population_count: root_info.associated_genes.len() as u32,
+                    study_count,
+                    population_count,
                     depth: 0,
                     p_val: root_info.score as f32,
                 },
@@ -423,6 +444,7 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
             &root,
             &mut visited,
             0,
+            &counts_for,
         );
 
         // Remove compressed edges whose target is not a known significant node.
@@ -446,7 +468,7 @@ pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, Str
 // Recursively traverses the GO graph starting from a given term, adding nodes and edges for significant terms.
 // It's a depth-first traversal that ensures all significant terms are included, even if their direct parents are not significant.
 // A significant child node is always connected to the nearest significant ancestor, skipping any non-significant intermediate terms.
-fn traverse_term(
+fn traverse_term<F>(
     term: &TermId,
     go: &FullCsrOntology,
     nodes: &mut Nodes,
@@ -456,7 +478,11 @@ fn traverse_term(
     significant_parent: &TermId,
     visited: &mut HashSet<TermId>,
     depth: usize,
-) -> bool {
+    counts_for: &F,
+) -> bool
+where
+    F: Fn(&EnrichmentItem) -> (u32, u32),
+{
     // Wenn schon besucht -> abbrechen, aber true zurückgeben (damit Kante trotzdem gesetzt wird)
     if !visited.insert(term.clone()) {
         // Term schon besucht
@@ -489,6 +515,7 @@ fn traverse_term(
             next_parent,
             visited,
             depth + 1,
+            counts_for,
         );
 
         if child_keep {
@@ -500,13 +527,14 @@ fn traverse_term(
     }
 
     if let Some(node_result) = tested_terms.get(term) {
+        let (study_count, population_count) = counts_for(node_result);
         let node_data = NodeData {
             id: term.to_string(),
             label: node_result.label.clone(),
             depth,
             p_val: node_result.score as f32,
-            study_count: node_result.associated_genes.len() as u32,
-            population_count: node_result.associated_genes.len() as u32,
+            study_count,
+            population_count,
         };
 
         // Always populate the tested pool (used for Top N seeding in the frontend)

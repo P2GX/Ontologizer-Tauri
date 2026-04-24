@@ -91,7 +91,8 @@ export class ResultTable implements AfterViewInit {
   }
 
   isSignificant(value: number): boolean {
-    return !isNaN(value) && value < 0.05;
+    if (isNaN(value)) return false;
+    return this.isFrequentist() ? value < 0.05 : value >= 0.5;
   }
 
   formatScore(score: number): string {

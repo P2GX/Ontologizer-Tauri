@@ -1,73 +1,142 @@
 <div class="dashboard-container">
     <div class="dashboard-grid">
 
-        <div class="dashboard-card" id="summary">
-            <h3>Analysis Summary</h3>
-            <div class="summary-item">
-                <p>Study genes:</p>
-                <p>{{dashboardInfo.studyGenes}}</p>
+        <section class="dashboard-card" id="input-files" aria-labelledby="files-heading">
+            <h3 id="files-heading" class="card-title">Input Files</h3>
+
+            <div class="file-group">
+                <h4 class="section-title">Gene Ontology</h4>
+                <div class="kv-row">
+                    <span class="kv-key">Path</span>
+                    <span class="kv-value path" [title]="dashboardInfo.go.path ?? ''">
+                        {{ dashboardInfo.go.path ?? '—' }}
+                    </span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">Version</span>
+                    <span class="kv-value">{{ dashboardInfo.go.version ?? '—' }}</span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">GO terms</span>
+                    <span class="kv-value">{{ format(dashboardInfo.go.terms) }}</span>
+                </div>
             </div>
-            <div class="summary-item">
-                <p>Population genes:</p>
-                <p>{{dashboardInfo.popGenes}}</p>
+
+            <div class="file-group">
+                <h4 class="section-title">Annotations (GAF)</h4>
+                <div class="kv-row">
+                    <span class="kv-key">Path</span>
+                    <span class="kv-value path" [title]="dashboardInfo.gaf.path ?? ''">
+                        {{ dashboardInfo.gaf.path ?? '—' }}
+                    </span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">Organism</span>
+                    <span class="kv-value">{{ dashboardInfo.gaf.organism ?? '—' }}</span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">Version</span>
+                    <span class="kv-value">{{ dashboardInfo.gaf.version ?? '—' }}</span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">Annotations</span>
+                    <span class="kv-value">{{ format(dashboardInfo.gaf.annotations) }}</span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">Unique genes</span>
+                    <span class="kv-value">{{ format(dashboardInfo.gaf.uniqueGenes) }}</span>
+                </div>
             </div>
-            <div class="summary-item">
-                <p>Method:</p>
-                <p>{{ methodLabel }}</p>
+
+            <div class="file-group">
+                <h4 class="section-title">Population</h4>
+                <div class="kv-row">
+                    <span class="kv-key">Path</span>
+                    <span class="kv-value path" [title]="dashboardInfo.pop.path ?? ''">
+                        {{ dashboardInfo.pop.path ?? '—' }}
+                    </span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">Genes</span>
+                    <span class="kv-value">{{ format(dashboardInfo.pop.count) }}</span>
+                </div>
             </div>
+
+            <div class="file-group">
+                <h4 class="section-title">Study</h4>
+                <div class="kv-row">
+                    <span class="kv-key">Path</span>
+                    <span class="kv-value path" [title]="dashboardInfo.study.path ?? ''">
+                        {{ dashboardInfo.study.path ?? '—' }}
+                    </span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">Recognized</span>
+                    <span class="kv-value">{{ format(dashboardInfo.study.recognized) }}</span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">Unrecognized</span>
+                    <span class="kv-value">{{ format(dashboardInfo.study.unrecognized) }}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-card" id="method" aria-labelledby="method-heading">
+            <h3 id="method-heading" class="card-title">Method</h3>
+            <h4 class="section-title">{{ methodLabel }} </h4>
+
             @if (isFrequentist) {
-                <div class="summary-item indented">
-                    <p>Background:</p>
-                    <p>{{ backgroundLabel }}</p>
+                <div class="kv-row">
+                    <span class="kv-key">Correction</span>
+                    <span class="kv-value">{{ correctionLabel }}</span>
                 </div>
-                <div class="summary-item indented">
-                    <p>Correction:</p>
-                    <p>{{ correctionLabel }}</p>
+                <div class="kv-row">
+                    <span class="kv-key">Significance threshold</span>
+                    <span class="kv-value">p &lt; 0.05</span>
                 </div>
-                <div class="summary-item indented">
-                    <p>Significance threshold:</p>
-                    <p>0.05</p>
+            } @else if (dashboardInfo.method) {
+                <div class="kv-row">
+                    <span class="kv-key">False positive prior</span>
+                    <span class="kv-value">0.05</span>
                 </div>
-            }
-            @else {
-                <div class="summary-item indented">
-                    <p>False positive prior:</p>
-                    <p>0.05</p>
+                <div class="kv-row">
+                    <span class="kv-key">False negative prior</span>
+                    <span class="kv-value">0.10</span>
                 </div>
-                <div class="summary-item indented">
-                    <p>False negative prior:</p>
-                    <p>0.10</p>
-                </div>
-                <div class="summary-item indented">
-                    <p>Prior:</p>
-                    <p>{{ backgroundLabel }}</p>
-                </div>
-                <div class="summary-item indented">
-                    <p>Posterior threshold:</p>
-                    <p>0.50</p>
+                <div class="kv-row">
+                    <span class="kv-key">Posterior threshold</span>
+                    <span class="kv-value">0.50</span>
                 </div>
             }
-        </div>
+        </section>
 
-        <div class="dashboard-card term-card" id="term-count">
-            <h3>{{dashboardInfo.resultsLength.toLocaleString('de-DE')}}</h3>
-            <p>of {{dashboardInfo.goTerms.toLocaleString('de-DE')}} GO-terms tested</p>
-        </div>
+        <section class="dashboard-card" id="results" aria-labelledby="results-heading">
+            <h3 id="results-heading" class="card-title">Results</h3>
+            <h4 class="section-title">Significant Terms</h4>
 
-        <div class="dashboard-card term-card" id="term-sig">
-            <h3>{{dashboardInfo.proportionData.total.significant.toLocaleString('de-DE')}}</h3>
-            <p>of {{dashboardInfo.resultsLength.toLocaleString('de-DE')}} GO-terms significant</p>
-        </div>
+            <div class="result-headline">
+                <span class="result-fraction">
+                    <span class="result-significant">{{ format(significantTotal) }}</span>
+                    <span class="result-divider">/</span>
+                    <span class="result-total">{{ format(testedTotal) }}</span>
+                </span>
+            </div>
 
-        <div class="chart-card" id="chart-dist">
-            <p class="chart-label">Score distribution</p>
-            <div class="chart-figure" #chartA></div>
-        </div>
-
-        <div class="chart-card" id="chart-aspect">
-            <p class="chart-label">Significant Terms by Aspect</p>
-            <div class="chart-figure" #chartB></div>
-        </div>
+            <div class="aspect-breakdown">
+                <div class="kv-row">
+                    <span class="kv-key">Biological Process</span>
+                    <span class="kv-value">{{ aspectShare('BP') }}</span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">Molecular Function</span>
+                    <span class="kv-value">{{ aspectShare('MF') }}</span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">Cellular Component</span>
+                    <span class="kv-value">{{ aspectShare('CC') }}</span>
+                </div>
+            </div>
+        </section>
 
     </div>
 </div>

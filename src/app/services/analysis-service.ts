@@ -28,7 +28,6 @@ export const CORRECTION_NAMES: Record<Correction, string> = {
 export class AnalysisService {
 
   readonly selectedMethod = signal<Method | null>(null);
-  readonly topology = signal<Background | null>(null);
   readonly correction = signal<Correction | null>(null);
   readonly isAnalysing = signal(false);
 

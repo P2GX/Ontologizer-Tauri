@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenu } from '../../shared/dropdown-menu/dropdown-menu';
 import { CardHeader } from '../../shared/card-header/card-header';
-import { AnalysisService, Method, Background, Correction, BACKGROUND_NAMES, CORRECTION_NAMES } from '../../services/analysis-service';
+import { AnalysisService, Method, Correction, CORRECTION_NAMES } from '../../services/analysis-service';
 import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { FilesService } from '../../services/files-service';
@@ -23,7 +23,6 @@ export class Analysis {
   private justCompleted = false;
 
   get selectedMethod() { return this.analysisService.selectedMethod(); }
-  get topology() { return this.analysisService.topology(); }
   get correction() { return this.analysisService.correction(); }
   get isAnalysing() { return this.analysisService.isAnalysing(); }
 
@@ -34,10 +33,8 @@ export class Analysis {
     return 'Start Analysis';
   }
 
-  readonly topologyOptions: Background[] =  ['Standard', 'ParentUnion', 'ParentIntersection'];
   readonly correctionOptions: Correction[] = ['Bonferroni', 'BonferroniHolm', 'BenjaminHochberg', 'None'];
 
-  readonly topologyNames = BACKGROUND_NAMES;
   readonly correctionNames = CORRECTION_NAMES;
 
   get isFrequentist(): boolean {
@@ -56,26 +53,18 @@ export class Analysis {
     if (category === 'Bayesian') {
       this.analysisService.selectedMethod.set({ method: 'Bayesian' });
       void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
-    } else if (this.topology && this.correction) {
-      this.analysisService.selectedMethod.set({ method: 'Frequentist', background: this.topology, correction: this.correction });
+    } else if (this.correction) {
+      this.analysisService.selectedMethod.set({ method: 'Frequentist', background: 'Standard', correction: this.correction });
       void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
     } else {
       this.analysisService.selectedMethod.set(null);
     }
   }
 
-  selectTopology(topology: string) {
-    this.analysisService.topology.set(topology as Background);
-    if (this.isFrequentist && this.correction) {
-      this.analysisService.selectedMethod.set({ method: 'Frequentist', background: this.topology!, correction: this.correction });
-      void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
-    }
-  }
-
   selectCorrection(correction: string) {
     this.analysisService.correction.set(correction as Correction);
-    if (this.isFrequentist && this.topology) {
-      this.analysisService.selectedMethod.set({ method: 'Frequentist', background: this.topology, correction: this.correction! });
+    if (this.isFrequentist) {
+      this.analysisService.selectedMethod.set({ method: 'Frequentist', background: 'Standard', correction: this.correction! });
       void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
     }
   }

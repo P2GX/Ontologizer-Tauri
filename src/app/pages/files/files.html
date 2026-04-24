@@ -15,16 +15,14 @@
             <app-gene-card cardTitle="Study Gene File"
                            target="study" />
         </div>
-
-
-        <div class="action-button-container" [class.disabled-state]="!allFilesLoaded()">
-            <mat-divider class="horizontal" />
-            <div class ="button-and-warning">
-                <button class="button" [disabled]="!allFilesLoaded()" (click)="processFiles()">
-                    {{ isProcessingAll() ? 'Processing...' : 'Process Files' }}
-                </button>
-            </div>
-            <mat-divider class="horizontal" />
+    </div>
+    <div class="action-button-container" [class.disabled-state]="!allFilesLoaded()">
+        <mat-divider class="horizontal" />
+        <div class ="button-and-warning">
+            <button class="button" [disabled]="!allFilesLoaded()" (click)="processFiles()">
+                {{ isProcessingAll() ? 'Processing...' : 'Process Files' }}
+            </button>
         </div>
+        <mat-divider class="horizontal" />
     </div>
 </div>

@@ -8,7 +8,7 @@
                 <button class="tab-button" [class.active]="selectedChart === 'dashboard'"
                     (click)="selectTab('dashboard')">
                     <span class="material-symbols-outlined tab-icon" aria-hidden="true">dashboard</span>
-                    Dashboard
+                    Summary
                 </button>
                 <mat-divider class="vertical" [vertical]="true"></mat-divider>
                 <button class="tab-button" [class.active]="selectedChart === 'table'"
@@ -34,9 +34,7 @@
         <div class="tab-panel">
             <app-dashboard
                 [dashboardInfo]="dashboardInfo"
-                [pValueData]="resultsService.barChartData()"
-                [hidden]="selectedChart !== 'dashboard'"
-                [visible]="selectedChart === 'dashboard'">
+                [hidden]="selectedChart !== 'dashboard'">
             </app-dashboard>
             <app-result-table
                 [tableData]="tableData()!"

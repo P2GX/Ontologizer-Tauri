@@ -39,7 +39,10 @@ export class GafCard {
         ]);
 
         this.organisms.set(organisms);
-        if (organisms.length > 0) this.selectedOrganism.set(organisms[0]);
+        if (organisms.length > 0) {
+            this.selectedOrganism.set(organisms[0]);
+            this.filesService.gafOrganism.set(organisms[0]);
+        }
 
         if (config.gaf_file) {
             const home = await homeDir();
@@ -53,7 +56,9 @@ export class GafCard {
     private async loadDate(path: string) {
         try {
             const date = await invoke<string>('get_gaf_date', { path });
-            this.version.set(date.slice(0, 10));
+            const short = date.slice(0, 10);
+            this.version.set(short);
+            this.filesService.gafVersion.set(short);
         } catch {
             // version remains null if extraction fails
         }
@@ -61,6 +66,7 @@ export class GafCard {
 
     async onOrganismChange(organism: string) {
         this.selectedOrganism.set(organism);
+        this.filesService.gafOrganism.set(organism);
         await this.downloadGaf();
     }
 
@@ -81,6 +87,7 @@ export class GafCard {
             this.filesService.setPath('annotation', path);
             this.filesService.clearGeneFiles();
             this.version.set(null);
+            this.filesService.gafVersion.set(null);
             void this.loadDate(path);
         } catch (error) {
             this.snackBar.open(`Download failed: ${error}`, 'Close', { panelClass: ['custom-snackbar'] });
@@ -105,6 +112,7 @@ export class GafCard {
         this.filesService.setPath('annotation', path as string);
         this.filesService.clearGeneFiles();
         this.version.set(null);
+        this.filesService.gafVersion.set(null);
         void this.loadDate(path as string);
     }
 }

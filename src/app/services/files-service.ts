@@ -16,6 +16,7 @@ export class FilesService {
   clearGeneFiles(): void {
     this.popPath.set(null);
     this.studyPath.set(null);
+    this.studyUnrecognizedCount.set(0);
     this.geneResetToken.update(n => n + 1);
   }
 
@@ -30,6 +31,14 @@ export class FilesService {
   readonly goTermCount = signal(0);
   readonly popGeneCount = signal(0);
   readonly studyGeneCount = signal(0);
+  readonly studyUnrecognizedCount = signal(0);
+  readonly gafAnnotationCount = signal(0);
+  readonly gafUniqueGenes = signal(0);
+
+  /** Metadata mirrored from the file cards so the dashboard can read it in one place. */
+  readonly goVersion = signal<string | null>(null);
+  readonly gafVersion = signal<string | null>(null);
+  readonly gafOrganism = signal<string | null>(null);
 
   /** Tracks which GO path is already loaded in backend state (used to skip re-processing). */
   readonly goLoadedForPath = signal<string | null>(null);

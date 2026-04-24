@@ -28,25 +28,13 @@ div.go-graph-container {
     border-radius: 1rem;
     cursor: pointer;
     max-width: 100%;
+    scrollbar-width: none;
 }
 
 .graphviz-container::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-.graphviz-container::-webkit-scrollbar-track {
-    background: var(--md-sys-color-primary-container);
-    border-radius: 3px;
-}
-
-.graphviz-container::-webkit-scrollbar-thumb {
-    background: var(--md-sys-color-outline);
-    border-radius: 3px;
-}
-
-.graphviz-container::-webkit-scrollbar-thumb:hover {
-    background: var(--md-sys-color-primary);
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 

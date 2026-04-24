@@ -8,8 +8,10 @@ import { FilesService } from '../../services/files-service';
 import { ResultsService, DotData, ProportionData, RowData } from '../../services/results-service';
 import { Method } from '../../services/analysis-service';
 import { invoke } from '@tauri-apps/api/core';
+import { homeDir } from '@tauri-apps/api/path';
 import { save } from '@tauri-apps/plugin-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { shortenPath } from '../../shared/utils/path';
 
 @Component({
   selector: 'app-results',
@@ -39,30 +41,43 @@ export class Results implements OnInit {
   success = false;
   globalLegendMax = 1;
 
-  dashboardInfo: DashboardInfo = {
-    method: null,
-    resultsLength: 0,
-    goTerms: 0,
-    studyGenes: 0,
-    popGenes: 0,
-    proportionData: {
-      BP: { significant: 0, nonSignificant: 0 },
-      MF: { significant: 0, nonSignificant: 0 },
-      CC: { significant: 0, nonSignificant: 0 },
-      total: { significant: 0, nonSignificant: 0 }
-    }
-  };
+  dashboardInfo: DashboardInfo = emptyDashboardInfo();
 
-  ngOnInit() {
+  async ngOnInit() {
     if (this.tableData() === null) return;
+
+    const home = await homeDir();
+    const display = (p: string | null) => p ? shortenPath(p, home) : null;
+    const proportion = this.resultsService.getProportionData();
 
     this.dashboardInfo = {
       method: this.resultsService.getMethod(),
-      studyGenes: this.filesService.studyGeneCount(),
-      popGenes: this.filesService.popGeneCount(),
-      goTerms: this.filesService.goTermCount(),
-      resultsLength: this.resultsService.getResultsLength(),
-      proportionData: this.resultsService.getProportionData()
+      go: {
+        path: display(this.filesService.goPath()),
+        version: this.filesService.goVersion(),
+        terms: this.filesService.goTermCount(),
+      },
+      gaf: {
+        path: display(this.filesService.annotationPath()),
+        version: this.filesService.gafVersion(),
+        organism: this.filesService.gafOrganism(),
+        annotations: this.filesService.gafAnnotationCount(),
+        uniqueGenes: this.filesService.gafUniqueGenes(),
+      },
+      pop: {
+        path: display(this.filesService.popPath()),
+        count: this.filesService.popGeneCount(),
+      },
+      study: {
+        path: display(this.filesService.studyPath()),
+        recognized: this.filesService.studyGeneCount(),
+        unrecognized: this.filesService.studyUnrecognizedCount(),
+      },
+      results: {
+        total: this.resultsService.getResultsLength(),
+        significant: proportion.total.significant,
+        proportionData: proportion,
+      },
     };
 
     this.dotData = this.resultsService.getDotData();
@@ -107,9 +122,50 @@ export class Results implements OnInit {
 
 export interface DashboardInfo {
   method: Method | null;
-  resultsLength: number;
-  goTerms: number;
-  studyGenes: number;
-  popGenes: number;
-  proportionData: ProportionData;
+  go: {
+    path: string | null;
+    version: string | null;
+    terms: number;
+  };
+  gaf: {
+    path: string | null;
+    version: string | null;
+    organism: string | null;
+    annotations: number;
+    uniqueGenes: number;
+  };
+  pop: {
+    path: string | null;
+    count: number;
+  };
+  study: {
+    path: string | null;
+    recognized: number;
+    unrecognized: number;
+  };
+  results: {
+    total: number;
+    significant: number;
+    proportionData: ProportionData;
+  };
+}
+
+function emptyDashboardInfo(): DashboardInfo {
+  return {
+    method: null,
+    go: { path: null, version: null, terms: 0 },
+    gaf: { path: null, version: null, organism: null, annotations: 0, uniqueGenes: 0 },
+    pop: { path: null, count: 0 },
+    study: { path: null, recognized: 0, unrecognized: 0 },
+    results: {
+      total: 0,
+      significant: 0,
+      proportionData: {
+        BP: { significant: 0, nonSignificant: 0 },
+        MF: { significant: 0, nonSignificant: 0 },
+        CC: { significant: 0, nonSignificant: 0 },
+        total: { significant: 0, nonSignificant: 0 }
+      }
+    }
+  };
 }

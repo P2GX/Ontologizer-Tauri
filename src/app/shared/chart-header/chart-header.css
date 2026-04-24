@@ -58,40 +58,8 @@
     outline-offset: 1px;
 }
 
-/* ── Help button ─────────────────────────────────────────────── */
-
-.help-btn {
-    width: 1.5rem;
-    height: 1.5rem;
-    min-width: 1.5rem;
-    border-radius: 50%;
-    border: none;
-    padding: 0;
-    background: var(--md-sys-color-secondary);
-    color: var(--md-sys-color-on-primary);
-    font-family: inherit;
-    font-size: var(--font-standard);
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background-color 0.2s ease;
-}
-
-.help-btn:hover {
-    background: var(--md-sys-color-secondary-hover);
-}
-
-.help-btn:focus-visible {
-    outline: 2px solid var(--md-sys-color-secondary);
-    outline-offset: 2px;
-}
-
 @media (prefers-reduced-motion: reduce) {
-    .stat-pill,
-    .help-btn {
+    .stat-pill {
         transition: none;
     }
 }

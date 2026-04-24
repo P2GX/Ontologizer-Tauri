@@ -1,13 +1,12 @@
 import { Component, SimpleChanges, Input, OnChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ChartHeader } from '../../../shared/chart-header/chart-header';
-import { Tooltip } from '../../../shared/tooltip/tooltip';
 import { DotData, NodeData } from '../../../services/results-service';
 import 'd3-graphviz';
 import * as d3 from 'd3';
 
 @Component({
   selector: 'app-go-graph',
-  imports: [ChartHeader, Tooltip],
+  imports: [ChartHeader],
   templateUrl: './go-graph.html',
   styleUrl: './go-graph.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -33,7 +32,6 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     'Cellular Component': 'CC',
   };
 
-  showTooltip: boolean = false;
   selectedChart: 'MF' | 'BP' | 'CC' = 'MF';
   selectedSubgraph: string = 'Molecular Function';
   selectedTopN: string = 'Significant';
@@ -128,7 +126,10 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     let dot = 'digraph {\nrankdir=BT;\nranksep=1.2;\nnodesep=0.5;\n';
     for (const node of [...seed_nodes, ...ancestor_nodes]) {
       const [fillColor, fontColor] = this.pvalToColor(node.p_val);
-      const tooltip = `${this.escapeHtml(node.label)}<br/>${node.id}<br/>p: ${this.formatPValue(node.p_val)}<br/>Study: ${node.study_count}<br/>Population: ${node.population_count}`;
+      const countsLine = this.isBayesian
+        ? `Study: ${node.study_count}`
+        : `Study: ${node.study_count}<br/>Population: ${node.population_count}`;
+      const tooltip = `${this.escapeHtml(node.label)}<br/>${node.id}<br/>p: ${this.formatPValue(node.p_val)}<br/>${countsLine}`;
       const attrs = `label="${node.id}", tooltip="${tooltip}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
       dot += `"${node.id}" [${attrs}];\n`;
     }

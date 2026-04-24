@@ -29,16 +29,6 @@
                 </div>
 
                 <div class="nested-settings" (click)="setCategory('Frequentist'); $event.stopPropagation()">
-                    <div class="settings" id="topology">
-                        <app-dropdown-menu
-                                [label]="'Background'"
-                                [options]="topologyOptions"
-                                [selected]="topology"
-                                [displayNames]="topologyNames"
-                                (selectedChange)="selectTopology($event)">
-                        </app-dropdown-menu>
-                    </div>
-
                     <div class="settings" id="correction">
                         <app-dropdown-menu
                                 [label]="'Multiple Testing Correction'"
@@ -83,26 +73,26 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Start Analysis Button with Dividers -->
-        <div class="action-button-container" [class.disabled-state]="!selectedMethod || isAnalysing">
-            <mat-divider class="horizontal" />
-            <div class="button-and-warning">
-                <button class="button" [disabled]="!selectedMethod || isAnalysing" (click)="startAnalysis()">
-                    {{ buttonLabel }}
-                    <span class="material-symbols-outlined icon" [class.spinning]="isAnalysing">
-                        {{ isAnalysing ? 'autorenew' : 'expand_circle_right' }}
-                    </span>
-                </button>
-                @if (isAnalysing && selectedMethod?.method === 'Bayesian') {
-                    <span class="analysis-warning">
-                        <span class="material-symbols-outlined warning-icon">schedule</span>
-                        This may take some time.
-                    </span>
-                }
-            </div>
-            <mat-divider class="horizontal" />
+    <!-- Start Analysis Button with Dividers -->
+    <div class="action-button-container" [class.disabled-state]="!selectedMethod || isAnalysing">
+        <mat-divider class="horizontal" />
+        <div class="button-and-warning">
+            <button class="button" [disabled]="!selectedMethod || isAnalysing" (click)="startAnalysis()">
+                {{ buttonLabel }}
+                <span class="material-symbols-outlined icon" [class.spinning]="isAnalysing">
+                    {{ isAnalysing ? 'autorenew' : 'expand_circle_right' }}
+                </span>
+            </button>
+            @if (isAnalysing) {
+                <span class="analysis-warning">
+                    <span class="material-symbols-outlined warning-icon">schedule</span>
+                    This may take some time.
+                </span>
+            }
         </div>
+        <mat-divider class="horizontal" />
     </div>
     }
     @if (!filesService.filesProcessed()) {

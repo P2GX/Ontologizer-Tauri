@@ -70,17 +70,25 @@ export class ResultsService {
   async loadAnalysisOutput() {
     try {
       if (this.currentMethod()?.method === 'Bayesian') {
-        const [firstPage, barPage, barPlotJson] = await Promise.all([
+        const [summary, firstPage, barPage, barPlotJson] = await Promise.all([
+          invoke<AnalysisSummaryResponse>('get_analysis_summary'),
           invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 10 }),
           invoke<{ items: string; total: number }>('get_analysis_results_page', { page: 0, pageSize: 100 }),
           invoke<string>('get_bar_chart_data', { n: 50 })
         ]);
         const items = JSON.parse(firstPage.items);
         this.bayesianTableData.set(this.parseBayesianResults(items));
-        this.bayesianTotalCount.set(firstPage.total);
-        this.resultsLength = firstPage.total;
+        this.bayesianTotalCount.set(summary.total);
+        this.resultsLength = summary.total;
         this.barChartData.set(this.parseBayesianResults(JSON.parse(barPage.items)));
         this.barPlotData.set(this.parseBayesianResults(JSON.parse(barPlotJson)));
+        this.proportionData = {
+          total: { significant: summary.proportionData.total.significant, nonSignificant: summary.proportionData.total.nonSignificant },
+          BP: { significant: summary.proportionData.bp.significant, nonSignificant: summary.proportionData.bp.nonSignificant },
+          MF: { significant: summary.proportionData.mf.significant, nonSignificant: summary.proportionData.mf.nonSignificant },
+          CC: { significant: summary.proportionData.cc.significant, nonSignificant: summary.proportionData.cc.nonSignificant },
+        };
+        this.significantCount = summary.proportionData.total.significant;
       } else {
         const [summary, firstPage, barPage, barPlotJson] = await Promise.all([
           invoke<AnalysisSummaryResponse>('get_analysis_summary'),

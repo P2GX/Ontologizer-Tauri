@@ -1,24 +1,43 @@
+/* Match the page-panel rhythm used on the Files page */
+:host { display: block; height: 100%; }
+
+.page-body {
+    flex: 1;
+    min-height: 0;
+    margin-bottom: 0.75rem;
+}
+
+.page-panel {
+    padding: 1.25rem 1.5rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow: visible;
+}
+
 /* === Category Cards === */
 .category-cards {
     display: flex;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
+    gap: 1rem;
+    min-height: 0;
 }
 
 .method-card {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2.0rem;
+    padding: 1rem 1.1rem;
     border: 2px solid var(--md-sys-color-outline);
     border-radius: 1rem;
-    padding: 1.5rem;
     cursor: pointer;
-    gap: 0.5rem;
     box-shadow: 0 0.13rem 0.8rem var(--shadow-header);
     transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
     background-color: var(--md-sys-color-on-primary);
-    display: flex;
-    flex-direction: column;
     font-size: var(--font-standard);
     color: var(--md-sys-color-primary);
+    box-sizing: border-box;
 }
 
 .method-card:hover {
@@ -31,13 +50,20 @@
     background-color: var(--md-sys-color-on-primary);
 }
 
-/* === Dropdowns === */
+.method-card p {
+    margin: 0;
+    font-size: var(--font-small);
+    color: var(--md-sys-color-on-primary-container);
+    line-height: 1.55;
+}
+
+/* === Nested dropdowns === */
 .nested-settings {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.7rem;
     width: 100%;
-    margin-top: 1rem;
+    margin-top: auto;
 }
 
 .nested-settings .settings {
@@ -49,7 +75,6 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    margin-top: 0.0rem;
 }
 
 .illustration-container svg {
@@ -57,11 +82,15 @@
     width: auto;
 }
 
-.illustration-container line { stroke: var(--md-sys-color-primary-hover); stroke-width: 2; opacity: 0.7;}
-.illustration-container circle.layer-input  {fill: var(--md-sys-color-secondary); stroke: var(--md-sys-color-on-primary); stroke-width: 2; }
+.illustration-container line { stroke: var(--md-sys-color-primary-hover); stroke-width: 2; opacity: 0.7; }
+.illustration-container circle.layer-input { fill: var(--md-sys-color-secondary); stroke: var(--md-sys-color-on-primary); stroke-width: 2; }
 .illustration-container circle { fill: var(--md-sys-color-primary); stroke: var(--md-sys-color-on-primary); stroke-width: 2; }
 
-/* === Analyze Button === */
+/* === Start-analysis button row === */
+.action-button-container {
+    margin-top: 0.75rem;
+}
+
 .button-and-warning {
     display: flex;
     flex-direction: column;
