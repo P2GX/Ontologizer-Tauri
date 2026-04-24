@@ -92,6 +92,7 @@ button.tab-button:hover:not(.active) {
    component manages its own overflow internally. */
 .tab-panel {
     position: relative;
+
     width: var(--container-width);
     min-width: var(--container-min-width);
     max-width: var(--container-max-width);
