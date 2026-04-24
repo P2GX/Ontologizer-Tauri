@@ -81,9 +81,6 @@
         <div class="button-and-warning">
             <button class="button" [disabled]="!selectedMethod || isAnalysing" (click)="startAnalysis()">
                 {{ buttonLabel }}
-                <span class="material-symbols-outlined icon" [class.spinning]="isAnalysing">
-                    {{ isAnalysing ? 'autorenew' : 'expand_circle_right' }}
-                </span>
             </button>
             @if (isAnalysing) {
                 <span class="analysis-warning">
