@@ -1,20 +1,22 @@
 <div class="card-header">
-    <div class="card-header-text">
+    <div class="card-header-title">
         <span class="card-title">{{ cardTitle() }}</span>
+        @if (tooltipType(); as type) {
+            <div class="tooltip-trigger">
+                <button class="help-btn" type="button" aria-label="Help">?</button>
+                <app-tooltip [type]="type" />
+            </div>
+        }
+    </div>
+    <div class="card-header-status">
         @if (ready()) {
             <span class="ready-badge">
                 <span class="material-symbols-outlined">check_circle</span>
-                READY
+                {{ badgeLabel() }}
                 @if (subtitle()) { <span class="version"> · {{ subtitle() }}</span> }
             </span>
         } @else if (subtitle()) {
             <span class="card-subtitle">{{ subtitle() }}</span>
         }
     </div>
-    @if (tooltipType(); as type) {
-        <div class="tooltip-trigger">
-            <button class="help-btn" type="button" aria-label="Help">?</button>
-            <app-tooltip [type]="type" />
-        </div>
-    }
 </div>

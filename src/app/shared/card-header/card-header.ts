@@ -13,4 +13,6 @@ export class CardHeader {
     tooltipType = input<'go' | 'annotation' | 'study' | 'pop' | null>(null);
     subtitle = input<string | null>(null);
     ready = input<boolean>(false);
+    /** Text shown inside the gold badge. Defaults to "READY" for file-card use. */
+    badgeLabel = input<string>('READY');
 }

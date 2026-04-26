@@ -1,9 +1,14 @@
 /* Match the page-panel rhythm used on the Files page */
-:host { display: block; height: 100%; }
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
 
 .page-body {
     flex: 1;
     min-height: 0;
+    justify-content: center;
     margin-bottom: 0.75rem;
 }
 
@@ -19,7 +24,7 @@
 /* === Category Cards === */
 .category-cards {
     display: flex;
-    gap: 1rem;
+    gap: 1.25rem;
     min-height: 0;
 }
 
@@ -27,13 +32,12 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 2.0rem;
-    padding: 1rem 1.1rem;
+    gap: 2.5rem;
+    padding: 1.75rem 2rem;
     border: 2px solid var(--md-sys-color-outline);
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     cursor: pointer;
-    box-shadow: 0 0.13rem 0.8rem var(--shadow-header);
-    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
     background-color: var(--md-sys-color-on-primary);
     font-size: var(--font-standard);
     color: var(--md-sys-color-primary);
@@ -42,12 +46,10 @@
 
 .method-card:hover {
     border-color: var(--md-sys-color-primary);
-    background-color: var(--md-sys-color-on-primary);
 }
 
 .method-card.active {
-    border-color: var(--md-sys-color-success);
-    background-color: var(--md-sys-color-on-primary);
+    border-color: var(--md-sys-color-primary);
 }
 
 .method-card p {
@@ -78,7 +80,7 @@
 }
 
 .illustration-container svg {
-    height: 80px;
+    height: 90px;
     width: auto;
 }
 
@@ -91,13 +93,6 @@
     margin-top: 0.75rem;
 }
 
-.button-and-warning {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
-}
-
 /* === Spinner === */
 @keyframes spin {
     from { transform: rotate(0deg); }
@@ -106,17 +101,4 @@
 
 .spinning {
     animation: spin 1s linear infinite;
-}
-
-/* === Warning === */
-.analysis-warning {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: var(--font-small);
-    color: var(--md-sys-color-on-primary-container);
-}
-
-.warning-icon {
-    font-size: var(--font-standard);
 }

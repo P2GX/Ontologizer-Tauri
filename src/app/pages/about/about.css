@@ -1,10 +1,10 @@
 
 h2 {
-    font-weight: 200;
+    font-weight: 300;
     margin-bottom: 0.5rem;
     margin-top: 0;
     max-width: 27rem;
-    font-size: 1.3rem;
+    font-size: var(--font-highlight);
 }
 
 
@@ -21,64 +21,19 @@ h2 {
     margin-bottom: 2rem;
 }
 
-.button {
-    background-color: var(--md-sys-color-primary);
-    align-self: center;
-    color: white;
-    border-radius: 3em;
-    width: 10rem;
-    height: 3rem;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.button:hover {
-    background-color: var(--md-sys-color-primary-hover);
-    transition: background-color 0.2s ease;
-    box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.4)
-}
-
 .material-symbols-outlined {
-    color: white;
-
+    color: var(--md-sys-color-on-primary);
 }
 
-button.tab-button {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
+/* Tab visual styles live in styles.scss; only the per-page width override stays here. */
+.tabs-container button.tab-button {
     width: 15rem;
-    transition: background-color 0.2s ease;
-    margin: 0.3em;
-    border-radius: 0.3rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-
-}
-
-button.tab-button.active {
-    background-color: var(--md-sys-color-primary-container);
-    color: black;
-}
-
-button.tab-button:hover:not(.active) {
-    background-color: var(--md-sys-color-primary-container);
 }
 
 .tabs-container {
     display: flex;
-    box-shadow: 0 2px 4px var(--shadow-header);
     background-color: var(--md-sys-color-on-primary);
+    border: 1px solid var(--md-sys-color-outline);
     border-radius: 0.5rem;
     position: relative;
     animation-timing-function: ease-in;
@@ -105,8 +60,8 @@ button.tab-button:hover:not(.active) {
 
 
 .material-symbols-outlined.tab-icon {
-    color: rgb(50, 50, 50);
-    font-size: 20px;
+    color: var(--md-sys-color-primary);
+    font-size: var(--font-highlight);
 }
 
 

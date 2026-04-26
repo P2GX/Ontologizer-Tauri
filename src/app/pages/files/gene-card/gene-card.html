@@ -1,11 +1,18 @@
 <div class="gene-card">
 
     <app-card-header
-        [cardTitle]="cardTitle()"
-        [tooltipType]="target() === 'population' ? 'pop' : 'study'"
-        [ready]="!!filePath()" />
+            [cardTitle]="cardTitle()"
+            [ready]="!!filePath()" />
 
-    <p class="card-description"></p>
+    <p class="card-description">
+        @if (target() === 'study') {
+            The study set is the <span class="highlight">genes set</span> used to test for GO term enrichment. Symbols are matched against the <em>DB Object Symbol</em> column of the GAF.<br>
+            Pick your genes of interest, one symbol per line.
+        } @else {
+            The population set is the background <span class="highlight">gene set</span> the study set is compared against (typically all genes measurable in your experiment). Symbols are matched against the <em>DB Object Symbol</em> column of the GAF. <br>
+            Pick the reference gene list, one symbol per line.
+        }
+    </p>
 
     <div class="file-status" [class.file-loaded]="filePath()">
         <span class="material-symbols-outlined file-icon">
@@ -14,7 +21,7 @@
         <span class="file-name">{{ fileName() ?? 'No file selected' }}</span>
     </div>
 
-    <button class="pick-button" (click)="openFileDialog()">
+    <button class="button-tonal" (click)="openFileDialog()">
         <span class="material-symbols-outlined pick-icon">upload_file</span>
         {{ filePath() ? 'Change File' : 'Select File' }}
     </button>

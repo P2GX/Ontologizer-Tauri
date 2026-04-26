@@ -13,6 +13,19 @@ export class FilesService {
 
   readonly geneResetToken = signal(0);
 
+  /** Inline error surfaced on /files when processFiles or background load fails. */
+  readonly errorMessage = signal<string | null>(null);
+
+  /** Lists the file roles that have not been selected yet, for inline validation copy. */
+  readonly missingFiles = computed<string[]>(() => {
+    const missing: string[] = [];
+    if (!this.goPath()) missing.push('Gene Ontology');
+    if (!this.annotationPath()) missing.push('GO Association File');
+    if (!this.popPath()) missing.push('Population gene list');
+    if (!this.studyPath()) missing.push('Study gene list');
+    return missing;
+  });
+
   clearGeneFiles(): void {
     this.popPath.set(null);
     this.studyPath.set(null);

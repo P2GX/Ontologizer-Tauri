@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { FilesService } from '../../services/files-service';
 import { invoke } from "@tauri-apps/api/core";
 import { MatDivider } from "@angular/material/list";
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { GeneCard } from "./gene-card/gene-card";
 
 type Stat = { key: string; value: string };
@@ -19,16 +18,20 @@ type Stat = { key: string; value: string };
 })
 export class Files {
   private router = inject(Router);
-  private snackBar = inject(MatSnackBar);
   protected filesService = inject(FilesService);
 
   isProcessingAll = signal(false);
 
   allFilesLoaded = computed(() => this.filesService.allPathsSet());
 
+  dismissError() {
+    this.filesService.errorMessage.set(null);
+  }
+
   async processFiles() {
     if (!this.allFilesLoaded()) return;
 
+    this.filesService.errorMessage.set(null);
     this.isProcessingAll.set(true);
     try {
       let goStats: Stat[];
@@ -62,7 +65,8 @@ export class Files {
       await this.router.navigate(['/analysis']);
     } catch (error) {
       console.error("Error processing files:", error);
-      this.snackBar.open(`Failed to process files: ${error}`, 'Close', { panelClass: ['custom-snackbar'], duration: 8000 });
+      const detail = typeof error === 'string' ? error : String(error);
+      this.filesService.errorMessage.set(`Failed to process files. ${detail}`);
     } finally {
       this.isProcessingAll.set(false);
     }

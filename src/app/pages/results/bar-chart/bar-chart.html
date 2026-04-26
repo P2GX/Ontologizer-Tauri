@@ -14,9 +14,25 @@
         (statisticChange)="selectPlotOption($event)">
     </app-chart-header>
 
-    <div class="container-body">
-        <div #chartDiv class="chartDiv">
-            <canvas #barCanvas></canvas>
+    @if (hasData) {
+        <div class="container-body">
+            <div #chartDiv class="chartDiv">
+                <canvas #barCanvas></canvas>
+            </div>
         </div>
-    </div>
+    } @else {
+        <div class="empty-state">
+            <span class="material-symbols-outlined empty-state-icon">filter_alt_off</span>
+            <h2>No terms in view</h2>
+            <p>
+                @if (selectedTopN === 'Significant') {
+                    No terms pass the significance threshold for the current filter.
+                    Try one of the <strong>Top 10 / 25 / 50</strong> sizes to see the closest results.
+                } @else {
+                    No terms match <strong>{{ selectedSubgraph }}</strong> at the current size.
+                    Try a different aspect or a larger size.
+                }
+            </p>
+        </div>
+    }
 </div>

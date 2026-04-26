@@ -18,16 +18,18 @@
 .dashboard-grid {
     display: grid;
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-rows: 1fr 1fr;
     grid-template-areas:
         "input-files method"
         "input-files results";
     gap: 1rem;
     width: 100%;
+    min-height: 100%;
 }
 
 #input-files { grid-area: input-files; }
-#method      { grid-area: method; }
-#results     { grid-area: results; }
+#method      { grid-area: method; align-self: stretch; height: 100%; box-sizing: border-box; }
+#results     { grid-area: results; align-self: stretch; height: 100%; box-sizing: border-box; }
 
 @media (max-width: 900px) {
     .dashboard-grid {
@@ -45,10 +47,9 @@
     flex-direction: column;
     padding: 1.25rem 1.5rem;
     border: 1px solid var(--md-sys-color-outline);
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     background-color: var(--md-sys-color-on-primary);
     gap: 0.75rem;
-    box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
     font-size: var(--font-standard);
     color: var(--md-sys-color-primary);
     min-width: 0;
@@ -80,7 +81,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-primary);
 }
 
 /* ===== Key / Value rows ===== */
@@ -118,8 +119,8 @@
 .method-name {
     margin: 0 0 0.25rem 0;
     font-size: var(--font-highlight);
-    font-weight: 500;
-    color: var(--md-sys-color-secondary);
+    font-weight: 700;
+    color: var(--md-sys-color-primary);
 }
 
 /* ===== Results card ===== */

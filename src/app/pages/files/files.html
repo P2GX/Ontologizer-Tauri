@@ -1,27 +1,56 @@
-<div class="page-header">
-</div>
-
 <div class="page-body">
     <div class="page-panel">
 
-        <div class="upload-grid">
-            <app-go-card />
+        <div class="upload-stack">
+            <section class="upload-section">
+                <div class="upload-pair">
+                    <app-go-card />
+                    <app-gaf-card />
+                </div>
+            </section>
 
-            <app-gaf-card />
-
-            <app-gene-card cardTitle="Population Gene File"
-                           target="population" />
-
-            <app-gene-card cardTitle="Study Gene File"
-                           target="study" />
+            <section class="upload-section">
+                <div class="upload-pair">
+                    <app-gene-card cardTitle="Population Gene File"
+                                   target="population" />
+                    <app-gene-card cardTitle="Study Gene File"
+                                   target="study" />
+                </div>
+            </section>
         </div>
+
+        @if (filesService.errorMessage(); as msg) {
+            <div class="alert alert--error" role="alert">
+                <span class="material-symbols-outlined alert-icon" aria-hidden="true">error</span>
+                <div class="alert-body">
+                    <p class="alert-title">Could not process the files</p>
+                    {{ msg }}
+                </div>
+                <button class="alert-close" type="button" (click)="dismissError()" aria-label="Dismiss">
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                </button>
+            </div>
+        } @else if (filesService.missingFiles().length > 0) {
+            <div class="alert alert--info">
+                <span class="material-symbols-outlined alert-icon" aria-hidden="true">info</span>
+                <div class="alert-body">
+                    Still needed: {{ filesService.missingFiles().join(', ') }}.
+                </div>
+            </div>
+        }
     </div>
     <div class="action-button-container" [class.disabled-state]="!allFilesLoaded()">
         <mat-divider class="horizontal" />
         <div class ="button-and-warning">
-            <button class="button" [disabled]="!allFilesLoaded()" (click)="processFiles()">
+            <button class="button" [disabled]="!allFilesLoaded() || isProcessingAll()" (click)="processFiles()">
                 {{ isProcessingAll() ? 'Processing...' : 'Process Files' }}
             </button>
+            @if (isProcessingAll()) {
+                <span class="action-hint">
+                    <span class="material-symbols-outlined warning-icon" aria-hidden="true">schedule</span>
+                    Building index, this may take a moment.
+                </span>
+            }
         </div>
         <mat-divider class="horizontal" />
     </div>

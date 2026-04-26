@@ -5,7 +5,7 @@
     border: 1px solid var(--md-sys-color-outline);
     box-shadow: 0 4px 16px var(--shadow-header);
     padding: 0.6rem 1rem;
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     z-index: 1000;
     width: 20rem;
     word-wrap: break-word;

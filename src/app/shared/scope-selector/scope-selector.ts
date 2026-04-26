@@ -3,6 +3,8 @@ import {
   ChangeDetectionStrategy, HostListener, ElementRef
 } from '@angular/core';
 
+type Slot = 'size' | 'aspect' | 'statistic';
+
 @Component({
   selector: 'app-scope-selector',
   imports: [],
@@ -17,31 +19,43 @@ export class ScopeSelector {
   @Input() aspectOptions: string[] = [];
   @Input() selectedAspect: string = '';
 
+  /** Optional third slot. When `statisticOptions` is non-empty the sentence reads "...by {statistic}". */
+  @Input() statisticOptions: string[] | null = null;
+  @Input() selectedStatistic: string = '';
+  @Input() statisticDisplayNames: Record<string, string> = {};
+
   @Output() sizeChange = new EventEmitter<string>();
   @Output() aspectChange = new EventEmitter<string>();
+  @Output() statisticChange = new EventEmitter<string>();
 
-  openDropdown: 'size' | 'aspect' | null = null;
+  openDropdown: Slot | null = null;
 
   constructor(private elementRef: ElementRef) {}
 
-  toggle(which: 'size' | 'aspect'): void {
+  toggle(which: Slot): void {
     this.openDropdown = this.openDropdown === which ? null : which;
   }
 
-  select(option: string, which: 'size' | 'aspect'): void {
+  select(option: string, which: Slot): void {
     if (which === 'size') this.sizeChange.emit(option);
-    else this.aspectChange.emit(option);
+    else if (which === 'aspect') this.aspectChange.emit(option);
+    else this.statisticChange.emit(option);
     this.openDropdown = null;
   }
 
-  onTokenKeydown(event: KeyboardEvent, which: 'size' | 'aspect'): void {
+  /** Display name for a statistic option (falls back to the raw key). */
+  statLabel(option: string): string {
+    return this.statisticDisplayNames[option] ?? option;
+  }
+
+  onTokenKeydown(event: KeyboardEvent, which: Slot): void {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       this.toggle(which);
     }
   }
 
-  onOptionKeydown(event: KeyboardEvent, option: string, which: 'size' | 'aspect'): void {
+  onOptionKeydown(event: KeyboardEvent, option: string, which: Slot): void {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       this.select(option, which);

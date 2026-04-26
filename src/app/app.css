@@ -112,7 +112,7 @@ body {
 
 .nav-item {
   margin: 4px 8px;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   transition: background-color 0.2s ease, transform 0.2s ease;
   color: var(--md-sys-color-on-primary);
   white-space: nowrap; /* Prevents wrapping during collapse */
@@ -137,8 +137,8 @@ body {
 }
 
 .nav-item.active-link {
-  background: linear-gradient(90deg, var(--md-sys-color-primary-hover) 0%, var(--md-sys-color-primary) 69%);
-  border-radius: 2em;
+  background: var(--md-sys-color-primary-hover);
+  border-radius: 0.5rem;
   transform: translateX(0.2em);
   color: var(--md-sys-color-on-primary); /* Reusing white */
   transition: background-color 0.6s ease, transform 0.6s ease;
@@ -150,7 +150,7 @@ body {
 
 a.nav-item {
   width: auto;
-  border-radius: 2em;
+  border-radius: 0.5rem;
 }
 
 /* ==================================================== */

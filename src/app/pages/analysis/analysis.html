@@ -11,7 +11,7 @@
             <div class="method-card"
                  [class.active]="isFrequentist"
                  (click)="setCategory('Frequentist')">
-                <app-card-header cardTitle="Statistical Testing" />
+                <app-card-header cardTitle="Statistical Testing" [ready]="isFrequentist" badgeLabel="SELECTED" />
                 <p>Evaluates terms using hypergeometric tests, defining specific topological backgrounds to reduce hierarchy bias.</p>
 
                 <div class="illustration-container">
@@ -45,7 +45,7 @@
             <div class="method-card"
                  [class.active]="selectedMethod?.method === 'Bayesian'"
                  (click)="setCategory('Bayesian')">
-                <app-card-header cardTitle="Bayesian Inference" />
+                <app-card-header cardTitle="Bayesian Inference" [ready]="selectedMethod?.method === 'Bayesian'" badgeLabel="SELECTED" />
                 <p>Model-based gene set analysis considering term overlaps jointly using a Bayesian hierarchical model.</p>
 
                 <div class="illustration-container">
@@ -75,6 +75,19 @@
         </div>
     </div>
 
+    @if (errorMessage; as msg) {
+        <div class="alert alert--error" role="alert">
+            <span class="material-symbols-outlined alert-icon" aria-hidden="true">error</span>
+            <div class="alert-body">
+                <p class="alert-title">Could not run the analysis</p>
+                {{ msg }}
+            </div>
+            <button class="alert-close" type="button" (click)="dismissError()" aria-label="Dismiss">
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+            </button>
+        </div>
+    }
+
     <!-- Start Analysis Button with Dividers -->
     <div class="action-button-container" [class.disabled-state]="!selectedMethod || isAnalysing">
         <mat-divider class="horizontal" />
@@ -82,10 +95,10 @@
             <button class="button" [disabled]="!selectedMethod || isAnalysing" (click)="startAnalysis()">
                 {{ buttonLabel }}
             </button>
-            @if (isAnalysing) {
-                <span class="analysis-warning">
-                    <span class="material-symbols-outlined warning-icon">schedule</span>
-                    This may take some time.
+            @if (isAnalysing && stepHint) {
+                <span class="action-hint">
+                    <span class="material-symbols-outlined warning-icon" aria-hidden="true">schedule</span>
+                    {{ stepHint }}, this may take a moment.
                 </span>
             }
         </div>

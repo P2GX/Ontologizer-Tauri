@@ -109,13 +109,17 @@ export class Results implements OnInit {
     }
   }
 
+  /** Frequentist colorbar caps at 10 ( -log10(p) = 10  ⇔  p = 1e-10 ).
+   *  Anything more significant maps to the high end of the scale; anything less
+   *  spreads across the visible range. Bayesian uses the data's actual max. */
+  private static readonly FREQUENTIST_LEGEND_CAP = 10;
+
   private computeLegendMax(data: RowData[]): number {
     if (!data || data.length === 0) return 1;
-    const isBayesian = this.resultsService.isBayesian();
-    const max = data.reduce((acc, d) => {
-      const val = isBayesian ? d.score : -Math.log10(d.score);
-      return val > acc ? val : acc;
-    }, 0);
+    if (!this.resultsService.isBayesian()) {
+      return Results.FREQUENTIST_LEGEND_CAP;
+    }
+    const max = data.reduce((acc, d) => (d.score > acc ? d.score : acc), 0);
     return isFinite(max) && max > 0 ? max : 1;
   }
 }

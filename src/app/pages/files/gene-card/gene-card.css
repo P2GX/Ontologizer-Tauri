@@ -8,10 +8,9 @@
     flex-direction: column;
     gap: 0.7rem;
     padding: 1rem 1.1rem;
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     border: 2px solid var(--md-sys-color-outline);
     background-color: var(--md-sys-color-on-primary);
-    box-shadow: 0 0.13rem 0.8rem var(--shadow-header);
     height: 100%;
     box-sizing: border-box;
 }
@@ -67,36 +66,16 @@
     opacity: 0.7;
 }
 
-/* === Pick / Change File button === */
-.pick-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+/* === Pick / Change File button (visual class lives in styles.scss) === */
+.gene-card .button-tonal {
     width: 100%;
-    padding: 0.55rem 1rem;
-    border-radius: 0.75rem;
-    border: 1px solid var(--md-sys-color-outline);
-    background-color: var(--md-sys-color-primary-container);
-    color: var(--md-sys-color-primary);
     font-size: var(--font-standard);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-    font-family: "Trebuchet MS", Trebuchet, sans-serif;
-}
-
-.pick-button:hover:not(:disabled) {
-    background-color: var(--md-sys-color-outline);
-    border-color: var(--md-sys-color-primary-hover);
-}
-
-.pick-button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
 }
 
 .pick-icon {
     font-size: var(--font-highlight);
 }
 
+::ng-deep .highlight {
+    color: var(--md-sys-color-secondary);
+}

@@ -1,9 +1,9 @@
 
 h2 {
-    font-weight: 200;
+    font-weight: 300;
     margin-bottom: 0.5rem;
     margin-top: 0;
     max-width: 27rem;
-    font-size: 1.3rem;
+    font-size: var(--font-highlight);
 }
 

@@ -2,11 +2,13 @@
 
     <app-card-header
         cardTitle="GO Association File"
-        tooltipType="annotation"
         [subtitle]="version()"
         [ready]="!!filePath()" />
 
-    <p class="card-description"></p>
+    <p class="card-description">
+        The GO Association File (GAF) links <span class="highlight">gene products</span> to GO <span class="highlight">terms</span>. <br>
+        Pick an organism, then download the latest release automatically or select a local file.
+    </p>
 
     <app-dropdown-menu
         label="Organism"
@@ -22,14 +24,14 @@
     </div>
 
     <div class="button-row">
-        <button class="download-button"
+        <button class="button-secondary"
                 (click)="downloadGaf()"
                 [disabled]="downloading()">
             <span class="material-symbols-outlined">download</span>
             {{ downloading() ? 'Update' : 'Update' }}
         </button>
 
-        <button class="pick-button"
+        <button class="button-tonal"
                 (click)="openFileDialog()"
                 [disabled]="downloading()">
             <span class="material-symbols-outlined">upload_file</span>

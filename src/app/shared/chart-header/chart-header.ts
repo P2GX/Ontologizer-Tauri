@@ -24,13 +24,9 @@ export class ChartHeader {
   @Output() sizeChange = new EventEmitter<string>();
   @Output() aspectChange = new EventEmitter<string>();
 
-  // Statistic segmented control — null hides it (Bayesian mode / GO-graph)
+  // Statistic dropdown chip rendered by scope-selector. Null hides it.
   @Input() statisticOptions: string[] | null = null;
   @Input() selectedStatistic: string | null = null;
   @Input() statisticDisplayNames: Record<string, string> = {};
   @Output() statisticChange = new EventEmitter<string>();
-
-  labelOf(opt: string): string {
-    return this.statisticDisplayNames[opt] ?? opt;
-  }
 }

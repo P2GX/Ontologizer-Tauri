@@ -23,9 +23,8 @@ div.go-graph-container {
     min-height: 0;
     overflow: auto;
     border: 1px solid var(--md-sys-color-outline);
-    box-shadow: 0 0.13rem 0.3rem var(--shadow-header);
     background-color: transparent;
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     cursor: pointer;
     max-width: 100%;
     scrollbar-width: none;
@@ -46,13 +45,11 @@ g.node rect {
 }
 
 
+/* Positioning shell only. Visual surface comes from .term-tooltip in styles.scss. */
 .hover-node-tooltip {
     position: absolute;
     z-index: 10;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border-radius: 4px;
     pointer-events: none;
-    opacity: 0.5;
-    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
 }

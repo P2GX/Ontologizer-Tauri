@@ -1,9 +1,14 @@
 /* Let the body consume the remaining viewport so the panel can be capped. */
-:host { display: block; height: 100%; }
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
 
 .page-body {
     flex: 1;
     min-height: 0;
+    justify-content: center;
     margin-bottom: 0.75rem;
 }
 
@@ -17,11 +22,24 @@
     overflow: auto;
 }
 
-.upload-grid {
+/* === Upload sections (Reference data / Your experiment) ===
+   Two semantic groups instead of an identical 2x2 card grid. Spacing rhythm:
+   medium (1rem) between paired cards; generous (1.5rem) between sections.  */
+.upload-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.upload-pair {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    min-height: 0;
 }
 
 .action-button-container {

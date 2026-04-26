@@ -2,11 +2,13 @@
 
     <app-card-header
         cardTitle="Gene Ontology"
-        tooltipType="go"
         [subtitle]="version()"
         [ready]="!!filePath()" />
 
-    <p class="card-description"></p>
+    <p class="card-description">
+       The Gene Ontology (GO) is a standardised vocabulary of biological knowledge, made of <span class="highlight">terms</span> connected by defined <span class="highlight">relations</span>.
+        <br> Download the latest release automatically or select a local file.
+    </p>
 
     <div class="file-status" [class.file-loaded]="filePath()">
         <span class="material-symbols-outlined file-icon">
@@ -16,14 +18,14 @@
     </div>
 
     <div class="button-row">
-        <button class="download-button"
+        <button class="button-secondary"
                 (click)="downloadLatest()"
                 [disabled]="downloading()">
             <span class="material-symbols-outlined">download</span>
             {{ downloading() ? 'Update' : 'Update' }}
         </button>
 
-        <button class="pick-button"
+        <button class="button-tonal"
                 (click)="openFileDialog()"
                 [disabled]="downloading()">
             <span class="material-symbols-outlined">upload_file</span>

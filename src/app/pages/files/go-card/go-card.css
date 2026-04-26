@@ -8,10 +8,9 @@
     flex-direction: column;
     gap: 0.7rem;
     padding: 1rem 1.1rem;
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     border: 2px solid var(--md-sys-color-outline);
     background-color: var(--md-sys-color-on-primary);
-    box-shadow: 0 0.13rem 0.8rem var(--shadow-header);
     height: 100%;
     box-sizing: border-box;
 }
@@ -62,7 +61,7 @@
 
 .ready-badge {
     flex-shrink: 0;
-    font-size: 0.65rem;
+    font-size: var(--font-small);
     font-weight: 700;
     background-color: var(--md-sys-color-success-container);
     color: var(--md-sys-color-success);
@@ -84,62 +83,9 @@
     gap: 0.75rem;
 }
 
-/* === Download button (primary) === */
-.download-button {
-    flex: 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.55rem 1rem;
-    border-radius: 0.75rem;
-    border: none;
-    background-color: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
-    font-size: var(--font-small);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    font-family: "Trebuchet MS", Trebuchet, sans-serif;
-}
-
-.download-button:hover:not(:disabled) {
-    background-color: var(--md-sys-color-primary-hover);
-}
-
-.download-button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-/* === Select / Change File button (secondary) === */
-.pick-button {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.55rem 1rem;
-    border-radius: 0.75rem;
-    border: 1px solid var(--md-sys-color-outline);
-    background-color: var(--md-sys-color-primary-container);
-    color: var(--md-sys-color-primary);
-    font-size: var(--font-small);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-    font-family: "Trebuchet MS", Trebuchet, sans-serif;
-}
-
-.pick-button:hover:not(:disabled) {
-    background-color: var(--md-sys-color-outline);
-    border-color: var(--md-sys-color-primary-hover);
-}
-
-.pick-button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
+/* === Action button row sizing (shared visual classes live in styles.scss) === */
+.button-row .button-secondary { flex: 3; }
+.button-row .button-tonal     { flex: 1; }
 
 @keyframes spin {
     from { transform: rotate(0deg); }

@@ -5,22 +5,13 @@
         [selectedSize]="selectedSize"
         [aspectOptions]="aspectOptions"
         [selectedAspect]="selectedAspect"
+        [statisticOptions]="statisticOptions"
+        [selectedStatistic]="selectedStatistic ?? ''"
+        [statisticDisplayNames]="statisticDisplayNames"
         (sizeChange)="sizeChange.emit($event)"
-        (aspectChange)="aspectChange.emit($event)">
+        (aspectChange)="aspectChange.emit($event)"
+        (statisticChange)="statisticChange.emit($event)">
     </app-scope-selector>
-
-    @if (statisticOptions && statisticOptions.length > 0) {
-        <div class="stat-picker" role="group" aria-label="Statistic">
-            @for (opt of statisticOptions; track opt) {
-                <button type="button" class="stat-pill"
-                    [class.active]="opt === selectedStatistic"
-                    [attr.aria-pressed]="opt === selectedStatistic"
-                    (click)="statisticChange.emit(opt)">
-                    {{ labelOf(opt) }}
-                </button>
-            }
-        </div>
-    }
 
     <div class="header-spacer"></div>
 

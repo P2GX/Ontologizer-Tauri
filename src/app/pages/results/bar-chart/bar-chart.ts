@@ -2,6 +2,22 @@ import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, Afte
 import Chart from 'chart.js/auto';
 import { RowData, FrequentistRowData } from '../../../services/results-service';
 import { ChartHeader } from '../../../shared/chart-header/chart-header';
+import { interpolateSignificance, significanceThresholdT } from '../../../shared/utils/significance-color';
+import { termTooltipHtml, formatScore } from '../../../shared/utils/term-tooltip';
+
+/**
+ * Chart.js global defaults so charts speak the project's typography and color
+ * vocabulary. Set once at module load; applies to every chart this app renders.
+ * Tokens are resolved at runtime so dark/light theme changes (if any) propagate.
+ */
+function applyChartDefaults() {
+    const css = getComputedStyle(document.documentElement);
+    Chart.defaults.font.family = "'Trebuchet MS', Trebuchet, sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = css.getPropertyValue('--md-sys-color-primary').trim() || '#003754';
+    Chart.defaults.borderColor = css.getPropertyValue('--md-sys-color-outline').trim() || '#D9E1E5';
+}
+applyChartDefaults();
 
 @Component({
   selector: 'app-bar-chart',
@@ -25,8 +41,8 @@ export class BarChart implements AfterViewInit, OnChanges {
 
   plotOptions: string[] = ['-Log10(p)', 'Enrichment ratio', 'Study count'];
   readonly plotDisplayNames: Record<string, string> = {
-    '-Log10(p)': '−log₁₀(p)',
-    'Enrichment ratio': 'Enr. ratio',
+    '-Log10(p)': '−Log p-value',
+    'Enrichment ratio': 'Enrichment ratio',
     'Study count': 'Count'
   };
   subgraphs: string[] = ['All', 'Molecular Function', 'Biological Process', 'Cellular Component'];
@@ -35,9 +51,26 @@ export class BarChart implements AfterViewInit, OnChanges {
   selectedSubgraph = 'All';
   selectedTopN = 'Significant';
 
+  /** Layout constants for canvas auto-width when there are many bars. */
+  private static readonly BAR_WIDTH = 10;
+  private static readonly BAR_GAP = 8;
+  private static readonly AXIS_AND_PADDING = 200;
+  private static readonly NO_GROW_THRESHOLD = 30;
+
+  /** Truncate x-axis tick labels at this length. Full label still appears in the hover tooltip. */
+  private static readonly MAX_LABEL_CHARS = 22;
+
+  /** The rows currently rendered. Used by the external tooltip handler. */
+  private currentRows: RowData[] = [];
+
   get topNOptions(): string[] {
     const base = ['Top 10', 'Top 25', 'Top 50'];
     return this.isBayesian ? base : ['Significant', ...base];
+  }
+
+  /** Whether the current filter selection produces any rows to plot. */
+  get hasData(): boolean {
+    return this.getDisplayData().length > 0;
   }
 
   selectPlotOption(option: string) {
@@ -110,7 +143,9 @@ export class BarChart implements AfterViewInit, OnChanges {
       this.chartDiv.nativeElement.style.width = '100%';
     }
 
-    const labels = displayData.map(row => row.label);
+    this.currentRows = displayData;
+
+    const labels = displayData.map(row => this.truncateLabel(row.label));
     const backgroundColors = displayData.map(row =>
       this.isBayesian ? this.postProbToColor(row.score) : this.pvalToColor(row.score)
     );
@@ -130,7 +165,11 @@ export class BarChart implements AfterViewInit, OnChanges {
       yData = yValues[this.selectedPlotOption] ?? yValues['-Log10(p)'];
     }
 
-    const yAxisLabel = this.isBayesian ? 'Posterior Probability' : this.selectedPlotOption;
+    const yAxisLabel = this.isBayesian ? 'Posterior probability' : (this.plotDisplayNames[this.selectedPlotOption] ?? this.selectedPlotOption);
+
+    const css = getComputedStyle(document.documentElement);
+    const tokenInk    = css.getPropertyValue('--md-sys-color-primary').trim() || '#003754';
+    const tokenLine   = css.getPropertyValue('--md-sys-color-outline').trim() || '#D9E1E5';
 
     this.chart = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
@@ -140,9 +179,9 @@ export class BarChart implements AfterViewInit, OnChanges {
           label: yAxisLabel,
           data: yData,
           borderWidth: 1,
-          barThickness: 10,
+          barThickness: BarChart.BAR_WIDTH,
           backgroundColor: backgroundColors,
-          borderColor: backgroundColors
+          borderColor: tokenLine
         }]
       },
       options: {
@@ -150,69 +189,110 @@ export class BarChart implements AfterViewInit, OnChanges {
         maintainAspectRatio: false,
         scales: {
           x: {
-            ticks: {
-              maxRotation: 45,
-              minRotation: 45,
-            }
+            ticks: { maxRotation: 45, minRotation: 45 },
+            grid: { color: tokenLine }
           },
-          y: { beginAtZero: true, title: { display: true, text: yAxisLabel } }
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: yAxisLabel, color: tokenInk, font: { weight: 600 } },
+            grid: { color: tokenLine }
+          }
         },
         plugins: {
           legend: { display: false },
           tooltip: {
-            callbacks: {
-              afterBody: (context) => {
-                const row = displayData[context[0].dataIndex];
-                if (this.isBayesian) {
-                  return `Posterior Probability: ${this.formatScore(row.score)}`;
-                }
-                return `Adj. p-value: ${this.formatScore(row.score)}`;
-              }
-            }
+            enabled: false,
+            external: (ctx) => this.renderExternalTooltip(ctx),
           }
         }
       }
     });
 
-    if (labels.length > 30) {
-      const newWidth = 1830 + ((labels.length - 30) * 10);
+    if (labels.length > BarChart.NO_GROW_THRESHOLD) {
+      const newWidth =
+        labels.length * (BarChart.BAR_WIDTH + BarChart.BAR_GAP) + BarChart.AXIS_AND_PADDING;
       this.chartDiv.nativeElement.style.width = `${newWidth}px`;
     }
   }
 
-  formatScore(value: number): string {
-    if (value < 0.001) return value.toExponential(2);
-    return value.toFixed(4);
+  /**
+   * Chart.js external tooltip handler. Renders the shared `.term-tooltip`
+   * markup into a positioned div inside the chart's parent, so the bar plot
+   * and the GO graph speak the same hover vocabulary.
+   */
+  private renderExternalTooltip(context: { chart: Chart; tooltip: any }): void {
+    const { chart, tooltip } = context;
+    const parent = chart.canvas.parentNode as HTMLElement | null;
+    if (!parent) return;
+
+    let el = parent.querySelector<HTMLDivElement>('.term-tooltip-host');
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'term-tooltip term-tooltip-host';
+      el.style.position = 'absolute';
+      el.style.pointerEvents = 'none';
+      el.style.opacity = '0';
+      el.style.transition = 'opacity 0.15s ease';
+      el.style.zIndex = '10';
+      parent.appendChild(el);
+    }
+
+    if (tooltip.opacity === 0 || !tooltip.dataPoints?.length) {
+      el.style.opacity = '0';
+      return;
+    }
+
+    const dataIndex = tooltip.dataPoints[0].dataIndex as number;
+    const row = this.currentRows[dataIndex];
+    if (!row) {
+      el.style.opacity = '0';
+      return;
+    }
+
+    const studyHits = this.isBayesian
+      ? row.associatedGenes.length
+      : (row as FrequentistRowData).k;
+    const populationHits = this.isBayesian
+      ? undefined
+      : (row as FrequentistRowData).K;
+
+    el.innerHTML = termTooltipHtml({
+      label: row.label,
+      id: row.id,
+      scoreLabel: this.isBayesian ? 'Posterior' : 'Adj. p-value',
+      scoreValue: formatScore(row.score),
+      studyHits,
+      populationHits,
+    });
+
+    // Place to the right of the bar; flip to the left if it would overflow the chart canvas.
+    const margin = 12;
+    let left = tooltip.caretX + margin;
+    if (left + el.offsetWidth > chart.canvas.width) {
+      left = tooltip.caretX - el.offsetWidth - margin;
+    }
+    el.style.left = `${Math.max(0, left)}px`;
+    el.style.top = `${tooltip.caretY}px`;
+    el.style.opacity = '1';
+  }
+
+  /** Cap x-axis tick label length so long GO term names don't push the layout. */
+  private truncateLabel(label: string): string {
+    if (label.length <= BarChart.MAX_LABEL_CHARS) return label;
+    return label.slice(0, BarChart.MAX_LABEL_CHARS - 1).trimEnd() + '…';
   }
 
   pvalToColor(adj_pval: number): string {
     const max = this.legendMaxValue;
-    if (max <= 0) return '#FFFFFF';
-    const t = Math.min(1, Math.max(0, -Math.log10(adj_pval) / max));
-    return this.interpolateGoldToRed(t);
+    if (max <= 0) return interpolateSignificance(0);
+    const threshold = significanceThresholdT(false, max);
+    return interpolateSignificance(-Math.log10(adj_pval) / max, threshold);
   }
 
   postProbToColor(post_prob: number): string {
     const max = this.legendMaxValue;
-    if (max <= 0) return '#FFFFFF';
-    const t = Math.min(1, Math.max(0, post_prob / max));
-    return this.interpolateGoldToRed(t);
-  }
-
-  private interpolateGoldToRed(t: number): string {
-    // 3-stop gradient matching legend: white #FFFFFF → light pink #FBDDDC → gold #9D7220
-    let r: number, g: number, b: number;
-    if (t <= 0.5) {
-      const s = t * 2;
-      r = Math.round(0xFF + (0xFB - 0xFF) * s);
-      g = Math.round(0xFF + (0xDD - 0xFF) * s);
-      b = Math.round(0xFF + (0xDC - 0xFF) * s);
-    } else {
-      const s = (t - 0.5) * 2;
-      r = Math.round(0xFB + (0x9D - 0xFB) * s);
-      g = Math.round(0xDD + (0x72 - 0xDD) * s);
-      b = Math.round(0xDC + (0x20 - 0xDC) * s);
-    }
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    if (max <= 0) return interpolateSignificance(0);
+    const threshold = significanceThresholdT(true, max);
+    return interpolateSignificance(post_prob / max, threshold);
   }
 }

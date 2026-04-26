@@ -31,7 +31,7 @@
         }
     </div>
 
-    <span class="scope-word" aria-hidden="true">in</span>
+    <span class="scope-word" aria-hidden="true">terms in</span>
 
     <div class="scope-token" [class.open]="openDropdown === 'aspect'">
         <button type="button" class="scope-btn"
@@ -61,5 +61,38 @@
             </ul>
         }
     </div>
+
+    @if (statisticOptions && statisticOptions.length > 0) {
+        <span class="scope-word" aria-hidden="true">by</span>
+
+        <div class="scope-token" [class.open]="openDropdown === 'statistic'">
+            <button type="button" class="scope-btn"
+                [attr.aria-label]="'Statistic: ' + statLabel(selectedStatistic)"
+                [attr.aria-expanded]="openDropdown === 'statistic'"
+                aria-haspopup="listbox"
+                (click)="toggle('statistic')"
+                (keydown)="onTokenKeydown($event, 'statistic')">
+                <span class="scope-btn-text">{{ statLabel(selectedStatistic) }}</span>
+                <svg class="caret" [class.flipped]="openDropdown === 'statistic'" width="10" height="6"
+                    viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+                    <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.8"
+                        fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            @if (openDropdown === 'statistic') {
+                <ul class="scope-menu" role="listbox" [attr.aria-label]="'Statistic options'">
+                    @for (opt of statisticOptions; track opt) {
+                        <li role="option"
+                            [attr.aria-selected]="opt === selectedStatistic"
+                            tabindex="0"
+                            (click)="select(opt, 'statistic')"
+                            (keydown)="onOptionKeydown($event, opt, 'statistic')">
+                            {{ statLabel(opt) }}
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    }
 
 </div>

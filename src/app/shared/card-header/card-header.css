@@ -17,12 +17,20 @@
     margin: 0;
 }
 
+/* Reserved slot for the badge (or subtitle) so toggling its visibility never
+   changes the card's height. min-height matches a rendered .ready-badge. */
+.card-header-status {
+    display: flex;
+    align-items: flex-start;
+    min-height: 1.6rem;
+}
+
 .ready-badge {
     align-self: flex-start;
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    font-size: 0.7rem;
+    font-size: var(--font-small);
     font-weight: 700;
     letter-spacing: 0.03em;
     background-color: var(--md-sys-color-success-container);
@@ -30,11 +38,10 @@
     padding: 0.2rem 0.6rem;
     border-radius: 1rem;
     white-space: nowrap;
-    margin-top: 0.15rem;
 }
 
 .ready-badge .material-symbols-outlined {
-    font-size: 0.9rem;
+    font-size: var(--font-small);
 }
 
 .ready-badge .version {

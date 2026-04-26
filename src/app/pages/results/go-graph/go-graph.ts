@@ -1,6 +1,8 @@
 import { Component, SimpleChanges, Input, OnChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ChartHeader } from '../../../shared/chart-header/chart-header';
 import { DotData, NodeData } from '../../../services/results-service';
+import { interpolateSignificanceHex, significanceThresholdT } from '../../../shared/utils/significance-color';
+import { TermTooltipData, termTooltipHtml, formatScore } from '../../../shared/utils/term-tooltip';
 import 'd3-graphviz';
 import * as d3 from 'd3';
 
@@ -38,6 +40,8 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
   dotStrings: Record<'BP' | 'MF' | 'CC', string> = { BP: '', MF: '', CC: '' };
   private renderedAspects: Set<'MF' | 'BP' | 'CC'> = new Set();
+  /** Per-node tooltip data, keyed by GO term id. Populated in generateDot. */
+  private nodeTooltips = new Map<string, TermTooltipData>();
 
   private updateOptionsForMethod(): void {
     this.topNOptions = this.isBayesian
@@ -123,14 +127,23 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     const edges = this.dotData[subgraph].edges.full
       .filter(e => allIds.has(e.source) && allIds.has(e.target));
 
+    // Reset tooltip data so stale entries don't survive a re-render.
+    this.nodeTooltips.clear();
+
     let dot = 'digraph {\nrankdir=BT;\nranksep=1.2;\nnodesep=0.5;\n';
     for (const node of [...seed_nodes, ...ancestor_nodes]) {
       const [fillColor, fontColor] = this.pvalToColor(node.p_val);
-      const countsLine = this.isBayesian
-        ? `Study: ${node.study_count}`
-        : `Study: ${node.study_count}<br/>Population: ${node.population_count}`;
-      const tooltip = `${this.escapeHtml(node.label)}<br/>${node.id}<br/>p: ${this.formatPValue(node.p_val)}<br/>${countsLine}`;
-      const attrs = `label="${node.id}", tooltip="${tooltip}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
+      this.nodeTooltips.set(node.id, {
+        label: node.label,
+        id: node.id,
+        scoreLabel: this.isBayesian ? 'Posterior' : 'Adj. p-value',
+        scoreValue: formatScore(node.p_val),
+        studyHits: node.study_count,
+        populationHits: this.isBayesian ? undefined : node.population_count,
+      });
+      // Graphviz needs a tooltip attribute so an <a title="..."> is emitted; we
+      // park the GO id there and look up the rich tooltip in our Map at hover.
+      const attrs = `label="${node.id}", tooltip="${node.id}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
       dot += `"${node.id}" [${attrs}];\n`;
     }
     for (const edge of edges) {
@@ -140,37 +153,16 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     this.dotStrings[subgraph] = dot;
   }
 
-  formatPValue(p: number): string {
-    if (p < 0.001) return p.toExponential(2);
-    return p.toFixed(4);
-  }
-
-  private escapeHtml(s: string): string {
-    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
   pvalToColor(score: number): [string, string] {
     const max = this.legendMaxValue;
     const t = max > 0
-      ? Math.min(1, Math.max(0, this.isBayesian ? score / max : -Math.log10(score) / max))
+      ? (this.isBayesian ? score / max : -Math.log10(score) / max)
       : 0;
-    return [this.interpolateGoldToRed(t), '#003754'];
-  }
-
-  private interpolateGoldToRed(t: number): string {
-    let r: number, g: number, b: number;
-    if (t <= 0.5) {
-      const s = t * 2;
-      r = Math.round(0xFF + (0xFB - 0xFF) * s);
-      g = Math.round(0xFF + (0xDD - 0xFF) * s);
-      b = Math.round(0xFF + (0xDC - 0xFF) * s);
-    } else {
-      const s = (t - 0.5) * 2;
-      r = Math.round(0xFB + (0x9D - 0xFB) * s);
-      g = Math.round(0xDD + (0x72 - 0xDD) * s);
-      b = Math.round(0xDC + (0x20 - 0xDC) * s);
-    }
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    const threshold = significanceThresholdT(this.isBayesian, max);
+    const fill = interpolateSignificanceHex(t, threshold);
+    const ink = getComputedStyle(document.documentElement)
+      .getPropertyValue('--md-sys-color-primary').trim() || '#003754';
+    return [fill, ink];
   }
 
   ngAfterViewInit(): void {
@@ -228,15 +220,17 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     nodes.on('mouseover', (event: any) => {
       d3.select(event.currentTarget).select('polygon, rect').attr('stroke-width', 4);
       const aTag = d3.select(event.currentTarget).select('g a');
-      const tooltipText = aTag.attr('data-tooltip');
+      const nodeId = aTag.attr('data-tooltip');
       aTag.attr('title', null);
+
+      const data = nodeId ? this.nodeTooltips.get(nodeId) : undefined;
+      if (!data) return;
 
       const containerRect = containerEl.getBoundingClientRect();
       const nodeRect = event.currentTarget.getBoundingClientRect();
       tooltipRef
         .style('opacity', 1)
-        .style('padding', '4px 8px')
-        .html(tooltipText)
+        .html(termTooltipHtml(data))
         .style('left', (nodeRect.x - containerRect.x + nodeRect.width + 10) + 'px')
         .style('top', (nodeRect.y - containerRect.y) + 'px');
     })

@@ -1,10 +1,14 @@
 <div class="colorbar">
-    <span class="colorbar-title">{{ isBayesian ? 'Posterior' : '−log₁₀(p)' }}</span>
-    <div class="colorbar-body">
-        <div class="colorbar-bar"></div>
-        <div class="colorbar-range">
-            <span>0</span>
-            <span>{{ maxLabel }}</span>
-        </div>
+    <span class="colorbar-title">{{ isBayesian ? 'Posterior' : '-log p' }}</span>
+    <span class="colorbar-min" aria-hidden="true">0</span>
+    <div class="colorbar-bar" role="img"
+        [style.background]="gradientStyle"
+        [attr.aria-label]="(isBayesian ? 'Posterior' : '-log p') + ' from 0 to ' + maxLabel + (thresholdPercent !== null ? ', significance threshold marked' : '')">
+        @if (thresholdPercent !== null) {
+            <span class="colorbar-threshold"
+                [style.left.%]="thresholdPercent"
+                [attr.aria-label]="isBayesian ? 'Posterior threshold 0.5' : 'p-value threshold 0.05'"></span>
+        }
     </div>
+    <span class="colorbar-max">{{ maxLabel }}</span>
 </div>
