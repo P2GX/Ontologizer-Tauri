@@ -5,10 +5,14 @@ description = "Rust (tauri) implementation of the Ontologizer application for ch
 authors = ["Lukas Ramlow, Jasmin Scholtes, Peter N. Robinson"]
 license = "MIT"
 repository = ""
-# default-run = "app"
+default-run = "ontologizer"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "ontologizer"
+path = "src/main.rs"
 
 [build-dependencies]
 tauri-build = { version = "2.3.1", features = [] }

@@ -11,7 +11,6 @@
   },
   "app": {
     "security": {
-      "csp": "default-src 'self'; img-src 'self' asset: https:; script-src 'self'; style-src 'self' 'unsafe-inline';"
     },
     "windows": [
       {
