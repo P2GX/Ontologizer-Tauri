@@ -1,9 +1,9 @@
-import { Component, computed } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenu } from '../../shared/dropdown-menu/dropdown-menu';
 import { CardHeader } from '../../shared/card-header/card-header';
-import { AnalysisService, Method, Correction, CORRECTION_NAMES, STEP_LABELS } from '../../services/analysis-service';
+import { AnalysisService, Correction, CORRECTION_NAMES, STEP_LABELS } from '../../services/analysis-service';
 import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { FilesService } from '../../services/files-service';

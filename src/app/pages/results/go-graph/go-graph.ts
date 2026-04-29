@@ -206,7 +206,7 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     svg.select('g').select('polygon').attr('fill', 'none').attr('stroke', 'none');
 
     const nodes = svg.selectAll('g.node');
-    nodes.each((d: any, i: number, nodesArray: any) => {
+    nodes.each((_d: any, i: number, nodesArray: any) => {
       const node = d3.select(nodesArray[i]);
       const aTag = node.select('g a');
       const title = aTag.attr('title');

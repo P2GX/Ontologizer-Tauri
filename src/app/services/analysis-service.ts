@@ -9,12 +9,6 @@ export type Method =
     | { method: 'Bayesian' }
     | { method: 'Frequentist'; background: Background; correction: Correction };
 
-export const BACKGROUND_NAMES: Record<Background, string> = {
-  Standard: 'Standard',
-  ParentUnion: 'Parent Union',
-  ParentIntersection: 'Parent Intersection',
-};
-
 export const CORRECTION_NAMES: Record<Correction, string> = {
   Bonferroni: 'Bonferroni',
   BonferroniHolm: 'Bonferroni-Holm',
