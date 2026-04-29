@@ -55,6 +55,25 @@ export function interpolateSignificance(t: number, threshold = 0): string {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
+/**
+ * Pick a readable ink color for a given fill. Returns `--md-sys-color-on-primary`
+ * (light) when the fill is dark enough that `--md-sys-color-primary` ink would
+ * fail WCAG AA, otherwise returns the standard primary ink.
+ */
+export function pickInkForBackground(fillHex: string): string {
+  const [r, g, b] = hexToRgb(fillHex);
+  const srgbToLin = (c: number) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  };
+  const luminance = 0.2126 * srgbToLin(r) + 0.7152 * srgbToLin(g) + 0.0722 * srgbToLin(b);
+  const styles = getComputedStyle(document.documentElement);
+  const dark  = styles.getPropertyValue('--md-sys-color-primary').trim() || '#003754';
+  const light = styles.getPropertyValue('--md-sys-color-on-primary').trim() || '#ffffff';
+  // Threshold ~0.45 keeps mid-gold fills on light ink rather than dark navy.
+  return luminance < 0.45 ? light : dark;
+}
+
 /** As `interpolateSignificance` but returns `#rrggbb`, useful for Graphviz. */
 export function interpolateSignificanceHex(t: number, threshold = 0): string {
   const clamped = Math.min(1, Math.max(0, t));

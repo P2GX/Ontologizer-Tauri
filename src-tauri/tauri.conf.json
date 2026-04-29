@@ -6,16 +6,16 @@
   "build": {
     "frontendDist": "../dist/ontologizer/browser",
     "devUrl": "http://localhost:4200",
-    "beforeDevCommand": "ng serve",
-    "beforeBuildCommand": "ng build"
+    "beforeDevCommand": "npm run start",
+    "beforeBuildCommand": "npm run build -- --configuration=production --skip-nx-cache"
   },
   "app": {
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' asset: https:; script-src 'self'; style-src 'self' 'unsafe-inline';"
     },
     "windows": [
       {
-        "title": "ontologizer",
+        "title": "Ontologizer",
         "width": 1300,
         "height": 800,
         "minWidth": 1200,

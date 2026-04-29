@@ -4,6 +4,7 @@ import { RowData, FrequentistRowData } from '../../../services/results-service';
 import { ChartHeader } from '../../../shared/chart-header/chart-header';
 import { interpolateSignificance, significanceThresholdT } from '../../../shared/utils/significance-color';
 import { termTooltipHtml, formatScore } from '../../../shared/utils/term-tooltip';
+import { wrapLabel } from '../../../shared/utils/wrap-label';
 
 /**
  * Chart.js global defaults so charts speak the project's typography and color
@@ -56,9 +57,6 @@ export class BarChart implements AfterViewInit, OnChanges {
   private static readonly BAR_GAP = 8;
   private static readonly AXIS_AND_PADDING = 200;
   private static readonly NO_GROW_THRESHOLD = 30;
-
-  /** Truncate x-axis tick labels at this length. Full label still appears in the hover tooltip. */
-  private static readonly MAX_LABEL_CHARS = 22;
 
   /** The rows currently rendered. Used by the external tooltip handler. */
   private currentRows: RowData[] = [];
@@ -145,7 +143,7 @@ export class BarChart implements AfterViewInit, OnChanges {
 
     this.currentRows = displayData;
 
-    const labels = displayData.map(row => this.truncateLabel(row.label));
+    const labels = displayData.map(row => wrapLabel(row.label, 10, 2));
     const backgroundColors = displayData.map(row =>
       this.isBayesian ? this.postProbToColor(row.score) : this.pvalToColor(row.score)
     );
@@ -274,12 +272,6 @@ export class BarChart implements AfterViewInit, OnChanges {
     el.style.left = `${Math.max(0, left)}px`;
     el.style.top = `${tooltip.caretY}px`;
     el.style.opacity = '1';
-  }
-
-  /** Cap x-axis tick label length so long GO term names don't push the layout. */
-  private truncateLabel(label: string): string {
-    if (label.length <= BarChart.MAX_LABEL_CHARS) return label;
-    return label.slice(0, BarChart.MAX_LABEL_CHARS - 1).trimEnd() + '…';
   }
 
   pvalToColor(adj_pval: number): string {

@@ -1,6 +1,73 @@
-<div class="page-header">
-    <h1 class="page-title">Contact</h1>
-    <div style="margin-left:2rem; display:flex; gap:2em;">
-        <h2 class="sub-title">Get in touch with us.</h2>
+<div class="contact-body">
+    <div class="contact-wrapper">
+
+        <section class="contact-section">
+            <h2>How to cite</h2>
+            <p>If you use Ontologizer V3 in published work, please cite the software and the original papers describing the underlying methods.</p>
+
+            <div class="bibtex-block">
+                <pre>{{ bibtex }}</pre>
+                <button type="button" class="button-tonal" (click)="copyBibtex()">Copy BibTeX</button>
+            </div>
+
+            <ul class="ref-list">
+                <li>
+                    <strong>Version 1 (2004).</strong>
+                    <button type="button" class="link-button" (click)="open('https://pubmed.ncbi.nlm.nih.gov/14764576/')">PubMed: 14764576</button>
+                </li>
+                <li>
+                    <strong>Version 2 (2008).</strong>
+                    <button type="button" class="link-button" (click)="open('https://pubmed.ncbi.nlm.nih.gov/18511468/')">PubMed: 18511468</button>
+                </li>
+                <li>
+                    <strong>Version 3 (2026).</strong>
+                    Manuscript in preparation.
+                </li>
+            </ul>
+        </section>
+
+        <section class="contact-section">
+            <h2>Authors</h2>
+            <div class="author-grid">
+                @for (a of authors; track a.name) {
+                    <article class="author-card">
+                        <h3 class="author-name">{{ a.name }}</h3>
+                        <p class="author-affiliation">{{ a.affiliation }}</p>
+                        @if (a.orcid) {
+                            <button type="button" class="link-button" (click)="open('https://orcid.org/' + a.orcid)">ORCID: {{ a.orcid }}</button>
+                        }
+                        @if (a.email) {
+                            <button type="button" class="link-button" (click)="open('mailto:' + a.email)">{{ a.email }}</button>
+                        }
+                    </article>
+                }
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <h2>Source code &amp; bug reports</h2>
+            <p>Ontologizer V3 is split across two repositories. The fastest way to reach the maintainers is to file an issue against the relevant one.</p>
+            <div class="repo-grid">
+                @for (r of repos; track r.repoUrl) {
+                    <article class="repo-card">
+                        <h3 class="repo-label">{{ r.label }}</h3>
+                        <p class="repo-description">{{ r.description }}</p>
+                        <div class="repo-actions">
+                            <button type="button" class="button-secondary" (click)="open(r.repoUrl)">Open repository</button>
+                            <button type="button" class="button-tonal" (click)="open(r.issueUrl)">Report an issue</button>
+                        </div>
+                    </article>
+                }
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <h2>License</h2>
+            <p>
+                Ontologizer V3 is distributed under the
+                <button type="button" class="link-button" (click)="open(licenseUrl)">GNU General Public License (GPL-3.0-or-later)</button>.
+            </p>
+        </section>
+
     </div>
 </div>

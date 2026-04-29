@@ -1,7 +1,8 @@
 import { Component, SimpleChanges, Input, OnChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ChartHeader } from '../../../shared/chart-header/chart-header';
 import { DotData, NodeData } from '../../../services/results-service';
-import { interpolateSignificanceHex, significanceThresholdT } from '../../../shared/utils/significance-color';
+import { interpolateSignificanceHex, pickInkForBackground, significanceThresholdT } from '../../../shared/utils/significance-color';
+import { wrapLabel } from '../../../shared/utils/wrap-label';
 import { TermTooltipData, termTooltipHtml, formatScore } from '../../../shared/utils/term-tooltip';
 import 'd3-graphviz';
 import * as d3 from 'd3';
@@ -143,7 +144,12 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
       });
       // Graphviz needs a tooltip attribute so an <a title="..."> is emitted; we
       // park the GO id there and look up the rich tooltip in our Map at hover.
-      const attrs = `label="${node.id}", tooltip="${node.id}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
+      // Visible label: term name, wrapped to ≤10 chars × 2 lines so nodes stay
+      // close to their previous (id-only) footprint.
+      const wrapped = wrapLabel(node.label, 10, 2)
+        .map(line => line.replace(/\\/g, '\\\\').replace(/"/g, '\\"'))
+        .join('\\n');
+      const attrs = `label="${wrapped}", tooltip="${node.id}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
       dot += `"${node.id}" [${attrs}];\n`;
     }
     for (const edge of edges) {
@@ -160,8 +166,7 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
       : 0;
     const threshold = significanceThresholdT(this.isBayesian, max);
     const fill = interpolateSignificanceHex(t, threshold);
-    const ink = getComputedStyle(document.documentElement)
-      .getPropertyValue('--md-sys-color-primary').trim() || '#003754';
+    const ink = pickInkForBackground(fill);
     return [fill, ink];
   }
 

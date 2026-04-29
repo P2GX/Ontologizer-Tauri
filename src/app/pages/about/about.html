@@ -1,8 +1,3 @@
-<div class="page-header">
-    <h1 class="page-title">Help</h1>
-    <div style="margin-left:2rem; display:flex; gap:2em;">
-    </div>
-</div>
 <div class="about-body">
     <div class="about-wrapper">
         <div class="tabs-container">
@@ -50,32 +45,21 @@
 
             @case ('table') {
                 <div class="tab-content">
-                    
-                    <p>Ontologizer requires four files to run</p>
+                    <p>To run an enrichment analysis, Ontologizer requires four inputs: </p>
                     <ol>
-                        <li>go-basic.json <button 
-                        type="button"
-                        (click)="openExternalLink('https://www.geneontology.org/docs/download-ontology/')"
-                        class="go-external-link">
-                        download page
-                        </button></li>
-                         <li>GO annotation file (GAF)<button 
-                        type="button"
-                        (click)="openExternalLink('https://www.geneontology.org/docs/download-go-annotations/')"
-                        class="go-external-link">
-                        download page
-                        </button></li>
-                        <li>Study set: Gene symbols of interest (e.g., differentially expressed), one to a line</li>
-                        <li>Population set: All gene symbols from the examined population, one to a line</li>
+                        <li> Gene Ontology (GO) - a hierarchy of terms describing biological processes, molecular functions, and cellular components. <i>Downloaded automatically or provided locally.</i></li>
+                        <li> GO association file - a species-specific file that links GO terms to genes or gene products. <i>Downloaded automatically for common organisms, or provided locally.</i></li>
+                        <li> Population set - the full set of genes measured in your experiment. <i>Experiment-specific; must be provided locally.</i></li>
+                        <li> Study set - a subset of the population set sharing a biological characteristic of interest (e.g. genes that are differentially expressed).<i>Experiment-specific; must be provided locally.</i> </li>
                     </ol>
-                    TODO more information is available in the ONLINE DOC SITE
+                    <p> Together, these inputs allow Ontologizer to test whether certain GO terms are overrepresented in the study set compared to the population set. </p>
                 </div>
             }
 
             @case ('go-graph') {
                 <div class="tab-content">
                     <h2>Statistics & Methods</h2>
-                    <p>The Term-for-Term method with Bonferroni correction for multiple testing is the classic GO overrepresentation algorithm.</p>
+                    <p> Ontologizer provides two methods to test for term overrepresentation The Term-for-Term method with Bonferroni correction for multiple testing is the classic GO overrepresentation algorithm.</p>
                     <p>Ontologizer additionally implements the parent-child algorithms and Model-Based Geneset Analysis (MGSA).</p>
                     <p>TODO ONLINE DOCs</p>
                 </div>
