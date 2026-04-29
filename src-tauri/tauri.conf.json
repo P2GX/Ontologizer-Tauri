@@ -7,7 +7,7 @@
     "frontendDist": "../dist/ontologizer/browser",
     "devUrl": "http://localhost:4200",
     "beforeDevCommand": "npm run start",
-    "beforeBuildCommand": "npm run build -- --configuration=production --skip-nx-cache"
+    "beforeBuildCommand": "npm run build -- --configuration=production"
   },
   "app": {
     "security": {
