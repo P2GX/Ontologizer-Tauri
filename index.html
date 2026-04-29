@@ -376,6 +376,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -392,6 +410,103 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gene-ontology-go" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📂 Gene Ontology (GO)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📂 Gene Ontology (GO)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-true-path-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "True-Path Rule"
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overrepresentation-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Overrepresentation Analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#availability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠 Availability
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠 Availability">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rust-library" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🦀 Rust Library
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#desktop-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💻 Desktop Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -469,7 +584,54 @@
 
 
 <h1 id="ontologizer">Ontologizer</h1>
-<p>to do. Tutorial for Ontologizer GUI.</p>
+<p>The Ontologizer is a Desktop application for performing Gene Ontology Overrepresentation analysis.</p>
+<hr />
+<h2 id="gene-ontology-go">📂 Gene Ontology (GO)</h2>
+<p>The <a href="https://www.geneontology.org/">Gene Ontology</a> provides a structured vocabulary to describe the roles of genes and their products across three distinct categories:</p>
+<ul>
+<li><strong>Molecular Function</strong>: The specific activities of a gene product. For example, <em>DNA helicase activity</em> (GO:0003678) is used to annotate gene products like <em>CHD1L</em>.</li>
+<li><strong>Biological Process</strong>: The larger pathways or "goals" the gene contributes to. For example, <em>COL11A2</em> is annotated to <em>cartilage development</em> (GO:0051216).</li>
+<li><strong>Cellular Component</strong>: The physical location where the activity occurs. For example, <em>Golgi membrane</em> (GO:0000139) annotates <em>B3GAT2</em>.</li>
+</ul>
+<h3 id="the-true-path-rule">The "True-Path Rule"</h3>
+<p>The GO is organized as a graph where terms are linked by <strong>is-a</strong> and <strong>part-of</strong> relations. By the principle of transitivity, if a gene is annotated to a specific term, it is automatically considered annotated to all its parent and ancestor terms. </p>
+<blockquote>
+<p><strong>Example:</strong> Because <em>cartilage</em> is <strong>part-of</strong> the <em>skeletal system</em>, any gene involved in <em>cartilage development</em> is also categorized under <em>skeletal system development</em> (GO:0001501).</p>
+</blockquote>
+<hr />
+<h2 id="overrepresentation-analysis">📊 Overrepresentation Analysis</h2>
+<p>One of the most important applications of GO is in the analysis of lists of differentially expressed genes derived from exploratory experiments in which the transcriptional activity of all or most genes is assayed with RNA-seq or comparable methods. <strong>GO Overrepresentation Analysis (GORA)</strong> asks the question of whether more genes annotated to a given GO term are found to be differentially expressed than one would expect by chance. If so, then we say that genes annotated to the GO term are "overrepresented" in the set of differentially expressed genes.</p>
+<p>We implement two primary approaches to tackle this statistical challenge:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Approach</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Term-for-Term (TfT)</strong></td>
+<td style="text-align: left;">Frequentist</td>
+<td style="text-align: left;">Uses the <strong>Fisher Exact Test (FET)</strong> for each term individually. Simple, but often results in many redundant, highly correlated terms due to the hierarchical nature of the GO.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Model-Based (MGSA)</strong></td>
+<td style="text-align: left;">Bayesian</td>
+<td style="text-align: left;">Analyzes all categories simultaneously via a <strong>Bayesian network</strong>. This approach naturally accounts for category overlap and eliminates the need for manual multiple-testing correction.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="availability">🛠 Availability</h2>
+<p>The Ontologizer ecosystem is built for speed and portability using <strong>Rust</strong>.</p>
+<h3 id="rust-library">🦀 Rust Library</h3>
+<p>The core engine for TfT and MGSA calculations, designed for integration into other bioinformatics pipelines.
+* <strong>Source:</strong> <a href="https://github.com/P2GX/ontologizer">P2GX/ontologizer</a></p>
+<h3 id="desktop-application">💻 Desktop Application</h3>
+<p>A user-friendly graphical interface built with the <strong>Tauri</strong> framework, offering a native experience across Windows, macOS, and Linux.
+* <strong>Source:</strong> <a href="https://github.com/P2GX/Ontologizer-Tauri">P2GX/Ontologizer-Tauri</a></p>
 
 
 
