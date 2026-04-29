@@ -147,7 +147,7 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
       // Visible label: term name, wrapped to ≤10 chars × 2 lines so nodes stay
       // close to their previous (id-only) footprint.
       const wrapped = wrapLabel(node.label, 10, 2)
-        .map(line => line.replace(/\\/g, '\\\\').replace(/"/g, '\\"'))
+          .map((line: string) => line.replace(/\\/g, '\\\\').replace(/"/g, '\"'))
         .join('\\n');
       const attrs = `label="${wrapped}", tooltip="${node.id}", fillcolor="${fillColor}", style="filled,rounded", fontname="Trebuchet MS", fontcolor="${fontColor}", penwidth=0.8, fixedsize=false, shape=box`;
       dot += `"${node.id}" [${attrs}];\n`;
