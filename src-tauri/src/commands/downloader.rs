@@ -1,5 +1,4 @@
 use crate::appstate::AppState;
-use std::collections::HashMap;
 use std::fs;
 
 const GO_URL: &str = "http://purl.obolibrary.org/obo/go/go-basic.json";

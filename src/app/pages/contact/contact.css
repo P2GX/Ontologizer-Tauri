@@ -8,7 +8,7 @@ h2 {
 
 .contact-body {
     display: flex;
-    padding: 0 1.5rem;
+    padding: 2rem 1.5rem;
     justify-content: center;
     margin-bottom: 2rem;
 }
@@ -18,6 +18,14 @@ h2 {
     flex-direction: column;
     width: 80cqw;
     gap: 2.5rem;
+    animation-timing-function: ease-in;
+    animation: contact-enter 0.5s;
+    position: relative;
+}
+
+@keyframes contact-enter {
+    from { top: -1rem; opacity: 0; }
+    to { top: 0; opacity: 1; }
 }
 
 .contact-section p {
