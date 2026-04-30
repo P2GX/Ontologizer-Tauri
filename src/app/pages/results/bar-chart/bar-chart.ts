@@ -143,7 +143,7 @@ export class BarChart implements AfterViewInit, OnChanges {
 
     this.currentRows = displayData;
 
-    const labels = displayData.map(row => wrapLabel(row.label, 10, 2));
+    const labels = displayData.map(row => wrapLabel(row.label, 15, 1));
     const backgroundColors = displayData.map(row =>
       this.isBayesian ? this.postProbToColor(row.score) : this.pvalToColor(row.score)
     );

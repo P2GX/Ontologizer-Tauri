@@ -1,6 +1,5 @@
 
 h2 {
-    font-weight: 300;
     margin-bottom: 0.5rem;
     margin-top: 0;
     max-width: 27rem;
@@ -81,6 +80,66 @@ h2 {
 }
 
 p {
-    font-weight: 300;
+    margin: 0 0 0.4rem 0;
+    line-height: 1.4;
+}
+
+.tab-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.tab-content p:last-of-type {
+    margin-bottom: 0;
+}
+
+.tab-content ol,
+.tab-content ul,
+.output-list {
+    margin: 0.15rem 0 0.6rem 0;
+    padding-left: 1.25rem;
+    line-height: 1.4;
+}
+
+.tab-content li,
+.output-list li {
+    margin-bottom: 0.15rem;
+}
+
+.tab-content li i,
+.tab-content li em {
+    color: var(--md-sys-color-primary-hover);
+    margin-left: 0.25rem;
+}
+
+.output-list strong {
+    font-weight: 600;
+    color: var(--md-sys-color-primary);
+}
+
+.tab-content code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.9em;
+    padding: 0.05rem 0.35rem;
+    background-color: var(--md-sys-color-primary-container);
+    border-radius: 0.25rem;
+    color: var(--md-sys-color-primary);
+}
+
+.go-external-link {
+    background: none;
+    border: none;
+    padding: 0;
     margin: 0;
+    font: inherit;
+    color: var(--md-sys-color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+    vertical-align: baseline;
+    line-height: inherit;
+}
+
+.go-external-link:hover {
+    color: var(--md-sys-color-primary-hover);
 }

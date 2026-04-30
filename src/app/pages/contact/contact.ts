@@ -36,18 +36,18 @@ export class Contact {
     {
       label: 'Frontend (Angular + Tauri)',
       description: 'Desktop UI, charts, and graph rendering.',
-      repoUrl:  'https://github.com/ORG/ontologizer-frontend',
-      issueUrl: 'https://github.com/ORG/ontologizer-frontend/issues',
+      repoUrl:  'https://github.com/P2GX/Ontologizer-Tauri',
+      issueUrl: 'https://github.com/P2GX/Ontologizer-Tauri/issues',
     },
     {
       label: 'Backend (Rust)',
       description: 'GO/GAF parsing, indexing, enrichment algorithms.',
-      repoUrl:  'https://github.com/ORG/ontologizer-backend',
-      issueUrl: 'https://github.com/ORG/ontologizer-backend/issues',
+      repoUrl:  'https://github.com/P2GX/ontologizer',
+      issueUrl: 'https://github.com/P2GX/ontologizer/issues',
     },
   ];
 
-  readonly licenseUrl = 'https://www.gnu.org/licenses/gpl-3.0.html';
+  readonly licenseUrl = 'https://opensource.org/license/MIT';
 
   readonly bibtex = `@article{ontologizer_v3_2026,
   title   = {Ontologizer V3},

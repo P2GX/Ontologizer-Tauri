@@ -1,5 +1,4 @@
 h2 {
-    font-weight: 300;
     margin-bottom: 0.5rem;
     margin-top: 0;
     max-width: 27rem;
@@ -28,17 +27,15 @@ h2 {
     to { top: 0; opacity: 1; }
 }
 
-.contact-section p {
-    font-weight: 300;
+p {
     margin: 0 0 0.75rem 0;
     font-size: var(--font-standard);
 }
 
-.contact-section ul {
+ul {
     margin: 0.5rem 0 0;
     padding-left: 1.25rem;
     font-size: var(--font-standard);
-    font-weight: 300;
 }
 
 .contact-section li {
@@ -96,14 +93,12 @@ h2 {
     margin: 0;
     font-size: var(--font-small);
     color: var(--md-sys-color-primary);
-    font-weight: 300;
 }
 
 .author-affiliation {
     margin: 0 0 0.4rem 0;
     font-size: var(--font-small);
     color: var(--md-sys-color-primary);
-    font-weight: 300;
     font-style: italic;
 }
 
@@ -135,7 +130,6 @@ h2 {
     margin: 0 0 0.25rem 0;
     font-size: var(--font-small);
     color: var(--md-sys-color-primary);
-    font-weight: 300;
 }
 
 .repo-actions {
