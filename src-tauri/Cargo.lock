@@ -3,6 +3,28 @@
 version = 4
 
 [[package]]
+name = "Ontologizer-GUI"
+version = "0.1.2"
+dependencies = [
+ "dirs",
+ "flate2",
+ "oboannotation",
+ "ontolius",
+ "ontologizer",
+ "reqwest 0.12.28",
+ "rstest",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-fs",
+ "tauri-plugin-opener",
+ "tokio",
+ "toml 0.9.12+spec-1.1.0",
+]
+
+[[package]]
 name = "adler2"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2897,28 +2919,6 @@ dependencies = [
  "serde",
  "serde_json",
  "ureq",
-]
-
-[[package]]
-name = "ontologizer-tauri"
-version = "1.0.0"
-dependencies = [
- "dirs",
- "flate2",
- "oboannotation",
- "ontolius",
- "ontologizer",
- "reqwest 0.12.28",
- "rstest",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tauri-plugin-fs",
- "tauri-plugin-opener",
- "tokio",
- "toml 0.9.12+spec-1.1.0",
 ]
 
 [[package]]

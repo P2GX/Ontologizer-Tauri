@@ -187,6 +187,7 @@ pub fn get_analysis_results(state: tauri::State<AppState>) -> Result<String, Str
 }
 
 // DotData holds the DOT graph data (nodes, edges, tooltips) for the three GO categories: BP, MF, CC
+#[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Clone)]
 pub struct DotData {
     BP: DotGraph,

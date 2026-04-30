@@ -1,6 +1,6 @@
 [package]
-name = "ontologizer-tauri"
-version = "1.0.0"
+name = "Ontologizer-GUI"
+version = "0.1.2"
 description = "Rust (tauri) implementation of the Ontologizer application for characterizing GO Term Overrepresentation"
 authors = ["Lukas Ramlow, Jasmin Scholtes, Peter N. Robinson"]
 license = "MIT"

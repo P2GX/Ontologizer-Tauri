@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "ontologizer",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "identifier": "com.ontologizer.app",
   "build": {
     "frontendDist": "../dist/ontologizer/browser",
