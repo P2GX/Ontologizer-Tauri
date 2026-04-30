@@ -1,0 +1,105 @@
+.welcome-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 55, 84, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1.5rem;
+    animation: welcome-fade-in 0.2s ease-out;
+}
+
+.welcome-dialog {
+    width: 100%;
+    max-width: 32rem;
+    background-color: var(--md-sys-color-on-primary);
+    border-radius: 0.5rem;
+    box-shadow: 0 12px 32px var(--shadow-header);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: welcome-pop-in 0.25s ease-out;
+}
+
+.welcome-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+}
+
+.welcome-header h2 {
+    margin: 0;
+    font-size: var(--font-highlight);
+    font-weight: 500;
+    color: var(--md-sys-color-on-primary);
+}
+
+.welcome-close {
+    background: none;
+    border: none;
+    color: var(--md-sys-color-on-primary);
+    cursor: pointer;
+    padding: 0.15rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+}
+
+.welcome-close:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.welcome-body {
+    padding: 1.25rem 1.5rem 1rem;
+    color: var(--md-sys-color-primary);
+    font-size: var(--font-standard);
+    line-height: 1.5;
+}
+
+.welcome-body p {
+    margin: 0 0 0.6rem 0;
+}
+
+.welcome-body p:last-child {
+    margin-bottom: 0;
+}
+
+.welcome-list {
+    margin: 0.25rem 0 0.85rem 0;
+    padding-left: 1.25rem;
+}
+
+.welcome-list li {
+    margin-bottom: 0.35rem;
+}
+
+.welcome-pointer a {
+    color: var(--md-sys-color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.welcome-pointer a:hover {
+    color: var(--md-sys-color-primary-hover);
+}
+
+.welcome-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.5rem 1.5rem 1.25rem;
+}
+
+@keyframes welcome-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes welcome-pop-in {
+    from { opacity: 0; transform: translateY(0.5rem) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0)      scale(1); }
+}

@@ -1,0 +1,40 @@
+@if (visible()) {
+    <div class="welcome-backdrop" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+        <div class="welcome-dialog">
+            <header class="welcome-header">
+                <h2 id="welcome-title">Welcome to Ontologizer</h2>
+                <button type="button" class="welcome-close" (click)="close()" aria-label="Close welcome dialog">
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                </button>
+            </header>
+
+            <div class="welcome-body">
+                <p>
+                    Ontologizer performs <strong>GO term overrepresentation analysis</strong>
+                    on a study gene set against a population gene set.
+                </p>
+                <p>
+                    Two complementary methods are provided:
+                </p>
+                <ul class="welcome-list">
+                    <li>
+                        <strong>Statistical Test</strong> &mdash; evaluates each term independently using the hypergeometric test.
+                    </li>
+                    <li>
+                        <strong>Bayesian Inference</strong> &mdash; evaluates all terms jointly under a Bayesian model (MGSA).
+                    </li>
+                </ul>
+                <p class="welcome-pointer">
+                    For details on the methods and file formats, visit
+                    <a routerLink="/about" (click)="close()">About</a>.
+                    For questions or feedback, see
+                    <a routerLink="/contact" (click)="close()">Contact</a>.
+                </p>
+            </div>
+
+            <footer class="welcome-actions">
+                <button type="button" class="button" (click)="close()">Get started</button>
+            </footer>
+        </div>
+    </div>
+}
