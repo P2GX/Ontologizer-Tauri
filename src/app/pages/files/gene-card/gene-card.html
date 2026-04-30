@@ -6,11 +6,11 @@
 
     <p class="card-description">
         @if (target() === 'study') {
-            The study set is the <span class="highlight">genes set</span> used to test for GO term enrichment. Symbols are matched against the <em>DB Object Symbol</em> column of the GAF.<br>
-            Pick your genes of interest, one symbol per line.
+            The genes of interest tested for GO term enrichment.
+            Provide a plain-text file with one gene symbol per line, matching the <em>DB Object Symbol</em> column of the GAF.
         } @else {
-            The population set is the background <span class="highlight">gene set</span> the study set is compared against (typically all genes measurable in your experiment). Symbols are matched against the <em>DB Object Symbol</em> column of the GAF. <br>
-            Pick the reference gene list, one symbol per line.
+            The reference set the study is compared against, typically all genes measurable in your experiment.
+            Provide a plain-text file with one gene symbol per line, matching the <em>DB Object Symbol</em> column of the GAF.
         }
     </p>
 

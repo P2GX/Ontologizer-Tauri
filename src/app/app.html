@@ -1,3 +1,5 @@
+<app-welcome-dialog></app-welcome-dialog>
+
 <div class="app-shell">
 
     <!-- Custom title bar (replaces native OS decorations) -->
@@ -66,6 +68,17 @@
                     <span matListItemTitle>Contact</span>
                 </a>
             </mat-nav-list>
+
+            <div class="sidenav-footer">
+                <button type="button" class="sidenav-help" (click)="showWelcome()"
+                        aria-label="Show welcome dialog"
+                        [title]="isCollapsed() ? 'Show welcome' : ''">
+                    <mat-icon>help_outline</mat-icon>
+                    @if (!isCollapsed()) {
+                        <span>Show welcome</span>
+                    }
+                </button>
+            </div>
 
         </mat-sidenav>
 

@@ -21,6 +21,8 @@
     color: var(--md-sys-color-on-primary-container);
     margin: 0;
     line-height: 1.55;
+    text-align: justify;
+    hyphens: auto;
 }
 
 /* === File status row === */
