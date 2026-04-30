@@ -66,6 +66,12 @@ body { margin: 0; font-family: "Trebuchet MS", Trebuchet, sans-serif; color: var
     text-align: center;
 }
 
+/* When the empty state is the sole content of a flex-centered .page-body,
+   skip the 5rem top offset so vertical centering actually centers. */
+.page-body > .empty-state {
+    margin-top: 0;
+}
+
 .empty-state-icon {
     font-size: 4rem;
     color: var(--md-sys-color-outline);

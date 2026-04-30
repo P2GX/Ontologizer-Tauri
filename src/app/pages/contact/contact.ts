@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { MatDividerModule } from '@angular/material/divider';
 import { openUrl } from '@tauri-apps/plugin-opener';
 
 interface Author {
@@ -16,14 +17,22 @@ interface Repo {
   issueUrl: string;
 }
 
+type ContactTab = 'authors' | 'citation' | 'repository' | 'license';
+
 @Component({
   selector: 'app-contact',
-  imports: [],
+  imports: [MatDividerModule],
   templateUrl: './contact.html',
   styleUrl: './contact.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Contact {
+  readonly selectedTab = signal<ContactTab>('authors');
+
+  selectTab(tab: ContactTab): void {
+    this.selectedTab.set(tab);
+  }
+
   readonly authors: Author[] = [
     { name: 'Lukas Ramlow',   affiliation: 'Berlin Institute of Health at Charité Universitätsmedizin',   role: 'Corresponding',          orcid: '0000-0001-6089-0613',  email: 'lukas.ramlow@bih-charite.de' },
     { name: 'Jasmin Scholtes',   affiliation: 'Berlin Institute of Health at Charité Universitätsmedizin',   role: 'Role'},
@@ -49,12 +58,23 @@ export class Contact {
 
   readonly licenseUrl = 'https://opensource.org/license/MIT';
 
-  readonly bibtex = `@article{ontologizer_v3_2026,
+  readonly ontologizer = `@article{ontologizer_v3_2026,
   title   = {Ontologizer V3},
   author  = {L. Ramlow, J. Scholtes, D. Danis and P. N. Robinson},
   journal={Bioinformatics},
   pages={btag041},
   year={2026},
+  publisher={Oxford University Press}
+}`;
+
+  readonly mgsa = `@article{bauer2010going,
+  title={GOing Bayesian: model-based gene set analysis of genome-scale data},
+  author={Bauer, Sebastian and Gagneur, Julien and Robinson, Peter N.},
+  journal={Nucleic Acids Research},
+  volume={38},
+  number={11},
+  pages={3523--3532},
+  year={2010},
   publisher={Oxford University Press}
 }`;
 
@@ -66,9 +86,9 @@ export class Contact {
     }
   }
 
-  async copyBibtex(): Promise<void> {
+  async copyBibtex(entry: string): Promise<void> {
     try {
-      await navigator.clipboard.writeText(this.bibtex);
+      await navigator.clipboard.writeText(entry);
     } catch (e) {
       console.error('Clipboard write failed:', e);
     }
