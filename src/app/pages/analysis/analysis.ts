@@ -8,6 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { FilesService } from '../../services/files-service';
 import { ResultsService } from '../../services/results-service';
+import { openUrl } from '@tauri-apps/plugin-opener';
 
 @Component({
   selector: 'app-analysis',
@@ -51,6 +52,14 @@ export class Analysis {
 
   dismissError() {
     this.analysisService.errorMessage.set(null);
+  }
+
+  async openExternalLink(url: string): Promise<void> {
+    try {
+      await openUrl(url);
+    } catch (error) {
+      console.error('Failed to open link:', error);
+    }
   }
 
   constructor(

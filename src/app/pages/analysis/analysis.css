@@ -57,6 +57,31 @@
     font-size: var(--font-small);
     color: var(--md-sys-color-on-primary-container);
     line-height: 1.55;
+    text-align: justify;
+    hyphens: auto;
+}
+
+.method-card p em {
+    font-style: italic;
+    color: var(--md-sys-color-primary);
+}
+
+.citation-link {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 0.15rem;
+    font: inherit;
+    color: var(--md-sys-color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+    vertical-align: baseline;
+    line-height: inherit;
+    white-space: nowrap;
+}
+
+.citation-link:hover {
+    color: var(--md-sys-color-primary-hover);
 }
 
 /* === Nested dropdowns === */

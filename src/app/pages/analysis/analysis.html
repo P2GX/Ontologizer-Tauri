@@ -12,7 +12,19 @@
                  [class.active]="isFrequentist"
                  (click)="setCategory('Frequentist')">
                 <app-card-header cardTitle="Statistical Testing" [ready]="isFrequentist" badgeLabel="SELECTED" />
-                <p>Evaluates terms using hypergeometric tests, defining specific topological backgrounds to reduce hierarchy bias.</p>
+                <p>
+                    Tests each GO term independently using a hypergeometric test, asking
+                    whether more study genes are annotated to the term than would be expected
+                    by chance given the population. The result is one adjusted <em>p-value</em>
+                    per term. Pick this if you want a fast, term-by-term answer with familiar
+                    significance thresholds. <br>
+                    For more details, see for example
+                    <button type="button" class="citation-link"
+                            (click)="openExternalLink('https://pubmed.ncbi.nlm.nih.gov/17182697/'); $event.stopPropagation()">
+                        Rivals et al., 2007
+                    </button>
+                    .
+                </p>
 
                 <div class="illustration-container">
                     <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
@@ -46,7 +58,19 @@
                  [class.active]="selectedMethod?.method === 'Bayesian'"
                  (click)="setCategory('Bayesian')">
                 <app-card-header cardTitle="Bayesian Inference" [ready]="selectedMethod?.method === 'Bayesian'" badgeLabel="SELECTED" />
-                <p>Model-based gene set analysis considering term overlaps jointly using a Bayesian hierarchical model.</p>
+                <p>
+                    Evaluates all GO terms jointly under a probabilistic model (MGSA): each
+                    term is treated as either active or inactive, and overlaps between terms
+                    are accounted for. The result is a <em>posterior probability of activation</em>
+                    per term. Pick this if you want a sparse set of terms that explain the study genes,
+                    without separate multiple-testing correction. <br>
+                    For more details, see
+                    <button type="button" class="citation-link"
+                            (click)="openExternalLink('https://pubmed.ncbi.nlm.nih.gov/20418340/'); $event.stopPropagation()">
+                        Bauer et al., 2010
+                    </button>
+                    .
+                </p>
 
                 <div class="illustration-container">
                     <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
