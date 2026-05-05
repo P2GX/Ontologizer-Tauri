@@ -95,14 +95,24 @@
                     <span class="kv-value">p &lt; 0.05</span>
                 </div>
             } @else if (dashboardInfo.method) {
-                <div class="kv-row">
-                    <span class="kv-key">False positive prior</span>
-                    <span class="kv-value">0.05</span>
-                </div>
-                <div class="kv-row">
-                    <span class="kv-key">False negative prior</span>
-                    <span class="kv-value">0.10</span>
-                </div>
+                <table class="parameters-table">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Prior</th>
+                            <th scope="col">Posterior</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (row of parameterRows; track row.label) {
+                            <tr>
+                                <th scope="row">{{ row.label }}</th>
+                                <td>{{ formatProb(row.prior) }}</td>
+                                <td>{{ formatProb(row.posterior) }}</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
                 <div class="kv-row">
                     <span class="kv-key">Posterior threshold</span>
                     <span class="kv-value">0.50</span>

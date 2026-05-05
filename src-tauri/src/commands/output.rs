@@ -37,9 +37,28 @@ pub struct SummaryProportionData {
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct BayesianPriors {
+    pub p: f64,
+    pub alpha: f64,
+    pub beta: f64,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BayesianPosteriors {
+    pub alpha: f64,
+    pub beta: f64,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct AnalysisSummary {
     pub total: usize,
     pub proportion_data: SummaryProportionData,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bayesian_priors: Option<BayesianPriors>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bayesian_posteriors: Option<BayesianPosteriors>,
 }
 
 #[tauri::command]
@@ -98,6 +117,35 @@ pub fn get_analysis_summary(state: tauri::State<AppState>) -> Result<AnalysisSum
         }
     }
 
+    let (bayesian_priors, bayesian_posteriors) = if is_bayesian {
+        let mut p_prior: Option<f64> = None;
+        let mut alpha_prior: Option<f64> = None;
+        let mut beta_prior: Option<f64> = None;
+        let mut alpha_post: Option<f64> = None;
+        let mut beta_post: Option<f64> = None;
+        for (key, value) in results.iter_meta() {
+            match key.as_str() {
+                "p_prior" => p_prior = value.parse().ok(),
+                "alpha_prior" => alpha_prior = value.parse().ok(),
+                "beta_prior" => beta_prior = value.parse().ok(),
+                "alpha" => alpha_post = value.parse().ok(),
+                "beta" => beta_post = value.parse().ok(),
+                _ => {}
+            }
+        }
+        let priors = match (p_prior, alpha_prior, beta_prior) {
+            (Some(p), Some(alpha), Some(beta)) => Some(BayesianPriors { p, alpha, beta }),
+            _ => None,
+        };
+        let posteriors = match (alpha_post, beta_post) {
+            (Some(alpha), Some(beta)) => Some(BayesianPosteriors { alpha, beta }),
+            _ => None,
+        };
+        (priors, posteriors)
+    } else {
+        (None, None)
+    };
+
     Ok(AnalysisSummary {
         total: results.items.len(),
         proportion_data: SummaryProportionData {
@@ -106,6 +154,8 @@ pub fn get_analysis_summary(state: tauri::State<AppState>) -> Result<AnalysisSum
             mf,
             cc,
         },
+        bayesian_priors,
+        bayesian_posteriors,
     })
 }
 

@@ -11,20 +11,20 @@
 .dashboard-container {
     width: 100%;
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
     box-sizing: border-box;
 }
 
 .dashboard-grid {
     display: grid;
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto 1fr;
     grid-template-areas:
         "input-files method"
         "input-files results";
     gap: 1rem;
     width: 100%;
-    min-height: 100%;
+    height: 100%;
 }
 
 #input-files { grid-area: input-files; }
@@ -121,6 +121,38 @@
     font-size: var(--font-highlight);
     font-weight: 700;
     color: var(--md-sys-color-primary);
+}
+
+.parameters-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-small);
+    color: var(--md-sys-color-primary);
+}
+
+.parameters-table th,
+.parameters-table td {
+    padding: 0.3rem 0.5rem;
+    text-align: right;
+    font-weight: 400;
+}
+
+.parameters-table thead th {
+    font-weight: 600;
+    border-bottom: 1px solid var(--md-sys-color-outline);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: calc(var(--font-small) * 0.95);
+}
+
+.parameters-table tbody th {
+    text-align: left;
+    font-weight: 500;
+}
+
+.parameters-table tbody tr + tr th,
+.parameters-table tbody tr + tr td {
+    border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 50%, transparent);
 }
 
 /* ===== Results card ===== */

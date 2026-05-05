@@ -30,6 +30,40 @@ export class Dashboard {
     return CORRECTION_NAMES[m.correction];
   }
 
+  get parameterRows(): ParameterRow[] {
+    const priors = this.dashboardInfo?.bayesianPriors ?? null;
+    const posteriors = this.dashboardInfo?.bayesianPosteriors ?? null;
+    return [
+      { label: 'False positive rate', prior: priors?.alpha ?? null, posterior: posteriors?.alpha ?? null },
+      { label: 'False negative rate', prior: priors?.beta ?? null, posterior: posteriors?.beta ?? null },
+      { label: 'Term activation probability', prior: priors?.p ?? null, posterior: 'see Table' },
+    ];
+  }
+
+  /** Two-significant-figure formatter. Switches to scientific notation
+   *  (mantissa × 10^exponent, with a unicode-superscripted exponent)
+   *  when |value| < 0.01, where leading zeros would dominate the display. */
+  formatProb(value: number | string | null | undefined): string {
+    if (typeof value === 'string') return value;
+    if (value === null || value === undefined || !isFinite(value)) return '—';
+    if (value === 0) return '0';
+    const abs = Math.abs(value);
+    if (abs >= 0.01) {
+      return parseFloat(value.toPrecision(2)).toString();
+    }
+    const exp = Math.floor(Math.log10(abs));
+    const mantissa = parseFloat((value / Math.pow(10, exp)).toPrecision(2)).toString();
+    return `${mantissa} × 10${this.toSuperscript(exp)}`;
+  }
+
+  private toSuperscript(n: number): string {
+    const map: Record<string, string> = {
+      '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³',
+      '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+    };
+    return n.toString().split('').map(c => map[c] ?? c).join('');
+  }
+
   get significantTotal(): number {
     return this.dashboardInfo?.results.significant ?? 0;
   }
@@ -53,4 +87,10 @@ export class Dashboard {
     const pct = Math.round((sig / total) * 100);
     return `${this.format(sig)} / ${this.format(total)} (${pct}%)`;
   }
+}
+
+export interface ParameterRow {
+  label: string;
+  prior: number | null;
+  posterior: number | string | null;
 }

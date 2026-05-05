@@ -15,6 +15,8 @@ export class ResultsService {
   public barPlotData = signal<RowData[] | null>(null);
   public frequentistTotalCount = signal<number>(0);
   public bayesianTotalCount = signal<number>(0);
+  public bayesianPriors = signal<BayesianPriors | null>(null);
+  public bayesianPosteriors = signal<BayesianPosteriors | null>(null);
 
   clearResults() {
     this.frequentistTableData.set(null);
@@ -23,6 +25,8 @@ export class ResultsService {
     this.barPlotData.set(null);
     this.frequentistTotalCount.set(0);
     this.bayesianTotalCount.set(0);
+    this.bayesianPriors.set(null);
+    this.bayesianPosteriors.set(null);
     this.dotData = null;
     this.significantCount = 0;
     this.resultsLength = 0;
@@ -79,6 +83,8 @@ export class ResultsService {
         const items = JSON.parse(firstPage.items);
         this.bayesianTableData.set(this.parseBayesianResults(items));
         this.bayesianTotalCount.set(summary.total);
+        this.bayesianPriors.set(summary.bayesianPriors ?? null);
+        this.bayesianPosteriors.set(summary.bayesianPosteriors ?? null);
         this.resultsLength = summary.total;
         this.barChartData.set(this.parseBayesianResults(JSON.parse(barPage.items)));
         this.barPlotData.set(this.parseBayesianResults(JSON.parse(barPlotJson)));
@@ -189,6 +195,19 @@ interface AnalysisSummaryResponse {
     mf: { significant: number; nonSignificant: number };
     cc: { significant: number; nonSignificant: number };
   };
+  bayesianPriors?: BayesianPriors;
+  bayesianPosteriors?: BayesianPosteriors;
+}
+
+export interface BayesianPriors {
+  p: number;
+  alpha: number;
+  beta: number;
+}
+
+export interface BayesianPosteriors {
+  alpha: number;
+  beta: number;
 }
 
 export interface RowData {

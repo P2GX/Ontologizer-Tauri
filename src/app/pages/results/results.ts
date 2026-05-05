@@ -5,7 +5,7 @@ import { Dashboard } from './dashboard/dashboard';
 import { GoGraph } from './go-graph/go-graph';
 import { ResultTable } from './result-table/result-table';
 import { FilesService } from '../../services/files-service';
-import { ResultsService, DotData, ProportionData, RowData } from '../../services/results-service';
+import { ResultsService, DotData, ProportionData, RowData, BayesianPriors, BayesianPosteriors } from '../../services/results-service';
 import { Method } from '../../services/analysis-service';
 import { invoke } from '@tauri-apps/api/core';
 import { homeDir } from '@tauri-apps/api/path';
@@ -78,6 +78,8 @@ export class Results implements OnInit {
         significant: proportion.total.significant,
         proportionData: proportion,
       },
+      bayesianPriors: this.resultsService.bayesianPriors(),
+      bayesianPosteriors: this.resultsService.bayesianPosteriors(),
     };
 
     this.dotData = this.resultsService.getDotData();
@@ -152,6 +154,8 @@ export interface DashboardInfo {
     significant: number;
     proportionData: ProportionData;
   };
+  bayesianPriors: BayesianPriors | null;
+  bayesianPosteriors: BayesianPosteriors | null;
 }
 
 function emptyDashboardInfo(): DashboardInfo {
@@ -170,6 +174,8 @@ function emptyDashboardInfo(): DashboardInfo {
         CC: { significant: 0, nonSignificant: 0 },
         total: { significant: 0, nonSignificant: 0 }
       }
-    }
+    },
+    bayesianPriors: null,
+    bayesianPosteriors: null,
   };
 }
