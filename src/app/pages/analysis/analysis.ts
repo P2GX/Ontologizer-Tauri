@@ -42,7 +42,7 @@ export class Analysis {
     return 'Start Analysis';
   }
 
-  readonly correctionOptions: Correction[] = ['Bonferroni', 'BonferroniHolm', 'BenjaminHochberg', 'None'];
+  readonly correctionOptions: Correction[] = ['Bonferroni', 'BonferroniHolm', 'BenjaminiHochberg', 'None'];
 
   readonly correctionNames = CORRECTION_NAMES;
 
@@ -74,7 +74,7 @@ export class Analysis {
       this.analysisService.selectedMethod.set({ method: 'Bayesian' });
       void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
     } else if (this.correction) {
-      this.analysisService.selectedMethod.set({ method: 'Frequentist', background: 'Standard', correction: this.correction });
+      this.analysisService.selectedMethod.set({ method: 'Frequentist', correction: this.correction });
       void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
     } else {
       this.analysisService.selectedMethod.set(null);
@@ -84,7 +84,7 @@ export class Analysis {
   selectCorrection(correction: string) {
     this.analysisService.correction.set(correction as Correction);
     if (this.isFrequentist) {
-      this.analysisService.selectedMethod.set({ method: 'Frequentist', background: 'Standard', correction: this.correction! });
+      this.analysisService.selectedMethod.set({ method: 'Frequentist', correction: this.correction! });
       void this.analysisService.saveSettings(this.analysisService.selectedMethod()!);
     }
   }

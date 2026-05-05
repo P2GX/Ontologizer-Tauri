@@ -1,18 +1,17 @@
 import { Injectable, signal } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 
-// These types mirror the Rust enums in src-tauri/src/commands/settings.
+// These types mirror the Rust enums in the upstream `ontologizer` crate.
 // Keep them in sync when the Rust side changes.
-export type Background = 'Standard' | 'ParentUnion' | 'ParentIntersection';
-export type Correction = 'Bonferroni' | 'BonferroniHolm' | 'BenjaminHochberg' | 'None';
+export type Correction = 'Bonferroni' | 'BonferroniHolm' | 'BenjaminiHochberg' | 'None';
 export type Method =
     | { method: 'Bayesian' }
-    | { method: 'Frequentist'; background: Background; correction: Correction };
+    | { method: 'Frequentist'; correction: Correction };
 
 export const CORRECTION_NAMES: Record<Correction, string> = {
   Bonferroni: 'Bonferroni',
   BonferroniHolm: 'Bonferroni-Holm',
-  BenjaminHochberg: 'Benjamini-Hochberg',
+  BenjaminiHochberg: 'Benjamini-Hochberg',
   None: 'None',
 };
 

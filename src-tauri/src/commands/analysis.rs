@@ -38,14 +38,10 @@ pub async fn run_analysis(state: tauri::State<'_, AppState>) -> Result<(), Strin
         let start_time = Instant::now();
 
         let mut result = match settings.method.clone() {
-            Method::Frequentist {
-                background,
-                correction,
-            } => frequentist_analysis(
+            Method::Frequentist { correction } => frequentist_analysis(
                 ontology,
                 annotation_index,
                 study_genes.recognized_genes(),
-                &background,
                 &correction,
             ),
             Method::Bayesian => {
