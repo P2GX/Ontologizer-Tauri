@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, ViewChild } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { BarChart } from './bar-chart/bar-chart';
 import { Dashboard } from './dashboard/dashboard';
@@ -24,6 +24,9 @@ export class Results implements OnInit {
   private filesService = inject(FilesService);
   public resultsService = inject(ResultsService);
   private snackBar = inject(MatSnackBar);
+
+  @ViewChild(BarChart) private barChartRef?: BarChart;
+  @ViewChild(GoGraph) private goGraphRef?: GoGraph;
 
   frequentistData = computed(() => this.resultsService.frequentistTableData());
   bayesianData = computed(() => this.resultsService.bayesianTableData());
@@ -95,6 +98,11 @@ export class Results implements OnInit {
     this.selectedChart = tab;
   }
 
+  /** True when the current tab shows a figure that "Save Figure" can export. */
+  get isFigureTab(): boolean {
+    return this.selectedChart === 'bar-plot' || this.selectedChart === 'go-graph';
+  }
+
   async saveResults() {
     const path = await save({
       filters: [{ name: 'CSV', extensions: ['csv'] }],
@@ -108,6 +116,47 @@ export class Results implements OnInit {
     } catch (error) {
       console.error('Error saving results:', error);
       this.snackBar.open('Failed to save results.', 'Close', { panelClass: ['custom-snackbar'], duration: 8000 });
+    }
+  }
+
+  /** Saves the figure on the currently active chart tab as a PNG. The bar
+   *  plot exports its Chart.js canvas; the GO graph rasterizes the currently
+   *  selected aspect (MF/BP/CC) from its Graphviz SVG. */
+  async saveFigure() {
+    let pngBase64: string | null = null;
+    let defaultName = 'figure.png';
+
+    if (this.selectedChart === 'bar-plot') {
+      pngBase64 = this.barChartRef?.exportPng() ?? null;
+      defaultName = 'bar_plot.png';
+    } else if (this.selectedChart === 'go-graph') {
+      try {
+        pngBase64 = (await this.goGraphRef?.exportPng()) ?? null;
+      } catch (error) {
+        console.error('Error rasterizing GO graph:', error);
+        pngBase64 = null;
+      }
+      const aspect = this.goGraphRef?.selectedAspectCode ?? 'graph';
+      defaultName = `go_graph_${aspect}.png`;
+    }
+
+    if (!pngBase64) {
+      this.snackBar.open('Nothing to save — figure is empty.', 'Close', { panelClass: ['custom-snackbar'], duration: 4000 });
+      return;
+    }
+
+    const path = await save({
+      filters: [{ name: 'PNG image', extensions: ['png'] }],
+      defaultPath: defaultName,
+    });
+    if (!path) return;
+
+    try {
+      await invoke('save_binary_file', { path, dataB64: pngBase64 });
+      this.snackBar.open('Figure saved.', 'Close', { panelClass: ['custom-snackbar'], duration: 4000 });
+    } catch (error) {
+      console.error('Error saving figure:', error);
+      this.snackBar.open('Failed to save figure.', 'Close', { panelClass: ['custom-snackbar'], duration: 8000 });
     }
   }
 

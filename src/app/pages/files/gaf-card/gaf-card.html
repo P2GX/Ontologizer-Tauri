@@ -6,7 +6,7 @@
         [ready]="!!filePath()" />
 
     <p class="card-description">
-        Pick an organism, then download the latest release automatically or select a local file.
+        Pick an organism, then download the latest GO association file (GAF) automatically or select a local file.
     </p>
 
     <app-dropdown-menu
@@ -27,7 +27,7 @@
                 (click)="downloadGaf()"
                 [disabled]="downloading()">
             <span class="material-symbols-outlined">download</span>
-            {{ downloading() ? 'Update' : 'Update' }}
+            {{ filePath() ? 'Update' : 'Download' }}
         </button>
 
         <button class="button-tonal"

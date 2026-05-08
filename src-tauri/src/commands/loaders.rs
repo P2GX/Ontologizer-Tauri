@@ -27,6 +27,16 @@ impl Stat {
     }
 }
 
+// Returns whether a regular file exists at the given path. Used by the file
+// cards to distinguish "the user has chosen/downloaded this file" from "the
+// config knows where this file *would* live by default" — on a fresh install
+// the default GO/GAF paths are populated before either file has been
+// downloaded, and we don't want the UI to claim the file is ready.
+#[tauri::command]
+pub fn path_exists(path: String) -> bool {
+    std::path::Path::new(&path).is_file()
+}
+
 #[tauri::command]
 pub async fn process_go_file(
     state: tauri::State<'_, AppState>,

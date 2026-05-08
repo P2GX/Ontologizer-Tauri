@@ -41,6 +41,11 @@ export class GeneCard {
         const saved = this.target() === 'population' ? config.pop_file : config.study_file;
         if (!saved) return;
 
+        // Saved paths come from a previous session and may have been moved or
+        // deleted; don't claim ready unless the file is still there.
+        const exists = await invoke<boolean>('path_exists', { path: saved });
+        if (!exists) return;
+
         const home = await homeDir();
         this.filePath.set(saved);
         this.displayPath.set(shortenPath(saved, home));

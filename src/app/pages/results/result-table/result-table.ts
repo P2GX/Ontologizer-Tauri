@@ -1,7 +1,6 @@
-import { Component, ViewChild, AfterViewInit, computed, effect, input, Output, EventEmitter } from '@angular/core';
+import { Component, computed, effect, input, Output, EventEmitter } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -12,7 +11,6 @@ import { RowData, FrequentistRowData } from '../../../services/results-service';
   imports: [
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule,
     MatProgressSpinnerModule,
     MatInputModule,
     MatFormFieldModule
@@ -21,9 +19,8 @@ import { RowData, FrequentistRowData } from '../../../services/results-service';
   templateUrl: './result-table.html',
   styleUrl: './result-table.css'
 })
-export class ResultTable implements AfterViewInit {
+export class ResultTable {
   tableData = input.required<RowData[]>();
-  sortDirection = input<'asc' | 'desc'>('asc');
   isFrequentist = input<boolean>(false);
   totalCount = input<number>(0);
 
@@ -61,33 +58,6 @@ export class ResultTable implements AfterViewInit {
 
   onPage(event: PageEvent) {
     this.pageChange.emit({ pageIndex: event.pageIndex, pageSize: event.pageSize });
-  }
-
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  ngAfterViewInit() {
-    // Do NOT connect paginator to dataSource — server-side pagination
-    this.dataSource.sort = this.sort;
-
-    this.dataSource.sortingDataAccessor = (data: RowData, sortHeaderId: string) => {
-      switch (sortHeaderId) {
-        case 'score':
-          return Number(data.score);
-        case 'k':
-          return Number((data as FrequentistRowData).k);
-        case 'n':
-          return Number((data as FrequentistRowData).n);
-        default:
-          const value = data[sortHeaderId as keyof RowData];
-          return Array.isArray(value) ? '' : String(value).toUpperCase();
-      }
-    };
-
-    const dir = this.sortDirection();
-    this.sort.active = 'score';
-    this.sort.direction = dir;
-    this.sort.sortChange.emit({ active: 'score', direction: dir });
   }
 
   isSignificant(value: number): boolean {

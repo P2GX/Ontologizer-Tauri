@@ -15,12 +15,12 @@ use commands::{
     config::{get_config, set_gaf_file, set_go_file, set_population_file, set_study_file},
     downloader::{download_gaf, download_go, get_available_organisms},
     loaders::{
-        build_annotation_index, get_gaf_date, get_go_date, process_gaf_file, process_gene_file,
-        process_go_file,
+        build_annotation_index, get_gaf_date, get_go_date, path_exists, process_gaf_file,
+        process_gene_file, process_go_file,
     },
     output::{
         build_go_graph_data, get_analysis_results, get_analysis_results_page, get_analysis_summary,
-        get_bar_chart_data, save_results,
+        get_bar_chart_data, save_binary_file, save_results,
     },
     settings::{get_data_dir, save_settings},
 };
@@ -58,6 +58,7 @@ fn main() {
             process_go_file,
             process_gaf_file,
             process_gene_file,
+            path_exists,
             build_annotation_index,
             get_go_date,
             get_gaf_date,
@@ -70,6 +71,7 @@ fn main() {
             build_go_graph_data,
             get_bar_chart_data,
             save_results,
+            save_binary_file,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

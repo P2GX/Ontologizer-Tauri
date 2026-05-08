@@ -1,34 +1,34 @@
 <div class="table-container">
 
-    <mat-table [dataSource]="dataSource" class="results-table" matSort multiTemplateDataRows>
+    <mat-table [dataSource]="dataSource" class="results-table" multiTemplateDataRows>
 
         <ng-container matColumnDef="label">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="label">Term Label</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef>Term Label</mat-header-cell>
             <mat-cell *matCellDef="let row">{{ row.label }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="aspect">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="aspect">Aspect</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef>Aspect</mat-header-cell>
             <mat-cell *matCellDef="let row">{{ row.aspect }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="id">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="id">GO-ID</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef>GO-ID</mat-header-cell>
             <mat-cell *matCellDef="let row">{{ row.id }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="k">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="k">Study Hits</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef>Study Hits</mat-header-cell>
             <mat-cell *matCellDef="let row">{{ asFrequentist(row).k }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="n">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="K">Pop Hits</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef>Pop Hits</mat-header-cell>
             <mat-cell *matCellDef="let row">{{ asFrequentist(row).K }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="score">
-            <mat-header-cell *matHeaderCellDef mat-sort-header="score">
+            <mat-header-cell *matHeaderCellDef>
                 {{ isFrequentist() ? 'Adj. P-Value' : 'Post. Prob.' }}
             </mat-header-cell>
             <mat-cell *matCellDef="let row">

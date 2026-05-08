@@ -245,6 +245,68 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     });
   }
 
+  /** Aspect code (MF/BP/CC) of the currently rendered subgraph. */
+  get selectedAspectCode(): 'MF' | 'BP' | 'CC' {
+    return this.selectedChart;
+  }
+
+  /** Returns a base64-encoded PNG of the currently displayed GO subgraph, or
+   *  null if nothing is rendered. The Graphviz SVG is cloned, given concrete
+   *  pixel dimensions from its viewBox (the live SVG uses 100%/100% which
+   *  collapses outside its container), painted on a white background, and
+   *  rasterized via Image → canvas. Output is upscaled 2× for crisper text. */
+  async exportPng(): Promise<string | null> {
+    const containerEl = this[`${this.selectedChart}graphvizContainer`]
+      .nativeElement as HTMLElement;
+    const liveSvg = containerEl.querySelector('svg');
+    if (!liveSvg) return null;
+
+    const clone = liveSvg.cloneNode(true) as SVGSVGElement;
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+
+    let widthPx = 800;
+    let heightPx = 600;
+    const viewBox = clone.getAttribute('viewBox');
+    if (viewBox) {
+      const parts = viewBox.split(/\s+/).map(Number);
+      if (parts.length === 4 && parts.every(n => Number.isFinite(n)) && parts[2] > 0 && parts[3] > 0) {
+        widthPx = parts[2];
+        heightPx = parts[3];
+      }
+    }
+    clone.setAttribute('width', String(widthPx));
+    clone.setAttribute('height', String(heightPx));
+
+    const xml = new XMLSerializer().serializeToString(clone);
+    const svgBlob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+
+    try {
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Failed to load GO graph SVG into image'));
+        img.src = url;
+      });
+
+      const scale = 2;
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(widthPx * scale));
+      canvas.height = Math.max(1, Math.round(heightPx * scale));
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return null;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/png');
+      const idx = dataUrl.indexOf(',');
+      return idx >= 0 ? dataUrl.substring(idx + 1) : null;
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
   ngOnDestroy(): void {
     for (const key of ['MF', 'BP', 'CC'] as const) {
       d3.select(this[`${key}graphvizContainer`].nativeElement).selectAll('*').remove();

@@ -35,7 +35,14 @@ export class GoCard {
         const config = await invoke<{ go_file: string | null }>('get_config');
         if (!config.go_file) return;
 
+        // Always remember the configured path — it doubles as the download
+        // target for `Download latest`, even on first run when the file
+        // doesn't exist on disk yet.
         this.configGoPath.set(config.go_file);
+
+        const exists = await invoke<boolean>('path_exists', { path: config.go_file });
+        if (!exists) return;
+
         const home = await homeDir();
         this.filePath.set(config.go_file);
         this.displayPath.set(shortenPath(config.go_file, home));

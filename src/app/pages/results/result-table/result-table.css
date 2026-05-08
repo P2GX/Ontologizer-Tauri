@@ -56,10 +56,6 @@
   font-family: "Trebuchet MS", Trebuchet, sans-serif !important;
 }
 
-:host ::ng-deep .mat-sort-header-arrow {
-  color: var(--md-sys-color-on-primary) !important;
-}
-
 /* Body rows */
 :host ::ng-deep .mat-mdc-cell {
   font-size: var(--font-small) !important;

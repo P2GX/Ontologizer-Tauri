@@ -7,7 +7,7 @@
 
     <p class="card-description">
 
-        <br> Download the latest release automatically or select a local file.
+        <br> Download the latest Gene Ontology (GO) release automatically or select a local file.
     </p>
 
     <div class="file-status" [class.file-loaded]="filePath()">
@@ -22,7 +22,7 @@
                 (click)="downloadLatest()"
                 [disabled]="downloading()">
             <span class="material-symbols-outlined">download</span>
-            {{ downloading() ? 'Update' : 'Update' }}
+            {{ filePath() ? 'Update' : 'Download' }}
         </button>
 
         <button class="button-tonal"

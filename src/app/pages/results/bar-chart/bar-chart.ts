@@ -274,6 +274,25 @@ export class BarChart implements AfterViewInit, OnChanges {
     el.style.opacity = '1';
   }
 
+  /** Returns a base64-encoded PNG of the current bar chart, or null if no
+   *  chart is rendered. Composites onto a white background — Chart.js canvases
+   *  are transparent by default, which looks broken when opened standalone. */
+  exportPng(): string | null {
+    if (!this.chart) return null;
+    const src = this.chart.canvas;
+    const out = document.createElement('canvas');
+    out.width = src.width;
+    out.height = src.height;
+    const ctx = out.getContext('2d');
+    if (!ctx) return null;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, out.width, out.height);
+    ctx.drawImage(src, 0, 0);
+    const dataUrl = out.toDataURL('image/png');
+    const idx = dataUrl.indexOf(',');
+    return idx >= 0 ? dataUrl.substring(idx + 1) : null;
+  }
+
   pvalToColor(adj_pval: number): string {
     const max = this.legendMaxValue;
     if (max <= 0) return interpolateSignificance(0);

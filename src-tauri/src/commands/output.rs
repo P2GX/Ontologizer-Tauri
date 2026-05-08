@@ -379,6 +379,18 @@ pub fn save_results(state: tauri::State<AppState>, path: String) -> Result<(), S
         .map_err(|e| format!("Failed to save results to '{}': {}", path, e))
 }
 
+// Writes a binary file to disk from a base64-encoded payload sent by the
+// frontend. Used by the "Save Figure" action to persist a PNG rendering of
+// the currently displayed bar plot or GO graph at a user-chosen path.
+#[tauri::command]
+pub fn save_binary_file(path: String, data_b64: String) -> Result<(), String> {
+    use base64::Engine;
+    let bytes = base64::engine::general_purpose::STANDARD
+        .decode(data_b64.as_bytes())
+        .map_err(|e| format!("Failed to decode base64 payload: {}", e))?;
+    std::fs::write(&path, bytes).map_err(|e| format!("Failed to write file '{}': {}", path, e))
+}
+
 // Generates the compressed and "full" GO graph data in DOT format for each of the three GO categories (BP, MF, CC).
 #[tauri::command]
 pub fn build_go_graph_data(state: tauri::State<AppState>) -> Result<DotData, String> {

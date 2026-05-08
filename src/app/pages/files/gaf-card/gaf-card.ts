@@ -45,11 +45,17 @@ export class GafCard {
         }
 
         if (config.gaf_file) {
-            const home = await homeDir();
-            this.filePath.set(config.gaf_file);
-            this.displayPath.set(shortenPath(config.gaf_file, home));
-            this.filesService.setPath('annotation', config.gaf_file);
-            void this.loadDate(config.gaf_file);
+            // The default config seeds gaf_file with the canonical download
+            // target before anything has been downloaded; only mark the card
+            // as ready once that file actually exists on disk.
+            const exists = await invoke<boolean>('path_exists', { path: config.gaf_file });
+            if (exists) {
+                const home = await homeDir();
+                this.filePath.set(config.gaf_file);
+                this.displayPath.set(shortenPath(config.gaf_file, home));
+                this.filesService.setPath('annotation', config.gaf_file);
+                void this.loadDate(config.gaf_file);
+            }
         }
     }
 

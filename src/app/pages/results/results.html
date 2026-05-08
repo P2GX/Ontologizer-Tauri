@@ -40,7 +40,6 @@
                 [tableData]="tableData()!"
                 [totalCount]="totalCount()"
                 [isFrequentist]="resultsService.isFrequentist()"
-                [sortDirection]="resultsService.isBayesian() ? 'desc' : 'asc'"
                 [hidden]="selectedChart !== 'table'"
                 (pageChange)="onPageChange($event)">
             </app-result-table>
@@ -61,9 +60,16 @@
 
         <div class="action-button-container">
             <mat-divider class="horizontal" />
-            <button class="button" (click)="saveResults()">
-                Save Results
-            </button>
+            <div class="action-buttons">
+                <button class="button" (click)="saveResults()">
+                    Save Results
+                </button>
+                @if (isFigureTab) {
+                    <button class="button" (click)="saveFigure()">
+                        Save Figure
+                    </button>
+                }
+            </div>
             <mat-divider class="horizontal" />
         </div>
     }
