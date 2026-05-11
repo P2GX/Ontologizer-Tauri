@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::{env, sync::RwLock};
+use std::sync::RwLock;
 
 mod appstate;
 use appstate::AppState;
@@ -19,7 +19,7 @@ use commands::{
         process_gene_file, process_go_file,
     },
     output::{
-        build_go_graph_data, get_analysis_results, get_analysis_results_page, get_analysis_summary,
+        build_go_graph_data, get_analysis_results_page, get_analysis_summary,
         get_bar_chart_data, save_binary_file, save_results,
     },
     settings::{get_data_dir, save_settings},
@@ -65,7 +65,6 @@ fn main() {
             save_settings,
             get_data_dir,
             run_analysis,
-            get_analysis_results,
             get_analysis_summary,
             get_analysis_results_page,
             build_go_graph_data,

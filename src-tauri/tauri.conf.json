@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "ontologizer",
+  "productName": "Ontologizer",
   "version": "0.1.2",
   "identifier": "com.ontologizer.app",
   "build": {

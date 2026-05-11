@@ -62,9 +62,7 @@ pub fn save_settings(
         .lock()
         .map_err(|_| "Failed to lock settings".to_string())?;
 
-    *user_settings_guard = Some(settings.clone());
-
-    println!("Settings saved: {:?}", settings);
+    *user_settings_guard = Some(settings);
 
     Ok("Settings processed successfully".to_string())
 }

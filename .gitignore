@@ -42,3 +42,9 @@ testem.log
 Thumbs.db
 
 /data
+
+# Local design / product notes — kept out of the repo to avoid mixing
+# scratch documentation with shipped code.
+DESIGN.json
+DESIGN.md
+PRODUCT.md

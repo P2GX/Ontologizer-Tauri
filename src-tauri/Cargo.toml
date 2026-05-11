@@ -2,9 +2,9 @@
 name = "Ontologizer-GUI"
 version = "0.1.2"
 description = "Rust (tauri) implementation of the Ontologizer application for characterizing GO Term Overrepresentation"
-authors = ["Lukas Ramlow, Jasmin Scholtes, Peter N. Robinson"]
+authors = ["Lukas Ramlow", "Jasmin Scholtes", "Daniel Danis", "Peter N. Robinson"]
 license = "MIT"
-repository = ""
+repository = "https://github.com/P2GX/Ontologizer-Tauri"
 default-run = "ontologizer"
 edition = "2021"
 
@@ -37,7 +37,6 @@ flate2 = "1"
 base64 = "0.22"
 
 [dev-dependencies]
-rstest = "0.25.0"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

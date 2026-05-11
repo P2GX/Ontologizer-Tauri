@@ -1,5 +1,4 @@
 use crate::appstate::AppState;
-use std::time::Instant;
 
 use ontologizer::{bayesian_analysis, frequentist_analysis, Method};
 
@@ -35,8 +34,6 @@ pub async fn run_analysis(state: tauri::State<'_, AppState>) -> Result<(), Strin
         let annotation_index = annotation_lock.as_ref().ok_or("Annotations not loaded")?;
         let study_genes = study_lock.as_ref().ok_or("Study Genes not loaded")?;
 
-        let start_time = Instant::now();
-
         let mut result = match settings.method.clone() {
             Method::Frequentist { correction } => frequentist_analysis(
                 ontology,
@@ -53,10 +50,6 @@ pub async fn run_analysis(state: tauri::State<'_, AppState>) -> Result<(), Strin
             Method::Frequentist { .. } => result.sort_by_score(false),
             Method::Bayesian => result.sort_by_score(true),
         }
-
-        let duration = start_time.elapsed();
-        println!("Calculated results in: {:?}", duration);
-        println!("Results before storing: {:?}", result.items.len());
 
         Ok(result)
     })?;

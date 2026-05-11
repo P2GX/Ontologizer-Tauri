@@ -39,7 +39,6 @@ export class AnalysisService {
   async saveSettings(method: Method): Promise<void> {
     try {
       await invoke('save_settings', { analysisMethod: method });
-      console.log('Settings saved:', method);
     } catch (err) {
       console.error('Error saving settings:', err);
     }

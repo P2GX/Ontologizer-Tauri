@@ -240,22 +240,6 @@ pub fn get_bar_chart_data(state: tauri::State<AppState>, n: usize) -> Result<Str
     serde_json::to_string(&top_items).map_err(|e| format!("Serialization error: {}", e))
 }
 
-// Retrieves the table analysis results from the shared app state and returns them as a JSON string.
-#[tauri::command]
-pub fn get_analysis_results(state: tauri::State<AppState>) -> Result<String, String> {
-    let results_lock = state
-        .results
-        .read()
-        .map_err(|e| format!("Failed to lock analysis results for reading: {}", e))?;
-
-    let results = results_lock.as_ref().ok_or("No analysis results loaded")?;
-
-    let results_json = serde_json::to_string(&results)
-        .map_err(|e| format!("Failed to serialize results: {}", e))?;
-    println! {"Happily serialized results."}
-    Ok(results_json)
-}
-
 // DotData holds the DOT graph data (nodes, edges, tooltips) for the three GO categories: BP, MF, CC
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Clone)]
