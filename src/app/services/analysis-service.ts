@@ -30,11 +30,23 @@ export const STEP_LABELS: Record<AnalysisStep, string> = {
 })
 export class AnalysisService {
 
-  readonly selectedMethod = signal<Method | null>(null);
+  // Default selection: Frequentist with no multiple-testing correction.
+  // Mirrors the dropdown's default below so the method page is ready to run
+  // on first visit — no need to open the correction menu to "wake up" the
+  // Start Analysis button.
+  readonly selectedMethod = signal<Method | null>({ method: 'Frequentist', correction: 'None' });
   readonly correction = signal<Correction | null>('None');
   readonly isAnalysing = signal(false);
   readonly analysisStep = signal<AnalysisStep>('idle');
   readonly errorMessage = signal<string | null>(null);
+
+  constructor() {
+    // Seed the Rust side with the default method so run_analysis works on
+    // first click — without this, the backend errors out with "Settings not
+    // loaded" until the user touches a dropdown.
+    const method = this.selectedMethod();
+    if (method) void this.saveSettings(method);
+  }
 
   async saveSettings(method: Method): Promise<void> {
     try {
