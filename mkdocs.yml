@@ -46,6 +46,7 @@ theme:
 
 nav:
 - Home: 'index.md'
+- Tutorial: 'tutorial.md'
 - Developers: 'developers.md'
 - Data sets: 'datasets.md'
 
