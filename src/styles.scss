@@ -397,7 +397,7 @@ button.tab-button:focus-visible {
 }
 
 /* ===== Action button + below-button hint =====
-   Used on /files and /analysis to stack the primary action above a small,
+   Used on /files and /method to stack the primary action above a small,
    step-named hint while a long async operation runs.                     */
 .button-and-warning {
     display: flex;

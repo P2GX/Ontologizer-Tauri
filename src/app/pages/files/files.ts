@@ -62,7 +62,7 @@ export class Files {
       this.filesService.studyUnrecognizedCount.set(studyStats.length > 1 ? Number(studyStats[1].value) : 0);
       this.filesService.filesProcessed.set(true);
 
-      await this.router.navigate(['/analysis']);
+      await this.router.navigate(['/method']);
     } catch (error) {
       console.error("Error processing files:", error);
       const detail = typeof error === 'string' ? error : String(error);

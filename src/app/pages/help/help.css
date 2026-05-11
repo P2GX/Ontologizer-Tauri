@@ -7,13 +7,13 @@ h2 {
 }
 
 
-.about-wrapper {
+.help-wrapper {
     display: flex;
     flex-direction: column;
     width: 80cqw;
 }
 
-.about-body {
+.help-body {
     display: flex;
     padding: 0 1.5rem;
     justify-content: center;
@@ -35,19 +35,7 @@ h2 {
     border: 1px solid var(--md-sys-color-outline);
     border-radius: 0.5rem;
     position: relative;
-    animation-timing-function: ease-in;
-    animation: mymove 0.5s;
     margin-bottom: 2rem;
-}
-
-@keyframes mymove {
-    from {
-        top: -1rem;
-    }
-
-    to {
-        top: 0rem;
-    }
 }
 
 .mat-divider.vertical {

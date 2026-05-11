@@ -11,14 +11,14 @@ import { ResultsService } from '../../services/results-service';
 import { openUrl } from '@tauri-apps/plugin-opener';
 
 @Component({
-  selector: 'app-analysis',
+  selector: 'app-method',
   imports: [CommonModule, MatSelectModule, DropdownMenu, CardHeader, MatDividerModule],
-  templateUrl: './analysis.html',
-  styleUrl: './analysis.css',
+  templateUrl: './method.html',
+  styleUrl: './method.css',
   standalone: true
 })
 
-export class Analysis {
+export class Method {
 
   private justCompleted = false;
 

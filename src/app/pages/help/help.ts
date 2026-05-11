@@ -4,22 +4,20 @@ import { CommonModule } from '@angular/common';
 import { openUrl } from '@tauri-apps/plugin-opener';
 
 @Component({
-  selector: 'app-about',
+  selector: 'app-help',
   imports: [MatDividerModule, CommonModule],
-  templateUrl: './about.html',
-  styleUrl: './about.css'
+  templateUrl: './help.html',
+  styleUrl: './help.css'
 })
-export class About {
+export class Help {
 
   selectedTab = 'introduction';
-
 
   async selectTab(tab: string) {
     this.selectedTab = tab;
   }
 
   async openExternalLink(url: string) {
-    console.log("OPen", url);
     try {
       await openUrl(url);
     } catch (error) {

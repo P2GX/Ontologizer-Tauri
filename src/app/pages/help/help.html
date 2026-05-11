@@ -1,5 +1,5 @@
-<div class="about-body">
-    <div class="about-wrapper">
+<div class="help-body">
+    <div class="help-wrapper">
         <div class="tabs-container">
             <button class="tab-button" [class.active]="selectedTab === 'introduction'"
                 (click)="selectTab('introduction')">Introduction</button>
@@ -77,7 +77,7 @@
                         Ontologizer accepts the standard file formats published by the Gene Ontology Consortium and expects gene lists as plain text:
                     </p>
                     <ul class="output-list">
-                        <li><strong>Ontology</strong> &mdash; OBO format (<code>.json</code>), as distributed by the GO Consortium.</li>
+                        <li><strong>Ontology</strong> &mdash; JSON format (<code>.json</code>), as distributed by the GO Consortium.</li>
                         <li><strong>Annotations</strong> &mdash; GAF format (<code>.gaf</code>, <code>gaf.gz</code>), the species-specific gene association files.</li>
                         <li><strong>Gene lists</strong> &mdash; plain-text files with one gene symbol or identifier per line, matching the namespace used in the GAF.</li>
                     </ul>
