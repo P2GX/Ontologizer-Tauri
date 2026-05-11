@@ -76,7 +76,7 @@
 
     <div class="table-footer">
         <mat-form-field>
-            <input (keyup)="applyFilter($event)" matInput placeholder="Search terms…">
+            <input [value]="searchText()" (keyup)="applyFilter($event)" matInput placeholder="Search terms…">
         </mat-form-field>
         <mat-paginator [length]="totalCount()" [pageSize]="10"
             showFirstLastButtons aria-label="Select page of results" (page)="onPage($event)">

@@ -15,6 +15,9 @@ export interface TermTooltipData {
   studyHits: number;
   /** Frequentist only. Omit for Bayesian rows. */
   populationHits?: number;
+  /** When true, renders a "Show in Table" action button. The host is
+   *  responsible for catching clicks on `[data-action="show-in-table"]`. */
+  showInTableButton?: boolean;
 }
 
 export function formatScore(value: number): string {
@@ -36,6 +39,13 @@ export function termTooltipHtml(d: TermTooltipData): string {
          <span class="term-tooltip-value">${d.populationHits}</span>
        </div>`
     : '';
+  const actions = d.showInTableButton
+    ? `<div class="term-tooltip-actions">
+         <button type="button" class="term-tooltip-action" data-action="show-in-table">
+           Show in Table
+         </button>
+       </div>`
+    : '';
   return `
     <div class="term-tooltip-name">${escapeHtml(d.label)}</div>
     <div class="term-tooltip-id">${escapeHtml(d.id)}</div>
@@ -51,5 +61,6 @@ export function termTooltipHtml(d: TermTooltipData): string {
       </div>
       ${popRow}
     </div>
+    ${actions}
   `;
 }

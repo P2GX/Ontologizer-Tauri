@@ -1,14 +1,13 @@
-import { Component, computed, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, computed, inject, ViewChild } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { BarChart } from './bar-chart/bar-chart';
 import { Dashboard } from './dashboard/dashboard';
 import { GoGraph } from './go-graph/go-graph';
 import { ResultTable } from './result-table/result-table';
 import { FilesService } from '../../services/files-service';
-import { ResultsService, DotData, ProportionData, RowData, BayesianPriors, BayesianPosteriors } from '../../services/results-service';
+import { ResultsService, ProportionData, BayesianPriors, BayesianPosteriors } from '../../services/results-service';
 import { Method } from '../../services/analysis-service';
 import { invoke } from '@tauri-apps/api/core';
-import { homeDir } from '@tauri-apps/api/path';
 import { save } from '@tauri-apps/plugin-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { shortenPath } from '../../shared/utils/path';
@@ -20,13 +19,14 @@ import { shortenPath } from '../../shared/utils/path';
   styleUrl: './results.css',
   standalone: true
 })
-export class Results implements OnInit {
+export class Results {
   private filesService = inject(FilesService);
   public resultsService = inject(ResultsService);
   private snackBar = inject(MatSnackBar);
 
   @ViewChild(BarChart) private barChartRef?: BarChart;
   @ViewChild(GoGraph) private goGraphRef?: GoGraph;
+  @ViewChild(ResultTable) private resultTableRef?: ResultTable;
 
   frequentistData = computed(() => this.resultsService.frequentistTableData());
   bayesianData = computed(() => this.resultsService.bayesianTableData());
@@ -40,20 +40,31 @@ export class Results implements OnInit {
   );
 
   selectedChart = 'dashboard';
-  dotData: DotData | null = null;
-  success = false;
-  globalLegendMax = 1;
 
-  dashboardInfo: DashboardInfo = emptyDashboardInfo();
+  // Pure passthroughs so the chart components see the right values on the
+  // very first paint after navigation — no imperative ngOnInit setup.
+  dotData = this.resultsService.dotData;
+  success = computed(() => this.tableData() !== null);
+  // Frequentist caps at 10 (-log10(p)=10 ⇔ p=1e-10); Bayesian uses the data's actual max.
+  globalLegendMax = computed(() => {
+    const data = this.tableData();
+    if (!data || data.length === 0) return 1;
+    if (!this.resultsService.isBayesian()) {
+      return Results.FREQUENTIST_LEGEND_CAP;
+    }
+    const max = data.reduce((acc, d) => (d.score > acc ? d.score : acc), 0);
+    return isFinite(max) && max > 0 ? max : 1;
+  });
 
-  async ngOnInit() {
-    if (this.tableData() === null) return;
-
-    const home = await homeDir();
+  // Reactive on the file/result signals — populated synchronously on first
+  // paint instead of being filled in after `await homeDir()` in ngOnInit.
+  // homeDir is cached on FilesService at app startup; if it ever happens to
+  // be null, shortenPath degrades to returning the raw path.
+  dashboardInfo = computed<DashboardInfo>(() => {
+    const home = this.filesService.homeDir() ?? '';
     const display = (p: string | null) => p ? shortenPath(p, home) : null;
     const proportion = this.resultsService.getProportionData();
-
-    this.dashboardInfo = {
+    return {
       method: this.resultsService.getMethod(),
       go: {
         path: display(this.filesService.goPath()),
@@ -84,11 +95,7 @@ export class Results implements OnInit {
       bayesianPriors: this.resultsService.bayesianPriors(),
       bayesianPosteriors: this.resultsService.bayesianPosteriors(),
     };
-
-    this.dotData = this.resultsService.getDotData();
-    this.globalLegendMax = this.computeLegendMax(this.tableData()!);
-    this.success = true;
-  }
+  });
 
   onPageChange(event: { pageIndex: number; pageSize: number }) {
     void this.resultsService.loadAnalysisPage(event.pageIndex, event.pageSize);
@@ -96,6 +103,14 @@ export class Results implements OnInit {
 
   selectTab(tab: string) {
     this.selectedChart = tab;
+  }
+
+  /** "Show in Table" action from the GO graph tooltip — switch to the Table
+   *  tab and filter the table down to the chosen term. The result-table is
+   *  inside the same @if block, so it's already mounted when this fires. */
+  onShowInTable(termId: string) {
+    this.selectedChart = 'table';
+    this.resultTableRef?.filterByTermId(termId);
   }
 
   /** True when the current tab shows a figure that "Save Figure" can export. */
@@ -164,15 +179,6 @@ export class Results implements OnInit {
    *  Anything more significant maps to the high end of the scale; anything less
    *  spreads across the visible range. Bayesian uses the data's actual max. */
   private static readonly FREQUENTIST_LEGEND_CAP = 10;
-
-  private computeLegendMax(data: RowData[]): number {
-    if (!data || data.length === 0) return 1;
-    if (!this.resultsService.isBayesian()) {
-      return Results.FREQUENTIST_LEGEND_CAP;
-    }
-    const max = data.reduce((acc, d) => (d.score > acc ? d.score : acc), 0);
-    return isFinite(max) && max > 0 ? max : 1;
-  }
 }
 
 export interface DashboardInfo {
@@ -205,26 +211,4 @@ export interface DashboardInfo {
   };
   bayesianPriors: BayesianPriors | null;
   bayesianPosteriors: BayesianPosteriors | null;
-}
-
-function emptyDashboardInfo(): DashboardInfo {
-  return {
-    method: null,
-    go: { path: null, version: null, terms: 0 },
-    gaf: { path: null, version: null, organism: null, annotations: 0, uniqueGenes: 0 },
-    pop: { path: null, count: 0 },
-    study: { path: null, recognized: 0, unrecognized: 0 },
-    results: {
-      total: 0,
-      significant: 0,
-      proportionData: {
-        BP: { significant: 0, nonSignificant: 0 },
-        MF: { significant: 0, nonSignificant: 0 },
-        CC: { significant: 0, nonSignificant: 0 },
-        total: { significant: 0, nonSignificant: 0 }
-      }
-    },
-    bayesianPriors: null,
-    bayesianPosteriors: null,
-  };
 }

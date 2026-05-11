@@ -1,5 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
+import { homeDir } from '@tauri-apps/api/path';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,15 @@ export class FilesService {
   readonly annotationPath = signal<string | null>(null);
   readonly popPath = signal<string | null>(null);
   readonly studyPath = signal<string | null>(null);
+
+  // Cached once at app startup so any consumer that needs to shorten a path
+  // for display can do so synchronously. Null only during the brief Tauri
+  // IPC window at boot — well before the user finishes file upload + analysis.
+  readonly homeDir = signal<string | null>(null);
+
+  constructor() {
+    void homeDir().then(h => this.homeDir.set(h)).catch(() => {});
+  }
 
   readonly geneResetToken = signal(0);
 

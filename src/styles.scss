@@ -373,6 +373,29 @@ button.tab-button:focus-visible {
     font-variant-numeric: tabular-nums;
 }
 
+.term-tooltip-actions {
+    margin-top: 0.6rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.term-tooltip-action {
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-primary);
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 0.3rem;
+    padding: 0.25rem 0.55rem;
+    font-family: "Trebuchet MS", Trebuchet, sans-serif;
+    font-size: var(--font-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.term-tooltip-action:hover {
+    background-color: var(--md-sys-color-outline);
+}
+
 /* ===== Action button + below-button hint =====
    Used on /files and /analysis to stack the primary action above a small,
    step-named hint while a long async operation runs.                     */

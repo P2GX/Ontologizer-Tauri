@@ -1,4 +1,4 @@
-import { Component, SimpleChanges, Input, OnChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, SimpleChanges, Input, Output, EventEmitter, OnChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ChartHeader } from '../../../shared/chart-header/chart-header';
 import { DotData, NodeData } from '../../../services/results-service';
 import { interpolateSignificanceHex, pickInkForBackground, significanceThresholdT } from '../../../shared/utils/significance-color';
@@ -19,6 +19,11 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   @Input() dotData?: DotData | null = null;
   @Input() legendMaxValue: number = 1;
   @Input() isBayesian: boolean = false;
+
+  /** Emits a GO term id when the user clicks "Show in Table" inside the
+   *  hover tooltip. The parent is expected to switch to the Table tab and
+   *  filter the table by that id. */
+  @Output() showInTable = new EventEmitter<string>();
 
   viewInitialized: boolean = false;
 
@@ -41,6 +46,10 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
   dotStrings: Record<'BP' | 'MF' | 'CC', string> = { BP: '', MF: '', CC: '' };
   private renderedAspects: Set<'MF' | 'BP' | 'CC'> = new Set();
+  /** d3-graphviz instance per aspect, captured so we can reset the zoom to
+   *  the original fit transform when the user re-selects an already-rendered
+   *  aspect. d3-zoom otherwise keeps whatever pan/zoom the user last applied. */
+  private graphvizInstances: Partial<Record<'MF' | 'BP' | 'CC', any>> = {};
   /** Per-node tooltip data, keyed by GO term id. Populated in generateDot. */
   private nodeTooltips = new Map<string, TermTooltipData>();
 
@@ -60,6 +69,10 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
       this.generateDot(this.selectedChart);
       this.renderGraph(this.selectedChart);
       this.renderedAspects.add(this.selectedChart);
+    } else {
+      // Re-center an aspect the user has already viewed — otherwise d3-zoom
+      // restores whatever pan/zoom they last applied to it.
+      this.graphvizInstances[this.selectedChart]?.resetZoom();
     }
   }
 
@@ -141,6 +154,7 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
         scoreValue: formatScore(node.p_val),
         studyHits: node.study_count,
         populationHits: this.isBayesian ? undefined : node.population_count,
+        showInTableButton: true,
       });
       // Graphviz needs a tooltip attribute so an <a title="..."> is emitted; we
       // park the GO id there and look up the rich tooltip in our Map at hover.
@@ -194,10 +208,18 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
   renderGraph(subgraph: 'MF' | 'BP' | 'CC'): void {
     const container = d3.select(this[`${subgraph}graphvizContainer`].nativeElement) as any;
-    container
-      .graphviz({ useWorker: false, zoom: true, fit: true })
-      .renderDot(this.dotStrings[subgraph])
-      .on('end', () => this.setupGraph(container, subgraph));
+    const gv = container.graphviz({ useWorker: false, zoom: true, fit: true });
+    this.graphvizInstances[subgraph] = gv;
+    gv.renderDot(this.dotStrings[subgraph])
+      .on('end', () => {
+        this.setupGraph(container, subgraph);
+        // d3-graphviz reuses the same instance per container, so a re-render
+        // (e.g. after changing Top N) inherits the user's prior d3-zoom
+        // transform — `fit: true` only acts on the initial render. Forcing
+        // resetZoom here re-centers on every render. Idempotent on first
+        // render (already fitted).
+        gv.resetZoom();
+      });
   }
 
   setupGraph(container: any, subgraph: 'MF' | 'BP' | 'CC') {
@@ -218,11 +240,42 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
     this.hoverNodeTooltip(nodes, subgraph);
   }
 
+  /** Tooltip-hide grace period (ms). Long enough for the user to bridge the
+   *  10 px gap between the node and the tooltip when they want to copy text;
+   *  short enough that a casual mouse-move doesn't leave stale tooltips. */
+  private static readonly TOOLTIP_HIDE_DELAY = 200;
+
   hoverNodeTooltip(nodes: any, subgraph: 'MF' | 'BP' | 'CC'): void {
     const containerEl = this[`${subgraph}graphvizContainer`].nativeElement;
     const tooltipRef = d3.select(`#${subgraph}Tooltip`);
 
+    let hideTimer: ReturnType<typeof setTimeout> | null = null;
+    let currentNode: Element | null = null;
+
+    const cancelHide = () => {
+      if (hideTimer !== null) { clearTimeout(hideTimer); hideTimer = null; }
+    };
+
+    const scheduleHide = () => {
+      cancelHide();
+      hideTimer = setTimeout(() => {
+        tooltipRef.style('opacity', 0).style('pointer-events', 'none');
+        if (currentNode) {
+          d3.select(currentNode).select('polygon, ellipse, rect').attr('stroke-width', '1');
+          currentNode = null;
+        }
+        hideTimer = null;
+      }, GoGraph.TOOLTIP_HIDE_DELAY);
+    };
+
     nodes.on('mouseover', (event: any) => {
+      cancelHide();
+      // Hopping directly from one node to another: clear the previous node's
+      // highlight before applying the new one (no mouseout reset fires here).
+      if (currentNode && currentNode !== event.currentTarget) {
+        d3.select(currentNode).select('polygon, ellipse, rect').attr('stroke-width', '1');
+      }
+      currentNode = event.currentTarget;
       d3.select(event.currentTarget).select('polygon, rect').attr('stroke-width', 4);
       const aTag = d3.select(event.currentTarget).select('g a');
       const nodeId = aTag.attr('data-tooltip');
@@ -235,14 +288,37 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
       const nodeRect = event.currentTarget.getBoundingClientRect();
       tooltipRef
         .style('opacity', 1)
+        .style('pointer-events', 'auto')
         .html(termTooltipHtml(data))
         .style('left', (nodeRect.x - containerRect.x + nodeRect.width + 10) + 'px')
         .style('top', (nodeRect.y - containerRect.y) + 'px');
     })
-    .on('mouseout', (event: any) => {
-      tooltipRef.style('opacity', 0);
-      d3.select(event.currentTarget).select('polygon, ellipse, rect').attr('stroke-width', '1');
-    });
+    .on('mouseout', () => scheduleHide());
+
+    // Tooltip itself is a hover target so the user can move into it (e.g. to
+    // select and copy the term name). d3's .on() replaces existing handlers
+    // by event name, so repeated renders don't stack listeners.
+    tooltipRef
+      .on('mouseenter', () => cancelHide())
+      .on('mouseleave', () => scheduleHide())
+      .on('click', (event: MouseEvent) => {
+        const target = event.target as HTMLElement | null;
+        const action = target?.closest('[data-action]')?.getAttribute('data-action');
+        if (action !== 'show-in-table') return;
+        const id = currentNode
+          ? d3.select(currentNode).select('g a').attr('data-tooltip')
+          : null;
+        if (!id) return;
+        this.showInTable.emit(id);
+        // Dismiss right away — the user has finished with this tooltip; the
+        // parent will switch tabs which removes our hover target anyway.
+        cancelHide();
+        tooltipRef.style('opacity', 0).style('pointer-events', 'none');
+        if (currentNode) {
+          d3.select(currentNode).select('polygon, ellipse, rect').attr('stroke-width', '1');
+          currentNode = null;
+        }
+      });
   }
 
   /** Aspect code (MF/BP/CC) of the currently rendered subgraph. */

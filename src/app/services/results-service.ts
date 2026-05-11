@@ -17,6 +17,7 @@ export class ResultsService {
   public bayesianTotalCount = signal<number>(0);
   public bayesianPriors = signal<BayesianPriors | null>(null);
   public bayesianPosteriors = signal<BayesianPosteriors | null>(null);
+  public dotData = signal<DotData | null>(null);
 
   clearResults() {
     this.frequentistTableData.set(null);
@@ -27,7 +28,7 @@ export class ResultsService {
     this.bayesianTotalCount.set(0);
     this.bayesianPriors.set(null);
     this.bayesianPosteriors.set(null);
-    this.dotData = null;
+    this.dotData.set(null);
     this.significantCount = 0;
     this.resultsLength = 0;
     this.proportionData = {
@@ -44,12 +45,11 @@ export class ResultsService {
     } catch (error) {
       console.error('Error running analysis:', error);
       this.frequentistTableData.set(null);
-      this.dotData = null;
+      this.dotData.set(null);
       throw error;
     }
   }
 
-  private dotData: DotData | null = null;
   private mtcMethod: string = '';
 
   private significantCount: number = 0;
@@ -64,8 +64,7 @@ export class ResultsService {
   async loadDotData() {
     try {
       const data = await invoke<DotData>('build_go_graph_data');
-      this.dotData = { BP: data.BP, MF: data.MF, CC: data.CC };
-      console.log('Loaded dot data:', this.dotData);
+      this.dotData.set({ BP: data.BP, MF: data.MF, CC: data.CC });
     } catch (error) {
       console.error('Error loading dot data:', error);
     }
@@ -180,7 +179,6 @@ export class ResultsService {
 
   getMethod() { return this.currentMethod(); }
   getFrequentistTableData() { return this.frequentistTableData(); }
-  getDotData() { return this.dotData; }
   getMtcMethod() { return this.mtcMethod; }
   getSignificantCount() { return this.significantCount; }
   getResultsLength() { return this.resultsLength; }

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { RowData, FrequentistRowData } from '../../../services/results-service';
 import { ChartHeader } from '../../../shared/chart-header/chart-header';
@@ -38,6 +38,17 @@ export class BarChart implements AfterViewInit, OnChanges {
   @Input() isBayesian: boolean = false;
   @Input() legendMaxValue: number = 1;
 
+  /** Emits a GO term id when the user clicks "Show in Table" inside the
+   *  hover tooltip. Parent is expected to switch to the Table tab. */
+  @Output() showInTable = new EventEmitter<string>();
+
+  /** Matches the GO graph's hide-grace period for consistency. */
+  private static readonly TOOLTIP_HIDE_DELAY = 200;
+  private tooltipHideTimer: ReturnType<typeof setTimeout> | null = null;
+  /** Row backing the currently displayed tooltip, used by the click handler
+   *  to know which term id to emit. */
+  private currentTooltipRow: RowData | null = null;
+
   viewInitialized = false;
 
   plotOptions: string[] = ['-Log10(p)', 'Enrichment ratio', 'Study count'];
@@ -46,10 +57,10 @@ export class BarChart implements AfterViewInit, OnChanges {
     'Enrichment ratio': 'Enrichment ratio',
     'Study count': 'Count'
   };
-  subgraphs: string[] = ['All', 'Molecular Function', 'Biological Process', 'Cellular Component'];
+  subgraphs: string[] = ['All Aspects', 'Molecular Function', 'Biological Process', 'Cellular Component'];
 
   selectedPlotOption = '-Log10(p)';
-  selectedSubgraph = 'All';
+  selectedSubgraph = 'All Aspects';
   selectedTopN = 'Significant';
 
   /** Layout constants for canvas auto-width when there are many bars. */
@@ -216,7 +227,9 @@ export class BarChart implements AfterViewInit, OnChanges {
   /**
    * Chart.js external tooltip handler. Renders the shared `.term-tooltip`
    * markup into a positioned div inside the chart's parent, so the bar plot
-   * and the GO graph speak the same hover vocabulary.
+   * and the GO graph speak the same hover vocabulary. The tooltip is itself
+   * a hover target — letting the user move into it to select & copy text or
+   * click "Show in Table" — by mirroring the GO graph's hide-grace pattern.
    */
   private renderExternalTooltip(context: { chart: Chart; tooltip: any }): void {
     const { chart, tooltip } = context;
@@ -233,19 +246,38 @@ export class BarChart implements AfterViewInit, OnChanges {
       el.style.transition = 'opacity 0.15s ease';
       el.style.zIndex = '10';
       parent.appendChild(el);
+
+      // Attach hover + click handlers once. Listeners live on the host div;
+      // innerHTML changes don't disturb them.
+      el.addEventListener('mouseenter', () => this.cancelTooltipHide());
+      el.addEventListener('mouseleave', () => this.scheduleTooltipHide(el!));
+      el.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement | null;
+        const action = target?.closest('[data-action]')?.getAttribute('data-action');
+        if (action !== 'show-in-table' || !this.currentTooltipRow) return;
+        this.showInTable.emit(this.currentTooltipRow.id);
+        this.hideTooltipNow(el!);
+      });
     }
 
+    // Chart.js fires with opacity=0 when the mouse leaves the canvas — that
+    // includes "left toward the tooltip", so we *schedule* a hide instead of
+    // hiding immediately; the tooltip's mouseenter cancels the timer if the
+    // user actually parked on it.
     if (tooltip.opacity === 0 || !tooltip.dataPoints?.length) {
-      el.style.opacity = '0';
+      this.scheduleTooltipHide(el);
       return;
     }
 
     const dataIndex = tooltip.dataPoints[0].dataIndex as number;
     const row = this.currentRows[dataIndex];
     if (!row) {
-      el.style.opacity = '0';
+      this.scheduleTooltipHide(el);
       return;
     }
+
+    this.cancelTooltipHide();
+    this.currentTooltipRow = row;
 
     const studyHits = this.isBayesian
       ? row.associatedGenes.length
@@ -261,6 +293,7 @@ export class BarChart implements AfterViewInit, OnChanges {
       scoreValue: formatScore(row.score),
       studyHits,
       populationHits,
+      showInTableButton: true,
     });
 
     // Place to the right of the bar; flip to the left if it would overflow the chart canvas.
@@ -272,6 +305,31 @@ export class BarChart implements AfterViewInit, OnChanges {
     el.style.left = `${Math.max(0, left)}px`;
     el.style.top = `${tooltip.caretY}px`;
     el.style.opacity = '1';
+    el.style.pointerEvents = 'auto';
+  }
+
+  private cancelTooltipHide(): void {
+    if (this.tooltipHideTimer !== null) {
+      clearTimeout(this.tooltipHideTimer);
+      this.tooltipHideTimer = null;
+    }
+  }
+
+  private scheduleTooltipHide(el: HTMLDivElement): void {
+    this.cancelTooltipHide();
+    this.tooltipHideTimer = setTimeout(() => {
+      el.style.opacity = '0';
+      el.style.pointerEvents = 'none';
+      this.currentTooltipRow = null;
+      this.tooltipHideTimer = null;
+    }, BarChart.TOOLTIP_HIDE_DELAY);
+  }
+
+  private hideTooltipNow(el: HTMLDivElement): void {
+    this.cancelTooltipHide();
+    el.style.opacity = '0';
+    el.style.pointerEvents = 'none';
+    this.currentTooltipRow = null;
   }
 
   /** Returns a base64-encoded PNG of the current bar chart, or null if no

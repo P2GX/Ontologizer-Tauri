@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, Output, EventEmitter } from '@angular/core';
+import { Component, computed, effect, input, signal, Output, EventEmitter } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
@@ -28,6 +28,11 @@ export class ResultTable {
 
   dataSource = new MatTableDataSource<RowData>();
 
+  /** Drives both the search input's displayed value and the dataSource filter,
+   *  so external triggers (e.g. "Show in Table" from the GO graph tooltip)
+   *  can update the filter while keeping the input in sync. */
+  searchText = signal('');
+
   displayedColumns = computed<string[]>(() =>
     this.isFrequentist()
       ? ['label', 'aspect', 'id', 'k', 'n', 'score']
@@ -41,6 +46,18 @@ export class ResultTable {
   constructor() {
     effect(() => {
       this.dataSource.data = this.tableData();
+    });
+
+    // Filter predicate is stable — set once. The effect below drives the
+    // actual filter string from searchText so any source (typed input or
+    // external trigger) flows through one place.
+    this.dataSource.filterPredicate = (data: RowData, filter: string) =>
+      data.label.toLowerCase().includes(filter) ||
+      data.id.toLowerCase().includes(filter) ||
+      data.aspect.toLowerCase().includes(filter);
+
+    effect(() => {
+      this.dataSource.filter = this.searchText().toLowerCase();
     });
   }
 
@@ -71,11 +88,12 @@ export class ResultTable {
   }
 
   applyFilter(keyupEvent: Event): void {
-    const inputValue = (keyupEvent.target as HTMLInputElement).value.toLowerCase();
-    this.dataSource.filterPredicate = (data: RowData, filter: string) =>
-      data.label.toLowerCase().includes(filter) ||
-      data.id.toLowerCase().includes(filter) ||
-      data.aspect.toLowerCase().includes(filter);
-    this.dataSource.filter = inputValue;
+    this.searchText.set((keyupEvent.target as HTMLInputElement).value);
+  }
+
+  /** Filter the table down to a specific GO term id. Called from the GO graph
+   *  tooltip's "Show in Table" action. */
+  filterByTermId(id: string): void {
+    this.searchText.set(id);
   }
 }
