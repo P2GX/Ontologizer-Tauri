@@ -1,6 +1,6 @@
-import { Component, computed, effect, input, signal, Output, EventEmitter } from '@angular/core';
+import { Component, computed, effect, input, signal, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -19,19 +19,28 @@ import { RowData, FrequentistRowData } from '../../../services/results-service';
   templateUrl: './result-table.html',
   styleUrl: './result-table.css'
 })
-export class ResultTable {
+export class ResultTable implements AfterViewInit {
   tableData = input.required<RowData[]>();
   isFrequentist = input<boolean>(false);
   totalCount = input<number>(0);
 
   @Output() pageChange = new EventEmitter<{ pageIndex: number; pageSize: number }>();
+  /** Debounced search input — parent listens and forwards to the service,
+   *  which asks Rust to filter across the full result set. */
+  @Output() searchChange = new EventEmitter<string>();
+
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
 
   dataSource = new MatTableDataSource<RowData>();
 
-  /** Drives both the search input's displayed value and the dataSource filter,
-   *  so external triggers (e.g. "Show in Table" from the GO graph tooltip)
-   *  can update the filter while keeping the input in sync. */
+  /** Drives the search input's displayed value so programmatic triggers
+   *  ("Show in Table" from the GO graph tooltip) appear in the box too. */
   searchText = signal('');
+
+  /** Debounce window for the search input. Long enough to avoid an IPC
+   *  per keystroke; short enough that the table feels responsive. */
+  private static readonly SEARCH_DEBOUNCE = 200;
+  private searchDebounce: ReturnType<typeof setTimeout> | null = null;
 
   displayedColumns = computed<string[]>(() =>
     this.isFrequentist()
@@ -47,18 +56,11 @@ export class ResultTable {
     effect(() => {
       this.dataSource.data = this.tableData();
     });
+  }
 
-    // Filter predicate is stable — set once. The effect below drives the
-    // actual filter string from searchText so any source (typed input or
-    // external trigger) flows through one place.
-    this.dataSource.filterPredicate = (data: RowData, filter: string) =>
-      data.label.toLowerCase().includes(filter) ||
-      data.id.toLowerCase().includes(filter) ||
-      data.aspect.toLowerCase().includes(filter);
-
-    effect(() => {
-      this.dataSource.filter = this.searchText().toLowerCase();
-    });
+  ngAfterViewInit(): void {
+    // Paginator is captured here so search/jumpToPage paths can reset it
+    // to page 0 — its (page) event continues to bubble through onPage.
   }
 
   isExpanded(element: RowData) {
@@ -88,12 +90,34 @@ export class ResultTable {
   }
 
   applyFilter(keyupEvent: Event): void {
-    this.searchText.set((keyupEvent.target as HTMLInputElement).value);
+    const value = (keyupEvent.target as HTMLInputElement).value;
+    this.searchText.set(value);
+    this.scheduleSearchEmit(value);
   }
 
   /** Filter the table down to a specific GO term id. Called from the GO graph
-   *  tooltip's "Show in Table" action. */
+   *  tooltip's "Show in Table" action — fires immediately (no debounce). */
   filterByTermId(id: string): void {
     this.searchText.set(id);
+    if (this.searchDebounce !== null) {
+      clearTimeout(this.searchDebounce);
+      this.searchDebounce = null;
+    }
+    this.emitSearch(id);
+  }
+
+  private scheduleSearchEmit(value: string): void {
+    if (this.searchDebounce !== null) clearTimeout(this.searchDebounce);
+    this.searchDebounce = setTimeout(() => {
+      this.searchDebounce = null;
+      this.emitSearch(value);
+    }, ResultTable.SEARCH_DEBOUNCE);
+  }
+
+  private emitSearch(value: string): void {
+    // Snap the paginator UI back to page 0 — the new result set has a fresh
+    // filtered total, and the parent has already requested page 0 of data.
+    if (this.paginator) this.paginator.pageIndex = 0;
+    this.searchChange.emit(value);
   }
 }

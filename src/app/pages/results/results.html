@@ -42,7 +42,8 @@
                     [totalCount]="totalCount()"
                     [isFrequentist]="resultsService.isFrequentist()"
                     [hidden]="selectedChart !== 'table'"
-                    (pageChange)="onPageChange($event)">
+                    (pageChange)="onPageChange($event)"
+                    (searchChange)="onSearch($event)">
                 </app-result-table>
                 <app-go-graph
                     [hidden]="selectedChart !== 'go-graph'"

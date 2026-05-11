@@ -164,6 +164,7 @@ pub fn get_analysis_results_page(
     state: tauri::State<AppState>,
     page: usize,
     page_size: usize,
+    query: Option<String>,
 ) -> Result<PagedResults, String> {
     let results_lock = state
         .results
@@ -171,10 +172,29 @@ pub fn get_analysis_results_page(
         .map_err(|e| format!("Failed to lock results: {}", e))?;
     let results = results_lock.as_ref().ok_or("No analysis results loaded")?;
 
-    let total = results.items.len();
+    // With a non-empty query, filter the full sorted vector by case-insensitive
+    // substring on label/id/aspect first, then page into the filtered slice.
+    // With no query, the "matched" set is just every item. The filter is <5 ms
+    // over ~20k items so we re-run it per page request instead of caching.
+    let needle = query.as_deref().unwrap_or("").trim().to_lowercase();
+    let matched: Vec<&EnrichmentItem> = if needle.is_empty() {
+        results.items.iter().collect()
+    } else {
+        results
+            .items
+            .iter()
+            .filter(|it| {
+                it.label.to_lowercase().contains(&needle)
+                    || it.id.to_lowercase().contains(&needle)
+                    || it.aspect.to_lowercase().contains(&needle)
+            })
+            .collect()
+    };
+
+    let total = matched.len();
     let start = page * page_size;
     let end = (start + page_size).min(total);
-    let page_items = &results.items[start..end];
+    let page_items = &matched[start..end];
 
     let items_json =
         serde_json::to_string(page_items).map_err(|e| format!("Serialization error: {}", e))?;

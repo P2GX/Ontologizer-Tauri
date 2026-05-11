@@ -106,11 +106,18 @@ export class Results {
   }
 
   /** "Show in Table" action from the GO graph tooltip — switch to the Table
-   *  tab and filter the table down to the chosen term. The result-table is
-   *  inside the same @if block, so it's already mounted when this fires. */
+   *  tab and filter the table down to the chosen term. `filterByTermId`
+   *  bubbles a searchChange event which our onSearch handler picks up, so
+   *  this is the same data path as a user-typed query. */
   onShowInTable(termId: string) {
     this.selectedChart = 'table';
     this.resultTableRef?.filterByTermId(termId);
+  }
+
+  /** Search-input change from the result table (debounced) — ask the service
+   *  to swap in page 0 of the matching subset. */
+  onSearch(query: string) {
+    void this.resultsService.setSearch(query);
   }
 
   /** True when the current tab shows a figure that "Save Figure" can export. */

@@ -19,6 +19,11 @@ export class ResultsService {
   public bayesianPosteriors = signal<BayesianPosteriors | null>(null);
   public dotData = signal<DotData | null>(null);
 
+  /** Current search query for the results table. Driven by the search input
+   *  (debounced) and by "Show in Table" from the GO graph / bar chart
+   *  tooltips. Empty string means no filter. */
+  public searchQuery = signal<string>('');
+
   clearResults() {
     this.frequentistTableData.set(null);
     this.bayesianTableData.set(null);
@@ -29,6 +34,7 @@ export class ResultsService {
     this.bayesianPriors.set(null);
     this.bayesianPosteriors.set(null);
     this.dotData.set(null);
+    this.searchQuery.set('');
     this.significantCount = 0;
     this.resultsLength = 0;
     this.proportionData = {
@@ -125,16 +131,29 @@ export class ResultsService {
 
   async loadAnalysisPage(page: number, pageSize: number) {
     try {
-      const result = await invoke<{ items: string; total: number }>('get_analysis_results_page', { page, pageSize });
+      const query = this.searchQuery().trim();
+      const result = await invoke<{ items: string; total: number }>(
+        'get_analysis_results_page',
+        { page, pageSize, query: query.length ? query : null },
+      );
       const items = JSON.parse(result.items);
       if (this.currentMethod()?.method === 'Bayesian') {
         this.bayesianTableData.set(this.parseBayesianResults(items));
+        this.bayesianTotalCount.set(result.total);
       } else {
         this.frequentistTableData.set(this.parseAnalysisResults(items));
+        this.frequentistTotalCount.set(result.total);
       }
     } catch (error) {
       console.error('Error loading analysis page:', error);
     }
+  }
+
+  /** Sets a new search query and reloads page 0 of the matching rows.
+   *  Called from the search input (debounced) and from "Show in Table". */
+  async setSearch(query: string, pageSize: number = 10) {
+    this.searchQuery.set(query);
+    await this.loadAnalysisPage(0, pageSize);
   }
 
   parseAnalysisResults(items: any[]): FrequentistRowData[] {
