@@ -34,8 +34,8 @@ export class AnalysisService {
   // Mirrors the dropdown's default below so the method page is ready to run
   // on first visit — no need to open the correction menu to "wake up" the
   // Start Analysis button.
-  readonly selectedMethod = signal<Method | null>({ method: 'Frequentist', correction: 'None' });
-  readonly correction = signal<Correction | null>('None');
+  readonly selectedMethod = signal<Method | null>({ method: 'Frequentist', correction: 'Bonferroni' });
+  readonly correction = signal<Correction | null>('Bonferroni');
   readonly isAnalysing = signal(false);
   readonly analysisStep = signal<AnalysisStep>('idle');
   readonly errorMessage = signal<string | null>(null);
