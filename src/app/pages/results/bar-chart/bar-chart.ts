@@ -4,6 +4,7 @@ import { RowData, FrequentistRowData } from '../../../services/results-service';
 import { ChartHeader } from '../../../shared/chart-header/chart-header';
 import { interpolateSignificance, significanceThresholdT } from '../../../shared/utils/significance-color';
 import { termTooltipHtml, formatScore } from '../../../shared/utils/term-tooltip';
+import { positionTooltip } from '../../../shared/utils/tooltip-position';
 import { wrapLabel } from '../../../shared/utils/wrap-label';
 
 /**
@@ -296,16 +297,26 @@ export class BarChart implements AfterViewInit, OnChanges {
       showInTableButton: true,
     });
 
-    // Place to the right of the bar; flip to the left if it would overflow the chart canvas.
-    const margin = 12;
-    let left = tooltip.caretX + margin;
-    if (left + el.offsetWidth > chart.canvas.width) {
-      left = tooltip.caretX - el.offsetWidth - margin;
-    }
-    el.style.left = `${Math.max(0, left)}px`;
-    el.style.top = `${tooltip.caretY}px`;
+    // Make the tooltip visible *before* measuring so getBoundingClientRect
+    // reports its full dimensions (a still-hidden element still has them, but
+    // pointer-events: auto needs to apply for hover hand-off either way).
     el.style.opacity = '1';
     el.style.pointerEvents = 'auto';
+
+    // Anchor the tooltip at the caret point, converted to viewport coords.
+    // The Chart.js caret is canvas-relative; offset by the canvas's screen
+    // position to get a viewport rect. Shared positioner then flips/clamps
+    // inside the .tab-panel (or the chartDiv if the panel can't be found).
+    const canvasRect = chart.canvas.getBoundingClientRect();
+    const anchorX = canvasRect.left + tooltip.caretX;
+    const anchorY = canvasRect.top + tooltip.caretY;
+    const bounds = (chart.canvas.closest('.tab-panel') as HTMLElement | null) ?? parent;
+    positionTooltip(
+      el,
+      { left: anchorX, right: anchorX, top: anchorY, bottom: anchorY },
+      bounds,
+      { margin: 12 },
+    );
   }
 
   private cancelTooltipHide(): void {

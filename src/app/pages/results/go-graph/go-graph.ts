@@ -4,6 +4,7 @@ import { DotData, NodeData } from '../../../services/results-service';
 import { interpolateSignificanceHex, pickInkForBackground, significanceThresholdT } from '../../../shared/utils/significance-color';
 import { wrapLabel } from '../../../shared/utils/wrap-label';
 import { TermTooltipData, termTooltipHtml, formatScore } from '../../../shared/utils/term-tooltip';
+import { positionTooltip } from '../../../shared/utils/tooltip-position';
 import 'd3-graphviz';
 import * as d3 from 'd3';
 
@@ -245,6 +246,17 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
    *  short enough that a casual mouse-move doesn't leave stale tooltips. */
   private static readonly TOOLTIP_HIDE_DELAY = 200;
 
+  /** Place the tooltip next to the hovered node, flipping/clamping so it
+   *  stays inside the visible tab-panel. Delegates the math to the shared
+   *  positioner; this wrapper just resolves the bounds element and feeds the
+   *  node's bounding rect as the anchor. */
+  private positionTooltipForNode(tooltipRef: any, nodeEl: Element, containerEl: HTMLElement): void {
+    const tooltipEl = tooltipRef.node() as HTMLElement | null;
+    if (!tooltipEl) return;
+    const bounds = (containerEl.closest('.tab-panel') as HTMLElement | null) ?? containerEl;
+    positionTooltip(tooltipEl, nodeEl.getBoundingClientRect(), bounds);
+  }
+
   hoverNodeTooltip(nodes: any, subgraph: 'MF' | 'BP' | 'CC'): void {
     const containerEl = this[`${subgraph}graphvizContainer`].nativeElement;
     const tooltipRef = d3.select(`#${subgraph}Tooltip`);
@@ -284,14 +296,13 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
       const data = nodeId ? this.nodeTooltips.get(nodeId) : undefined;
       if (!data) return;
 
-      const containerRect = containerEl.getBoundingClientRect();
-      const nodeRect = event.currentTarget.getBoundingClientRect();
+      // Render content first so getBoundingClientRect reports its actual size,
+      // then flip/clamp inside the visible tab-panel.
       tooltipRef
         .style('opacity', 1)
         .style('pointer-events', 'auto')
-        .html(termTooltipHtml(data))
-        .style('left', (nodeRect.x - containerRect.x + nodeRect.width + 10) + 'px')
-        .style('top', (nodeRect.y - containerRect.y) + 'px');
+        .html(termTooltipHtml(data));
+      this.positionTooltipForNode(tooltipRef, event.currentTarget as Element, containerEl);
     })
     .on('mouseout', () => scheduleHide());
 
