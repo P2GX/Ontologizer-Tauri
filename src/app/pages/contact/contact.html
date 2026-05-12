@@ -4,9 +4,6 @@
             <button class="tab-button" [class.active]="selectedTab() === 'authors'"
                 (click)="selectTab('authors')">Authors</button>
             <mat-divider class="vertical" [vertical]="true"></mat-divider>
-            <button class="tab-button" [class.active]="selectedTab() === 'citation'"
-                (click)="selectTab('citation')">Citation</button>
-            <mat-divider class="vertical" [vertical]="true"></mat-divider>
             <button class="tab-button" [class.active]="selectedTab() === 'repository'"
                 (click)="selectTab('repository')">Repository</button>
             <mat-divider class="vertical" [vertical]="true"></mat-divider>
@@ -32,39 +29,6 @@
                             </article>
                         }
                     </div>
-                </div>
-            }
-
-            @case ('citation') {
-                <div class="tab-content">
-                    <p>If you use Ontologizer 3.0 for a publication, please cite both the software and the original papers describing the underlying methods.</p>
-
-                    <div class="bibtex-grid">
-                        <div class="bibtex-block">
-                            <pre>{{ ontologizer }}</pre>
-                            <button type="button" class="button-tonal" (click)="copyBibtex(ontologizer)">Copy BibTeX</button>
-                        </div>
-
-                        <div class="bibtex-block">
-                            <pre>{{ mgsa }}</pre>
-                            <button type="button" class="button-tonal" (click)="copyBibtex(mgsa)">Copy BibTeX</button>
-                        </div>
-                    </div>
-
-                    <ul class="ref-list">
-                        <li>
-                            <strong>Version 1 (2004).</strong>
-                            <button type="button" class="link-button" (click)="open('https://pubmed.ncbi.nlm.nih.gov/14764576/')">PubMed: 14764576</button>
-                        </li>
-                        <li>
-                            <strong>Version 2 (2008).</strong>
-                            <button type="button" class="link-button" (click)="open('https://pubmed.ncbi.nlm.nih.gov/18511468/')">PubMed: 18511468</button>
-                        </li>
-                        <li>
-                            <strong>Version 3 (2026).</strong>
-                            Manuscript in preparation.
-                        </li>
-                    </ul>
                 </div>
             }
 

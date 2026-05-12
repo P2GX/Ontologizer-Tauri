@@ -6,10 +6,33 @@ body {
 
 .app-shell {
   --titlebar-height: 2.0rem;
+  --resize-edge: 4px;     /* thickness of the 4 edge resize handles */
+  --resize-corner: 10px;  /* size of the 4 corner resize handles */
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
+
+/* ======================================================= */
+/* Custom resize handles (decorations: false)              */
+/* ======================================================= */
+
+.resize-handle {
+  position: fixed;
+  z-index: 10000;        /* above titlebar (z-index ~ 1000-ish) and content */
+  background: transparent;
+}
+
+.resize-n { top: 0;    left: 0;     right: 0;    height: var(--resize-edge); cursor: ns-resize; }
+.resize-s { bottom: 0; left: 0;     right: 0;    height: var(--resize-edge); cursor: ns-resize; }
+.resize-e { top: 0;    bottom: 0;   right: 0;    width:  var(--resize-edge); cursor: ew-resize; }
+.resize-w { top: 0;    bottom: 0;   left: 0;     width:  var(--resize-edge); cursor: ew-resize; }
+
+/* Corners sit on top of the edges so a corner hover wins the cursor. */
+.resize-nw { top: 0;    left: 0;     width: var(--resize-corner); height: var(--resize-corner); cursor: nwse-resize; }
+.resize-ne { top: 0;    right: 0;    width: var(--resize-corner); height: var(--resize-corner); cursor: nesw-resize; }
+.resize-sw { bottom: 0; left: 0;     width: var(--resize-corner); height: var(--resize-corner); cursor: nesw-resize; }
+.resize-se { bottom: 0; right: 0;    width: var(--resize-corner); height: var(--resize-corner); cursor: nwse-resize; }
 
 /* ======================================================= */
 /* Custom title bar                                         */
@@ -271,7 +294,7 @@ a.nav-item {
 ::ng-deep .page-header {
   display: flex;
   flex-direction: column;
-  padding: 0 5vw 0rem 5vw;
+  padding: 0 5vw 0 5vw;
   box-shadow: 0 2px 4px var(--shadow-header);
   margin-bottom: 1rem;
   background-color: var(--md-sys-color-on-primary);
@@ -299,5 +322,5 @@ a.nav-item {
 ::ng-deep.mat-snack-bar-container-animations-enabled {
   background-color: var(--md-sys-color-on-primary) !important;
   opacity: 0.95 !important;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 0.13rem 0.3rem;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 0.13rem 0.3rem;
 }

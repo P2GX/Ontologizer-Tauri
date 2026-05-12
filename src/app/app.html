@@ -2,6 +2,20 @@
 
 <div class="app-shell">
 
+    <!-- Resize handles. `decorations: false` removes the OS resize border, so
+         we paint our own: thin overlays around the window that drive
+         getCurrentWindow().startResizeDragging() and apply the matching CSS
+         cursor. The four corner handles are stacked on top so they win over
+         the edge handles on overlap. -->
+    <div class="resize-handle resize-n"  (mousedown)="onResize('North',     $event)"></div>
+    <div class="resize-handle resize-s"  (mousedown)="onResize('South',     $event)"></div>
+    <div class="resize-handle resize-e"  (mousedown)="onResize('East',      $event)"></div>
+    <div class="resize-handle resize-w"  (mousedown)="onResize('West',      $event)"></div>
+    <div class="resize-handle resize-nw" (mousedown)="onResize('NorthWest', $event)"></div>
+    <div class="resize-handle resize-ne" (mousedown)="onResize('NorthEast', $event)"></div>
+    <div class="resize-handle resize-sw" (mousedown)="onResize('SouthWest', $event)"></div>
+    <div class="resize-handle resize-se" (mousedown)="onResize('SouthEast', $event)"></div>
+
     <!-- Custom title bar (replaces native OS decorations) -->
     <div class="titlebar" (mousedown)="startDrag($event)">
 <div class="titlebar-controls" (mousedown)="$event.stopPropagation()">

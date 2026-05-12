@@ -15,9 +15,12 @@ h2 {
 .contact-wrapper {
     display: flex;
     flex-direction: column;
-    width: 80cqw;
+    /* Width tracks the tabs strip automatically: max-content sizes to the
+       widest child, and the tabs row is the widest item under it. */
+    width: max-content;
 }
 
+/* Tab visual styles + width + strip sizing live in styles.scss. */
 .tabs-container {
     display: flex;
     background-color: var(--md-sys-color-on-primary);
@@ -25,10 +28,6 @@ h2 {
     border-radius: 0.5rem;
     position: relative;
     margin-bottom: 1.25rem;
-}
-
-.tabs-container button.tab-button {
-    width: 15rem;
 }
 
 .mat-divider.vertical {
@@ -58,39 +57,6 @@ ul {
 
 li {
     margin-bottom: 0.2rem;
-}
-
-.bibtex-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    margin: 0.75rem 0 1rem;
-}
-
-.bibtex-block {
-    position: relative;
-    background-color: var(--md-sys-color-on-primary);
-    border: 1px solid var(--md-sys-color-outline);
-    border-radius: 0.5rem;
-    padding: 1rem 1rem 0.75rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.bibtex-block pre {
-    margin: 0;
-    font-family: 'Trebuchet MS', Trebuchet, sans-serif;
-    font-size: var(--font-small);
-    color: var(--md-sys-color-primary);
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
-.bibtex-block .button-tonal {
-    display: inline-flex;
-    align-self: flex-start;
-    margin-top: auto;
-    padding-top: 0.6rem;
 }
 
 .author-grid {

@@ -51,11 +51,9 @@
     .results-panel { animation: none; }
 }
 
-/* Tab visual styles live in styles.scss; only the per-page width override stays here. */
-.tabs-container button.tab-button {
-    width: 10rem;
-    padding: 0.4rem 1rem;
-}
+/* Tab visual styles + width + strip sizing live in styles.scss. This file
+   keeps only the per-page chrome (tabs-container border/background) and the
+   divider tweak below. */
 
 .mat-divider.vertical {
     width: 1px;
@@ -71,7 +69,7 @@
 
 .material-symbols-outlined.tab-icon {
     color: var(--md-sys-color-primary);
-    font-size: var(--font-highlight);
+    font-size: var(--font-standard);
 }
 
 /* ===== Tab content panel ===== */

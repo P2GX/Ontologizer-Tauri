@@ -206,8 +206,12 @@ body { margin: 0; font-family: "Trebuchet MS", Trebuchet, sans-serif; color: var
     cursor: not-allowed;
 }
 
-/* ===== Shared Tab Button (results, about) ===== */
+/* ===== Shared Tab Button (results, help, contact) =====
+   `box-sizing: border-box` makes the declared width include padding, so a tab
+   that says `width: 15rem` renders at exactly 15rem from edge to edge — no
+   "+2 × padding" surprise. Per-page CSS no longer needs to set the width. */
 button.tab-button {
+    box-sizing: border-box;
     padding: 0.5rem 1rem;
     border: none;
     background-color: transparent;
@@ -236,6 +240,20 @@ button.tab-button.active {
 button.tab-button:focus-visible {
     outline: 2px solid var(--md-sys-color-primary);
     outline-offset: 2px;
+}
+
+/* ===== Shared Tabs Container =====
+   The strip's outer width tracks the buttons it contains; `align-self: center`
+   prevents a flex-column parent (.help-wrapper, .contact-wrapper) from
+   stretching it horizontally. Same rule works on Results because its parent
+   .control-header is a flex row, where align-self is a no-op for width. */
+.tabs-container {
+    width: max-content;
+    align-self: center;
+}
+
+.tabs-container button.tab-button {
+    width: 12rem;
 }
 
 /* ===== Shared Inline Alert =====
