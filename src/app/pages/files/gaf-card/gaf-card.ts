@@ -50,11 +50,7 @@ export class GafCard {
             // as ready once that file actually exists on disk.
             const exists = await invoke<boolean>('path_exists', { path: config.gaf_file });
             if (exists) {
-                const home = await homeDir();
-                this.filePath.set(config.gaf_file);
-                this.displayPath.set(shortenPath(config.gaf_file, home));
-                this.filesService.setPath('annotation', config.gaf_file);
-                void this.loadDate(config.gaf_file);
+                await this.applyFile(config.gaf_file);
             }
         }
     }
@@ -70,10 +66,59 @@ export class GafCard {
         }
     }
 
+    /** Mark the card as ready for `path`: updates local signals, the shared
+     *  FilesService, writes the path into the persisted config, clears the
+     *  gene-list pair (they belong to the previous annotation), and loads
+     *  the file's date. Shared between download, manual pick, and
+     *  organism-switch-with-existing-file paths. */
+    private async applyFile(path: string) {
+        const home = await homeDir();
+        this.filePath.set(path);
+        this.displayPath.set(shortenPath(path, home));
+        this.version.set(null);
+        this.filesService.gafVersion.set(null);
+        this.filesService.setPath('annotation', path);
+        try {
+            await invoke('set_gaf_file', { path });
+        } catch (error) {
+            console.error('Failed to persist GAF path:', error);
+        }
+        this.filesService.clearGeneFiles();
+        void this.loadDate(path);
+    }
+
+    /** Reset the card to the empty "No file selected" state and clear the
+     *  persisted gaf_file (plus pop/study) so the rest of the app cannot
+     *  silently analyse against a stale annotation belonging to a different
+     *  organism. */
+    private async clearFile() {
+        this.filePath.set(null);
+        this.displayPath.set(null);
+        this.version.set(null);
+        this.filesService.annotationPath.set(null);
+        this.filesService.gafVersion.set(null);
+        this.filesService.clearGeneFiles();
+        try {
+            await invoke('clear_gaf_file');
+        } catch (error) {
+            console.error('Failed to clear GAF path:', error);
+        }
+    }
+
     async onOrganismChange(organism: string) {
         this.selectedOrganism.set(organism);
         this.filesService.gafOrganism.set(organism);
-        await this.downloadGaf();
+        try {
+            const existing = await invoke<string | null>('find_existing_gaf_for_organism', { organism });
+            if (existing) {
+                await this.applyFile(existing);
+            } else {
+                await this.clearFile();
+            }
+        } catch (error) {
+            console.error('Could not look up GAF for organism:', error);
+            await this.clearFile();
+        }
     }
 
     async downloadGaf() {
@@ -84,17 +129,7 @@ export class GafCard {
         try {
             await invoke('download_gaf', { organism });
             const config = await invoke<{ gaf_file: string | null }>('get_config');
-            const path = config.gaf_file;
-            if (!path) return;
-            const home = await homeDir();
-            this.filePath.set(path);
-            this.displayPath.set(shortenPath(path, home));
-            await invoke('set_gaf_file', { path });
-            this.filesService.setPath('annotation', path);
-            this.filesService.clearGeneFiles();
-            this.version.set(null);
-            this.filesService.gafVersion.set(null);
-            void this.loadDate(path);
+            if (config.gaf_file) await this.applyFile(config.gaf_file);
         } catch (error) {
             this.snackBar.open(`Download failed: ${error}`, 'Close', { panelClass: ['custom-snackbar'] });
         } finally {
@@ -110,15 +145,6 @@ export class GafCard {
             filters: [{ name: 'GAF File', extensions: ['gaf', 'gz'] }]
         });
         if (!path) return;
-
-        const home = await homeDir();
-        this.filePath.set(path as string);
-        this.displayPath.set(shortenPath(path as string, home));
-        await invoke('set_gaf_file', { path });
-        this.filesService.setPath('annotation', path as string);
-        this.filesService.clearGeneFiles();
-        this.version.set(null);
-        this.filesService.gafVersion.set(null);
-        void this.loadDate(path as string);
+        await this.applyFile(path as string);
     }
 }

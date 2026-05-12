@@ -12,8 +12,10 @@ mod commands;
 use crate::commands::config::Config;
 use commands::{
     analysis::run_analysis,
-    config::{get_config, set_gaf_file, set_go_file, set_population_file, set_study_file},
-    downloader::{download_gaf, download_go, get_available_organisms},
+    config::{
+        clear_gaf_file, get_config, set_gaf_file, set_go_file, set_population_file, set_study_file,
+    },
+    downloader::{download_gaf, download_go, find_existing_gaf_for_organism, get_available_organisms},
     loaders::{
         build_annotation_index, get_gaf_date, get_go_date, path_exists, process_gaf_file,
         process_gene_file, process_go_file,
@@ -50,10 +52,12 @@ fn main() {
             set_gaf_file,
             set_study_file,
             set_population_file,
+            clear_gaf_file,
             // downloader
             download_go,
             download_gaf,
             get_available_organisms,
+            find_existing_gaf_for_organism,
             // loaders
             process_go_file,
             process_gaf_file,

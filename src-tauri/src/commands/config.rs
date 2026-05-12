@@ -180,3 +180,20 @@ pub fn get_config(state: tauri::State<AppState>) -> Result<Config, String> {
         .map_err(|_| "Failed to lock config".to_string())?;
     Ok(config.clone())
 }
+
+/// Clears the configured GAF file (and the gene-list pair, since study /
+/// population sets only make sense for the previously-loaded annotation).
+/// Used when the user switches organism to a value that has no downloaded
+/// file on disk; prevents the backend from running an analysis against the
+/// stale annotation that the UI no longer reflects.
+#[tauri::command]
+pub fn clear_gaf_file(state: tauri::State<AppState>) -> Result<(), String> {
+    let mut config = state
+        .config
+        .lock()
+        .map_err(|_| "Failed to lock config".to_string())?;
+    config.gaf_file = None;
+    config.pop_file = None;
+    config.study_file = None;
+    config.save()
+}
