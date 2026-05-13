@@ -4,7 +4,7 @@ version = "0.1.4"
 description = "Gene Ontology overrepresentation analysis — desktop application built with Tauri, Rust, and Angular."
 authors = ["Lukas Ramlow", "Jasmin Scholtes", "Daniel Danis", "Peter N. Robinson"]
 license = "MIT"
-repository = "https://github.com/P2GX/Ontologizer-Tauri"
+repository = "https://github.com/P2GX/ontologizer-gui"
 default-run = "ontologizer"
 edition = "2021"
 
