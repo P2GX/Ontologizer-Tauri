@@ -24,7 +24,7 @@ Each organism folder contains:
 
 ## Construction
 
-The study sets follow the simulation procedure described in the [Ontologizer 3 manuscript](#TODO-cite). GO terms were sampled at random and a fraction of each term's annotated genes was added to the study set, until the study set reached a target size. Unrelated noise genes were then added to reach a target *gene precision*. 
+The `study_genes.txt` file follow the simulation procedure described in the [Ontologizer 3 manuscript](#TODO-cite). GO terms were sampled at random and a fraction of each term's annotated genes was added to the study set, until the study set reached a target size. Unrelated noise genes were then added to reach a target *gene precision*. 
 Each dataset uses **gene recall** $\rho = 0.4$ (40% of each causal term's genes are included) and **gene precision** $\eta = 0.5$ (half the study set is causal, half noise), corresponding to a moderate-signal, moderate-noise regime.
 
 The `solution.tsv` file is tab-separated with two columns, containing the GO term ID (or the label `Noise` for unrelated genes) and a comma-separated list of the genes drawn from that term and added to the study set:
