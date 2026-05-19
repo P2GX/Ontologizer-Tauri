@@ -600,7 +600,7 @@
 </blockquote>
 <hr />
 <h2 id="overrepresentation-analysis">📊 Overrepresentation Analysis</h2>
-<p>One of the most important applications of GO is in the analysis of lists of differentially expressed genes derived from exploratory experiments in which the transcriptional activity of all or most genes is assayed with RNA-seq or comparable methods. <strong>GO Overrepresentation Analysis (GORA)</strong> asks the question of whether more genes annotated to a given GO term are found to be differentially expressed than one would expect by chance. If so, then we say that genes annotated to the GO term are "overrepresented" in the set of differentially expressed genes.</p>
+<p>One of the most important applications of GO is in the analysis of lists of differentially expressed genes derived from exploratory experiments in which the transcriptional activity of all or most genes is assayed with RNA-seq or comparable methods. <strong>GO Overrepresentation Analysis (ORA)</strong> asks the question of whether more genes annotated to a given GO term are found to be differentially expressed than one would expect by chance. If so, then we say that genes annotated to the GO term are "overrepresented" in the set of differentially expressed genes.</p>
 <p>We implement two primary approaches to tackle this statistical challenge:</p>
 <table>
 <thead>
@@ -612,14 +612,14 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Term-for-Term (TfT)</strong></td>
+<td style="text-align: left;"><strong>Fisher's Exact Test (FET)</strong></td>
 <td style="text-align: left;">Frequentist</td>
-<td style="text-align: left;">Uses the <strong>Fisher Exact Test (FET)</strong> for each term individually. Simple, but often results in many redundant, highly correlated terms due to the hierarchical nature of the GO.</td>
+<td style="text-align: left;">Tests each GO term independently for overrepresentation of study-set genes among its annotations, returning an adjusted $p$-value per term. Simple and fast, but the hierarchical structure of the GO leads to many redundant, correlated terms.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Model-Based (MGSA)</strong></td>
+<td style="text-align: left;"><strong>Model-Based Gene Set Analysis (MGSA)</strong></td>
 <td style="text-align: left;">Bayesian</td>
-<td style="text-align: left;">Analyzes all categories simultaneously via a <strong>Bayesian network</strong>. This approach naturally accounts for category overlap and eliminates the need for manual multiple-testing correction.</td>
+<td style="text-align: left;">Evaluates all GO terms jointly in a Bayesian network, returning a posterior probability of activation per term. The joint model naturally accounts for term overlap and removes the need for multiple-testing correction.</td>
 </tr>
 </tbody>
 </table>
@@ -627,11 +627,11 @@
 <h2 id="availability">🛠 Availability</h2>
 <p>The Ontologizer ecosystem is built for speed and portability using <strong>Rust</strong>.</p>
 <h3 id="rust-library">🦀 Rust Library</h3>
-<p>The core engine for TfT and MGSA calculations, designed for integration into other bioinformatics pipelines.
+<p>The core engine for FET and MGSA calculations, designed for integration into other bioinformatics pipelines.
 * <strong>Source:</strong> <a href="https://github.com/P2GX/ontologizer">P2GX/ontologizer</a></p>
 <h3 id="desktop-application">💻 Desktop Application</h3>
 <p>A user-friendly graphical interface built with the <strong>Tauri</strong> framework, offering a native experience across Windows, macOS, and Linux.
-* <strong>Source:</strong> <a href="https://github.com/P2GX/Ontologizer-Tauri">P2GX/Ontologizer-Tauri</a></p>
+* <strong>Source:</strong> <a href="https://github.com/P2GX/ontologizer-gui">P2GX/ontologizer-gui</a></p>
 
 
 
