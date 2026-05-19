@@ -43,6 +43,9 @@
         <mat-divider class="horizontal" />
         <div class ="button-and-warning">
             <button class="button" [disabled]="!allFilesLoaded() || isProcessingAll()" (click)="processFiles()">
+                @if (isProcessingAll()) {
+                    <span class="material-symbols-outlined button-spinner spinning" aria-hidden="true">progress_activity</span>
+                }
                 {{ isProcessingAll() ? 'Processing...' : 'Process Files' }}
             </button>
             @if (isProcessingAll()) {

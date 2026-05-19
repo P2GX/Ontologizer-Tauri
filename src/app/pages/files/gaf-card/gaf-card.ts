@@ -50,7 +50,9 @@ export class GafCard {
             // as ready once that file actually exists on disk.
             const exists = await invoke<boolean>('path_exists', { path: config.gaf_file });
             if (exists) {
-                await this.applyFile(config.gaf_file);
+                // Startup restore: the saved gene files belong to this same
+                // GAF, so don't clear them.
+                await this.applyFile(config.gaf_file, false);
             }
         }
     }
@@ -67,11 +69,12 @@ export class GafCard {
     }
 
     /** Mark the card as ready for `path`: updates local signals, the shared
-     *  FilesService, writes the path into the persisted config, clears the
-     *  gene-list pair (they belong to the previous annotation), and loads
+     *  FilesService, writes the path into the persisted config, and loads
      *  the file's date. Shared between download, manual pick, and
-     *  organism-switch-with-existing-file paths. */
-    private async applyFile(path: string) {
+     *  organism-switch-with-existing-file paths. Pass `clearGenes = false`
+     *  on the startup-restore path so the previously-saved pop/study files
+     *  survive across app restarts. */
+    private async applyFile(path: string, clearGenes = true) {
         const home = await homeDir();
         this.filePath.set(path);
         this.displayPath.set(shortenPath(path, home));
@@ -83,7 +86,9 @@ export class GafCard {
         } catch (error) {
             console.error('Failed to persist GAF path:', error);
         }
-        this.filesService.clearGeneFiles();
+        if (clearGenes) {
+            this.filesService.clearGeneFiles();
+        }
         void this.loadDate(path);
     }
 

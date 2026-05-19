@@ -62,7 +62,9 @@ export class BarChart implements AfterViewInit, OnChanges {
 
   selectedPlotOption = '-Log10(p)';
   selectedSubgraph = 'All Aspects';
-  selectedTopN = 'Significant';
+  selectedTopN = 'All Significant';
+
+  topNOptions: string[] = ['All Significant', 'Top 10', 'Top 25', 'Top 50'];
 
   /** Layout constants for canvas auto-width when there are many bars. */
   private static readonly BAR_WIDTH = 10;
@@ -72,11 +74,6 @@ export class BarChart implements AfterViewInit, OnChanges {
 
   /** The rows currently rendered. Used by the external tooltip handler. */
   private currentRows: RowData[] = [];
-
-  get topNOptions(): string[] {
-    const base = ['Top 10', 'Top 25', 'Top 50'];
-    return this.isBayesian ? base : ['Significant', ...base];
-  }
 
   /** Whether the current filter selection produces any rows to plot. */
   get hasData(): boolean {
@@ -106,9 +103,6 @@ export class BarChart implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isBayesian'] && changes['isBayesian'].isFirstChange()) {
-      this.selectedTopN = this.isBayesian ? 'Top 25' : 'Significant';
-    }
     if (changes['PlotData'] && this.PlotData && this.viewInitialized) {
       this.createChart();
     }
@@ -130,8 +124,8 @@ export class BarChart implements AfterViewInit, OnChanges {
       ? data.sort((a, b) => b.score - a.score)
       : data.sort((a, b) => a.score - b.score);
 
-    if (this.selectedTopN === 'Significant') {
-      return data.filter(row => row.score <= 0.05);
+    if (this.selectedTopN === 'All Significant') {
+      return data.filter(row => this.isBayesian ? row.score >= 0.5 : row.score <= 0.05);
     }
     const n = parseInt(this.selectedTopN.replace('Top ', ''), 10);
     return data.slice(0, n);

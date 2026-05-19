@@ -1,4 +1,4 @@
-# Ontologizer-Tauri — Claude Guidelines
+# ontologizer-gui — Claude Guidelines
 
 ## Project Overview
 Tauri + Angular desktop app for GO term enrichment analysis.

@@ -15,29 +15,11 @@ h2 {
 .contact-wrapper {
     display: flex;
     flex-direction: column;
-    /* Width tracks the tabs strip automatically: max-content sizes to the
-       widest child, and the tabs row is the widest item under it. */
+    gap: 1.75rem;
     width: max-content;
 }
 
-/* Tab visual styles + width + strip sizing live in styles.scss. */
-.tabs-container {
-    display: flex;
-    background-color: var(--md-sys-color-on-primary);
-    border: 1px solid var(--md-sys-color-outline);
-    border-radius: 0.5rem;
-    position: relative;
-    margin-bottom: 1.25rem;
-}
-
-.mat-divider.vertical {
-    width: 1px;
-    color: var(--md-sys-color-outline);
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
-
-.tab-content {
+.contact-section {
     display: flex;
     flex-direction: column;
 }
@@ -46,17 +28,6 @@ p {
     margin: 0 0 0.4rem 0;
     font-size: var(--font-standard);
     line-height: 1.4;
-}
-
-ul {
-    margin: 0.15rem 0 0.6rem 0;
-    padding-left: 1.25rem;
-    font-size: var(--font-standard);
-    line-height: 1.4;
-}
-
-li {
-    margin-bottom: 0.2rem;
 }
 
 .author-grid {
@@ -83,12 +54,6 @@ li {
     color: var(--md-sys-color-primary);
 }
 
-.author-role {
-    margin: 0;
-    font-size: var(--font-small);
-    color: var(--md-sys-color-primary);
-}
-
 .author-affiliation {
     margin: 0 0 0.4rem 0;
     font-size: var(--font-small);
@@ -96,42 +61,13 @@ li {
     font-style: italic;
 }
 
-.repo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-    gap: 1rem;
-    margin-top: 0.5rem;
-}
-
-.repo-card {
-    background-color: var(--md-sys-color-on-primary);
-    border: 1px solid var(--md-sys-color-outline);
-    border-radius: 0.5rem;
-    padding: 1rem 1.1rem;
+.repo-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
-}
-
-.repo-label {
-    margin: 0;
-    font-size: var(--font-standard);
-    font-weight: 600;
-    color: var(--md-sys-color-primary);
-}
-
-.repo-description {
-    margin: 0 0 0.25rem 0;
-    font-size: var(--font-small);
-    color: var(--md-sys-color-primary);
-}
-
-.repo-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    flex-wrap: wrap;
-    margin-top: 0.25rem;
 }
 
 .link-button {

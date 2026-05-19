@@ -65,12 +65,13 @@
             <div class="action-button-container">
                 <mat-divider class="horizontal" />
                 <div class="action-buttons">
-                    <button class="button" (click)="saveResults()">
-                        Save Results
-                    </button>
                     @if (isFigureTab) {
                         <button class="button" (click)="saveFigure()">
                             Save Figure
+                        </button>
+                    } @else {
+                        <button class="button" (click)="saveResults()">
+                            Save Results
                         </button>
                     }
                 </div>

@@ -9,7 +9,7 @@ Two complementary methods are available:
 
 ## Install
 
-Pre-built installers for Windows, macOS, and Linux are published on the [Releases page](https://github.com/P2GX/Ontologizer-Tauri/releases). Pick the bundle for your platform (`.msi` / `.dmg` / `.AppImage` / `.deb` / `.rpm`).
+Pre-built installers for Windows, macOS, and Linux are published on the [Releases page](https://github.com/P2GX/ontologizer-gui/releases). Pick the bundle for your platform (`.msi` / `.dmg` / `.AppImage` / `.deb` / `.rpm`).
 
 ## Use
 
@@ -25,9 +25,9 @@ Please cite the Ontologizer paper and the MGSA paper if you use Bayesian inferen
 
 ## Links
 
-- [Documentation](https://p2gx.github.io/Ontologizer-Tauri/) — methods, datasets, developer notes
+- [Documentation](https://p2gx.github.io/ontologizer-gui/) — methods, datasets, developer notes
 - [Rust backend (engine)](https://github.com/P2GX/ontologizer) — TfT and MGSA implementations
-- [Issue tracker](https://github.com/P2GX/Ontologizer-Tauri/issues)
+- [Issue tracker](https://github.com/P2GX/ontologizer-gui/issues)
 
 ## License
 

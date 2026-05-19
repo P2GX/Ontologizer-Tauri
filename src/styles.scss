@@ -146,6 +146,24 @@ body { margin: 0; font-family: "Trebuchet MS", Trebuchet, sans-serif; color: var
     width: 1.2em;
 }
 
+.button .button-spinner {
+    font-size: var(--font-highlight);
+    color: var(--md-sys-color-on-primary-container);
+    line-height: 1;
+}
+
+/* ===== Shared Spinner =====
+   Used inside disabled primary buttons (and reusable elsewhere) to show that
+   an async operation is still running while the surrounding UI is greyed out. */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.spinning {
+    animation: spin 1.4s linear infinite;
+}
+
 .disabled-state {
     opacity: 0.6;
 }

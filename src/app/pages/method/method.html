@@ -13,7 +13,7 @@
                  (click)="setCategory('Frequentist')">
                 <app-card-header cardTitle="Statistical Testing" [ready]="isFrequentist" badgeLabel="SELECTED" />
                 <p>
-                    Tests each GO term independently using a hypergeometric test, asking
+                    Tests each GO term independently using a Fisher's exact test, asking
                     whether more study genes are annotated to the term than would be expected
                     by chance given the population. The result is one adjusted <em>p-value</em>
                     per term. Pick this if you want a fast, term-by-term answer with familiar
@@ -113,13 +113,16 @@
     }
 
     <!-- Start Analysis Button with Dividers -->
-    <div class="action-button-container" [class.disabled-state]="!selectedMethod || isAnalysing">
+    <div class="action-button-container" [class.disabled-state]="!selectedMethod || isAnalysing()">
         <mat-divider class="horizontal" />
         <div class="button-and-warning">
-            <button class="button" [disabled]="!selectedMethod || isAnalysing" (click)="startAnalysis()">
-                {{ buttonLabel }}
+            <button class="button" [disabled]="!selectedMethod || isAnalysing()" (click)="startAnalysis()">
+                @if (isAnalysing()) {
+                    <span class="material-symbols-outlined button-spinner spinning" aria-hidden="true">progress_activity</span>
+                }
+                {{ isAnalysing() ? 'Analyzing...' : 'Run Analysis' }}
             </button>
-            @if (isAnalysing && stepHint) {
+            @if (isAnalysing() && stepHint) {
                 <span class="action-hint">
                     <span class="material-symbols-outlined warning-icon" aria-hidden="true">schedule</span>
                     {{ stepHint }}, this may take a moment.

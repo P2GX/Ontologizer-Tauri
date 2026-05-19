@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenu } from '../../shared/dropdown-menu/dropdown-menu';
@@ -20,26 +20,19 @@ import { openUrl } from '@tauri-apps/plugin-opener';
 
 export class Method {
 
-  private justCompleted = false;
+  private analysisService = inject(AnalysisService);
+  readonly filesService = inject(FilesService);
+  private resultsService = inject(ResultsService);
+  private router = inject(Router);
 
   get selectedMethod() { return this.analysisService.selectedMethod(); }
   get correction() { return this.analysisService.correction(); }
-  get isAnalysing() { return this.analysisService.isAnalysing(); }
+  isAnalysing = this.analysisService.isAnalysing;
   get analysisStep() { return this.analysisService.analysisStep(); }
   get errorMessage() { return this.analysisService.errorMessage(); }
   get stepHint(): string {
     const step = this.analysisStep;
     return step === 'idle' ? '' : STEP_LABELS[step];
-  }
-
-  get buttonLabel(): string {
-    if (this.isAnalysing) {
-      const hint = this.stepHint;
-      return hint ? `${hint}…` : 'Analyzing…';
-    }
-    if (this.justCompleted) return 'Done!';
-    if (this.resultsService.hasResults) return 'Rerun Analysis';
-    return 'Start Analysis';
   }
 
   readonly correctionOptions: Correction[] = ['Bonferroni', 'BonferroniHolm', 'BenjaminiHochberg', 'None'];
@@ -61,13 +54,6 @@ export class Method {
       console.error('Failed to open link:', error);
     }
   }
-
-  constructor(
-    private analysisService: AnalysisService,
-    readonly filesService: FilesService,
-    private resultsService: ResultsService,
-    private router: Router
-  ) { }
 
   setCategory(category: 'Frequentist' | 'Bayesian') {
     if (category === 'Bayesian') {
@@ -109,11 +95,9 @@ export class Method {
       await this.resultsService.runAnalysis();
       this.analysisService.analysisStep.set('output');
       await this.resultsService.loadAnalysisOutput();
-      this.analysisService.analysisStep.set('graph');
       await this.resultsService.loadDotData();
       this.analysisService.analysisStep.set('done');
-      this.justCompleted = true;
-      setTimeout(() => this.router.navigate(['/results']), 1000);
+      void this.router.navigate(['/results']);
     } catch (error) {
       console.error('Error running analysis:', error);
       const detail = typeof error === 'string' ? error : String(error);

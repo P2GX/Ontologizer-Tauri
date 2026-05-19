@@ -33,7 +33,7 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('CCgraphvizContainer', { static: true }) CCgraphvizContainer!: ElementRef;
 
   subgraphs: string[] = ['Molecular Function', 'Biological Process', 'Cellular Component'];
-  topNOptions: string[] = ['Significant', 'Top 10', 'Top 25', 'Top 50'];
+  topNOptions: string[] = ['All Significant', 'Top 10', 'Top 25', 'Top 50'];
 
   private readonly SUBGRAPH_CODES: Record<string, 'MF' | 'BP' | 'CC'> = {
     'Molecular Function': 'MF',
@@ -43,7 +43,7 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
   selectedChart: 'MF' | 'BP' | 'CC' = 'MF';
   selectedSubgraph: string = 'Molecular Function';
-  selectedTopN: string = 'Significant';
+  selectedTopN: string = 'All Significant';
 
   dotStrings: Record<'BP' | 'MF' | 'CC', string> = { BP: '', MF: '', CC: '' };
   private renderedAspects: Set<'MF' | 'BP' | 'CC'> = new Set();
@@ -53,13 +53,6 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
   private graphvizInstances: Partial<Record<'MF' | 'BP' | 'CC', any>> = {};
   /** Per-node tooltip data, keyed by GO term id. Populated in generateDot. */
   private nodeTooltips = new Map<string, TermTooltipData>();
-
-  private updateOptionsForMethod(): void {
-    this.topNOptions = this.isBayesian
-      ? ['Posterior', 'Top 10', 'Top 25', 'Top 50']
-      : ['Significant', 'Top 10', 'Top 25', 'Top 50'];
-    this.selectedTopN = this.isBayesian ? 'Posterior' : 'Significant';
-  }
 
   selectChart(chart: string) {
     const code = this.SUBGRAPH_CODES[chart];
@@ -90,12 +83,12 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
     // 1. Determine seed nodes based on selection
     let seed_nodes: NodeData[];
-    if (this.selectedTopN === 'Significant' || this.selectedTopN === 'Posterior') {
+    if (this.selectedTopN === 'All Significant') {
       // Use only terms that passed the significance threshold (applied by backend)
       seed_nodes = Object.values(this.dotData[subgraph].nodes.significant);
       seed_nodes.sort((a, b) => this.isBayesian ? b.p_val - a.p_val : a.p_val - b.p_val);
     } else {
-      // Top N: pick from ALL tested terms (not just significant ones), sorted by score
+      // Top N: pick from ALL tested terms (not just All Significant ones), sorted by score
       const all_tested = Object.values(this.dotData[subgraph].nodes.tested);
       all_tested.sort((a, b) => this.isBayesian ? b.p_val - a.p_val : a.p_val - b.p_val);
       const n = this.selectedTopN === 'Top 10' ? 10 : this.selectedTopN === 'Top 25' ? 25 : 50;
@@ -187,14 +180,10 @@ export class GoGraph implements AfterViewInit, OnChanges, OnDestroy {
 
   ngAfterViewInit(): void {
     this.viewInitialized = true;
-    this.updateOptionsForMethod();
     if (this.dotData) this.renderAll();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['isBayesian'] && this.viewInitialized) {
-      this.updateOptionsForMethod();
-    }
     if (changes['dotData'] && this.dotData && this.viewInitialized) {
       this.renderAll();
     }

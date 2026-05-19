@@ -15,13 +15,12 @@ export const CORRECTION_NAMES: Record<Correction, string> = {
   None: 'None',
 };
 
-export type AnalysisStep = 'idle' | 'enrichment' | 'output' | 'graph' | 'done';
+export type AnalysisStep = 'idle' | 'enrichment' | 'output' | 'done';
 
 export const STEP_LABELS: Record<AnalysisStep, string> = {
   idle: '',
   enrichment: 'Computing enrichment',
   output: 'Loading results',
-  graph: 'Building GO graph',
   done: 'Done',
 };
 

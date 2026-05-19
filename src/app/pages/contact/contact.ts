@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { MatDividerModule } from '@angular/material/divider';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { openUrl } from '@tauri-apps/plugin-opener';
 
 interface Author {
@@ -12,27 +11,17 @@ interface Author {
 
 interface Repo {
   label: string;
-  description: string;
-  repoUrl: string;
-  issueUrl: string;
+  url: string;
 }
-
-type ContactTab = 'authors' | 'repository' | 'license';
 
 @Component({
   selector: 'app-contact',
-  imports: [MatDividerModule],
+  imports: [],
   templateUrl: './contact.html',
   styleUrl: './contact.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Contact {
-  readonly selectedTab = signal<ContactTab>('authors');
-
-  selectTab(tab: ContactTab): void {
-    this.selectedTab.set(tab);
-  }
-
   readonly authors: Author[] = [
     { name: 'Lukas Ramlow',   affiliation: 'Berlin Institute of Health at Charité Universitätsmedizin',   role: 'Corresponding',          orcid: '0000-0001-6089-0613',  email: 'lukas.ramlow@bih-charite.de' },
     { name: 'Jasmin Scholtes',   affiliation: 'Berlin Institute of Health at Charité Universitätsmedizin',   role: 'Role'},
@@ -41,18 +30,8 @@ export class Contact {
   ];
 
   readonly repos: Repo[] = [
-    {
-      label: 'Frontend (Angular + Tauri)',
-      description: 'Desktop UI, charts, and graph rendering.',
-      repoUrl:  'https://github.com/P2GX/Ontologizer-Tauri',
-      issueUrl: 'https://github.com/P2GX/Ontologizer-Tauri/issues',
-    },
-    {
-      label: 'Backend (Rust)',
-      description: 'GO/GAF parsing, indexing, enrichment algorithms.',
-      repoUrl:  'https://github.com/P2GX/ontologizer',
-      issueUrl: 'https://github.com/P2GX/ontologizer/issues',
-    },
+    { label: 'Frontend (Angular + Tauri)', url: 'https://github.com/P2GX/ontologizer-gui' },
+    { label: 'Backend (Rust)',             url: 'https://github.com/P2GX/ontologizer' },
   ];
 
   readonly licenseUrl = 'https://opensource.org/license/MIT';

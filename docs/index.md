@@ -20,14 +20,14 @@ The GO is organized as a graph where terms are linked by **is-a** and **part-of*
 
 ## 📊 Overrepresentation Analysis 
 
-One of the most important applications of GO is in the analysis of lists of differentially expressed genes derived from exploratory experiments in which the transcriptional activity of all or most genes is assayed with RNA-seq or comparable methods. **GO Overrepresentation Analysis (GORA)** asks the question of whether more genes annotated to a given GO term are found to be differentially expressed than one would expect by chance. If so, then we say that genes annotated to the GO term are "overrepresented" in the set of differentially expressed genes.
+One of the most important applications of GO is in the analysis of lists of differentially expressed genes derived from exploratory experiments in which the transcriptional activity of all or most genes is assayed with RNA-seq or comparable methods. **GO Overrepresentation Analysis (ORA)** asks the question of whether more genes annotated to a given GO term are found to be differentially expressed than one would expect by chance. If so, then we say that genes annotated to the GO term are "overrepresented" in the set of differentially expressed genes.
 
 We implement two primary approaches to tackle this statistical challenge:
 
-| Method | Approach | Description |
-| :--- | :--- | :--- |
-| **Term-for-Term (TfT)** | Frequentist | Uses the **Fisher Exact Test (FET)** for each term individually. Simple, but often results in many redundant, highly correlated terms due to the hierarchical nature of the GO. |
-| **Model-Based (MGSA)** | Bayesian | Analyzes all categories simultaneously via a **Bayesian network**. This approach naturally accounts for category overlap and eliminates the need for manual multiple-testing correction. |
+| Method                                   | Approach    | Description                                                                                                                                                                                                                                       |
+|:-----------------------------------------|:------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Fisher's Exact Test (FET)**            | Frequentist | Tests each GO term independently for overrepresentation of study-set genes among its annotations, returning an adjusted $p$-value per term. Simple and fast, but the hierarchical structure of the GO leads to many redundant, correlated terms. |
+| **Model-Based Gene Set Analysis (MGSA)** | Bayesian    | Evaluates all GO terms jointly in a Bayesian network, returning a posterior probability of activation per term. The joint model naturally accounts for term overlap and removes the need for multiple-testing correction.                         |
 
 ---
 
@@ -36,12 +36,12 @@ We implement two primary approaches to tackle this statistical challenge:
 The Ontologizer ecosystem is built for speed and portability using **Rust**.
 
 ### 🦀 Rust Library
-The core engine for TfT and MGSA calculations, designed for integration into other bioinformatics pipelines.
+The core engine for FET and MGSA calculations, designed for integration into other bioinformatics pipelines.
 * **Source:** [P2GX/ontologizer](https://github.com/P2GX/ontologizer)
 
 ### 💻 Desktop Application
 A user-friendly graphical interface built with the **Tauri** framework, offering a native experience across Windows, macOS, and Linux.
-* **Source:** [P2GX/Ontologizer-Tauri](https://github.com/P2GX/Ontologizer-Tauri)
+* **Source:** [P2GX/ontologizer-gui](https://github.com/P2GX/ontologizer-gui)
 
 
 
