@@ -1,11 +1,14 @@
 # Example datasets
 
 Ontologizer 3 comes with five simulated datasets at `/datasets/`, one for each organism supported for automatic GAF download:
-* `fly/` - *Drosophila melanogaster*
-* `human/` - *Homo sapiens*
-* `mouse/` - *Mus musculus*
-* `rat/` - *Rattus norvegicus*
-* `yeast/` - *Saccharomyces cerevisiae*
+
+| Common name | Organism                   | GAF file  |
+|:------------|:---------------------------|:----------|
+| fly         | *Drosophila melanogaster*  | `fb.gaf`  |
+| human       | *Homo sapiens*             | `goa_human.gaf` |
+| mouse       | *Mus musculus*             | `mgi.gaf` |
+| rat         | *Rattus norvegicus*        | `rgd.gaf` |
+| yeast       | *Saccharomyces cerevisiae* | `sgd.gaf` |
 
 To try one of the datasets, download the `datasets` folder for your organism of interest. Then launch Ontologizer, download the GO and corresponding GO association file from within the application, then load the population and study gene files from the downloaded dataset folder. 
 
