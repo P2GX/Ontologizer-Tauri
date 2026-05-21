@@ -15,13 +15,44 @@ h2 {
 .contact-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 1.75rem;
-    width: max-content;
+    width: 80cqw;
 }
 
-.contact-section {
+/* Per-page chrome only; tab width + strip sizing are shared in styles.scss
+   (matches help/results). The entrance animation is contact-specific. */
+.tabs-container {
+    display: flex;
+    background-color: var(--md-sys-color-on-primary);
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 0.5rem;
+    position: relative;
+    animation-timing-function: ease-in;
+    animation: contact-enter 0.5s;
+    margin-bottom: 2rem;
+}
+
+.mat-divider.vertical {
+    width: 1px;
+    color: var(--md-sys-color-outline);
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+@keyframes contact-enter {
+    from { top: -1rem; opacity: 0; }
+    to { top: 0; opacity: 1; }
+}
+
+/* Cap the content well below the 80cqw wrapper: Contact holds only a few
+   cards / a single line, so the full width looked sparse. Centered so it
+   sits under the (centered) tab strip. */
+.tab-content {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    max-width: 52rem;
+    align-self: center;
+    text-align: center;
 }
 
 p {
@@ -32,7 +63,7 @@ p {
 
 .author-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
     margin-top: 0.5rem;
 }
@@ -54,6 +85,12 @@ p {
     color: var(--md-sys-color-primary);
 }
 
+.author-role {
+    margin: 0;
+    font-size: var(--font-small);
+    color: var(--md-sys-color-primary);
+}
+
 .author-affiliation {
     margin: 0 0 0.4rem 0;
     font-size: var(--font-small);
@@ -61,13 +98,44 @@ p {
     font-style: italic;
 }
 
-.repo-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.repo-grid {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+    max-width: 30rem;
+    margin: 0.5rem auto 0;
+}
+
+.repo-card {
+    background-color: var(--md-sys-color-on-primary);
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 0.5rem;
+    padding: 1rem 1.1rem;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+}
+
+.repo-label {
+    margin: 0;
+    font-size: var(--font-standard);
+    font-weight: 600;
+    color: var(--md-sys-color-primary);
+}
+
+.repo-description {
+    margin: 0 0 0.25rem 0;
+    font-size: var(--font-small);
+    color: var(--md-sys-color-primary);
+}
+
+.repo-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
 }
 
 .link-button {
@@ -80,7 +148,7 @@ p {
     font-size: inherit;
     text-decoration: underline;
     cursor: pointer;
-    text-align: left;
+    text-align: center;
 }
 
 .link-button:hover {

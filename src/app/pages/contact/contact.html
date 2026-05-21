@@ -1,41 +1,55 @@
 <div class="contact-body">
     <div class="contact-wrapper">
-        <section class="contact-section">
-            <h2>Authors</h2>
-            <p>Ontologizer 3.0 is developed and maintained by the team below.</p>
-            <div class="author-grid">
-                @for (a of authors; track a.name) {
-                    <article class="author-card">
-                        <h3 class="author-name">{{ a.name }}</h3>
-                        <p class="author-affiliation" [innerHTML]="a.affiliation"></p>
-                        @if (a.orcid) {
-                            <button type="button" class="link-button" (click)="open('https://orcid.org/' + a.orcid)">ORCID: {{ a.orcid }}</button>
-                        }
-                        @if (a.email) {
-                            <button type="button" class="link-button" (click)="open('mailto:' + a.email)">{{ a.email }}</button>
-                        }
-                    </article>
-                }
-            </div>
-        </section>
+        <div class="tabs-container">
+            <button class="tab-button" [class.active]="selectedTab() === 'authors'"
+                (click)="selectTab('authors')">Authors</button>
+            <mat-divider class="vertical" [vertical]="true"></mat-divider>
+            <button class="tab-button" [class.active]="selectedTab() === 'repository'"
+                (click)="selectTab('repository')">Repository</button>
+        </div>
 
-        <section class="contact-section">
-            <h2>Repositories</h2>
-            <ul class="repo-list">
-                @for (r of repos; track r.url) {
-                    <li>
-                        <button type="button" class="link-button" (click)="open(r.url)">{{ r.label }}: {{ r.url }}</button>
-                    </li>
-                }
-            </ul>
-        </section>
+        @switch (selectedTab()) {
+            @case ('authors') {
+                <div class="tab-content">
+                    <p>Ontologizer 3.0 is developed and maintained by the team below.</p>
+                    <div class="author-grid">
+                        @for (a of authors; track a.name) {
+                            <article class="author-card">
+                                <h3 class="author-name">{{ a.name }}</h3>
+                                <p class="author-affiliation" [innerHTML]="a.affiliation"></p>
+                                @if (a.orcid) {
+                                    <button type="button" class="link-button" (click)="open('https://orcid.org/' + a.orcid)">ORCID: {{ a.orcid }}</button>
+                                }
+                                @if (a.email) {
+                                    <button type="button" class="link-button" (click)="open('mailto:' + a.email)">{{ a.email }}</button>
+                                }
+                            </article>
+                        }
+                    </div>
+                </div>
+            }
 
-        <section class="contact-section">
-            <h2>License</h2>
-            <p>
-                Ontologizer 3.0 is distributed under the
-                <button type="button" class="link-button" (click)="open(licenseUrl)">MIT License</button>.
-            </p>
-        </section>
+            @case ('repository') {
+                <div class="tab-content">
+                    <p>Ontologizer 3.0 is split across two repositories. The fastest way to reach the maintainers is to file an issue against the relevant one.</p>
+                    <div class="repo-grid">
+                        @for (r of repos; track r.repoUrl) {
+                            <article class="repo-card">
+                                <h3 class="repo-label">{{ r.label }}</h3>
+                                <p class="repo-description">{{ r.description }}</p>
+                                <div class="repo-actions">
+                                    <button type="button" class="button-secondary" (click)="open(r.repoUrl)">Open repository</button>
+                                    <button type="button" class="button-tonal" (click)="open(r.issueUrl)">Report an issue</button>
+                                </div>
+                            </article>
+                        }
+                        <p>
+                            Ontologizer 3.0 is distributed under the
+                            <button type="button" class="link-button" (click)="open(licenseUrl)">MIT License</button>.
+                        </p>
+                    </div>
+                </div>
+            }
+        }
     </div>
 </div>

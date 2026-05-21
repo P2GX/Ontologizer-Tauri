@@ -109,7 +109,8 @@ pub async fn download_gaf(
 
     fs::write(&target_path, &bytes).map_err(|e| format!("Failed to write GAF file: {e}"))?;
 
-    // 4. Update config — also clears study/pop file paths
+    // 4. Update config — clears study/pop file paths only if this GAF differs
+    //    from the one already stored (i.e. a different organism)
     let mut config = state
         .config
         .lock()

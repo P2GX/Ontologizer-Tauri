@@ -51,8 +51,8 @@ export class GafCard {
             const exists = await invoke<boolean>('path_exists', { path: config.gaf_file });
             if (exists) {
                 // Startup restore: the saved gene files belong to this same
-                // GAF, so don't clear them.
-                await this.applyFile(config.gaf_file, false);
+                // GAF, so don't touch them (config already holds this path).
+                await this.applyFile(config.gaf_file, true);
             }
         }
     }
@@ -71,22 +71,35 @@ export class GafCard {
     /** Mark the card as ready for `path`: updates local signals, the shared
      *  FilesService, writes the path into the persisted config, and loads
      *  the file's date. Shared between download, manual pick, and
-     *  organism-switch-with-existing-file paths. Pass `clearGenes = false`
-     *  on the startup-restore path so the previously-saved pop/study files
-     *  survive across app restarts. */
-    private async applyFile(path: string, clearGenes = true) {
+     *  organism-switch-with-existing-file paths.
+     *
+     *  Gene lists belong to the current annotation, so the pop/study selection
+     *  is cleared only when the GAF path actually changes. Pass
+     *  `isRestore = true` on the startup-restore path: the saved genes belong
+     *  to this same GAF, and the config already holds it, so we neither clear
+     *  the signals nor re-persist (re-persisting is what previously wiped the
+     *  genes across restarts). */
+    private async applyFile(path: string, isRestore = false) {
         const home = await homeDir();
+        const gafChanged = !isRestore && this.filePath() !== path;
+
         this.filePath.set(path);
         this.displayPath.set(shortenPath(path, home));
         this.version.set(null);
         this.filesService.gafVersion.set(null);
         this.filesService.setPath('annotation', path);
-        try {
-            await invoke('set_gaf_file', { path });
-        } catch (error) {
-            console.error('Failed to persist GAF path:', error);
+
+        if (!isRestore) {
+            try {
+                // Path-aware on the backend: clears the persisted pop/study
+                // paths only when this GAF differs from the stored one.
+                await invoke('set_gaf_file', { path });
+            } catch (error) {
+                console.error('Failed to persist GAF path:', error);
+            }
         }
-        if (clearGenes) {
+
+        if (gafChanged) {
             this.filesService.clearGeneFiles();
         }
         void this.loadDate(path);

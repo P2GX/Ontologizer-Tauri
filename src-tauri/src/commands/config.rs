@@ -87,9 +87,14 @@ impl Config {
         if !path.is_file() {
             return Err(format!("No file found at {}", path.display()));
         }
+        // Gene lists are scoped to a specific annotation, so invalidate them
+        // only when the GAF actually changes. Re-applying the same path
+        // (startup restore, re-downloading the same organism) must keep them.
+        if self.gaf_file.as_deref() != Some(path.as_path()) {
+            self.pop_file = None;
+            self.study_file = None;
+        }
         self.gaf_file = Some(path);
-        self.pop_file = None;
-        self.study_file = None;
         self.save()
     }
 
