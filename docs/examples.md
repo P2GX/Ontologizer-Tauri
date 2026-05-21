@@ -1,6 +1,6 @@
 # Example datasets
 
-Ontologizer 3 comes with five simulated datasets at `/datasets/`, one for each organism supported for automatic GAF download:
+Ontologizer 3 comes with five simulated datasets that can be downloaded at [Zenobo](https://doi.org/10.5281/zenodo.20325131), one for each organism supported for automatic GAF download:
 
 | Common name | Organism                   | GAF file  |
 |:------------|:---------------------------|:----------|
