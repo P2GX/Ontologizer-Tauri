@@ -1,6 +1,6 @@
 [package]
 name = "ontologizer-gui"
-version = "0.1.4"
+version = "0.1.1"
 description = "Gene Ontology overrepresentation analysis — desktop application built with Tauri, Rust, and Angular."
 authors = ["Lukas Ramlow", "Jasmin Scholtes", "Daniel Danis", "Peter N. Robinson"]
 license = "MIT"
