@@ -1,6 +1,6 @@
 # Example datasets
 
-Ontologizer 3 comes with five simulated datasets that can be downloaded at [Zenobo](https://doi.org/10.5281/zenodo.20325131), one for each organism supported for automatic GAF download:
+Ontologizer 3 comes with a dataset which is available to download from [Zenodo](https://doi.org/10.5281/zenodo.20340038). This dataset contains the necessary Gene Ontology (GO) file, along with GO association files (GAF) and simulated datasets for five commonly studied organisms.
 
 | Common name | Organism                   | GAF file  |
 |:------------|:---------------------------|:----------|
@@ -10,7 +10,7 @@ Ontologizer 3 comes with five simulated datasets that can be downloaded at [Zeno
 | rat         | *Rattus norvegicus*        | `rgd.gaf` |
 | yeast       | *Saccharomyces cerevisiae* | `sgd.gaf` |
 
-To try one of the datasets, download the `datasets` folder for your organism of interest. Then launch Ontologizer, download the GO and corresponding GO association file from within the application, then load the population and study gene files from the downloaded dataset folder. 
+To try one of the datasets, download the dataset bundle. Launch Ontologizer and either download the GO and GAF files from within the application or load them from the bundle. Then load the corresponding population and study gene files.
 
 ## Content
 
