@@ -648,8 +648,10 @@
 </tbody>
 </table>
 <h2 id="construction">Construction</h2>
-<p>The <code>study_genes.txt</code> file follow the simulation procedure described in the <a href="#TODO-cite">Ontologizer 3 manuscript</a>. GO terms were sampled at random and a fraction of each term's annotated genes was added to the study set, until the study set reached a target size. Unrelated noise genes were then added to reach a target <em>gene precision</em>. 
-Each dataset uses <strong>gene recall</strong> $\rho = 0.4$ (40% of each causal term's genes are included) and <strong>gene precision</strong> $\eta = 0.5$ (half the study set is causal, half noise), corresponding to a moderate-signal, moderate-noise regime.</p>
+<p>The <code>study_genes.txt</code> file follows the simulation procedure described in the <a href="#TODO-cite">Ontologizer 3 paper</a>. 
+GO terms were sampled at random and a fraction $\rho$ of each term's annotated genes was added to the study set, until the study set reached a target size. 
+Unrelated noise genes were then added so that a target fraction $\eta$ of the study set is annotated to a sampled term.
+Each dataset uses $\rho = 0.4$ (40% of each sampled term's annotated genes are included in the study set) and $\eta = 0.5$ (half the study-set genes are annotated to a sampled term, half are noise), corresponding to a moderate-signal, moderate-noise regime.</p>
 <p>The <code>solution.tsv</code> file is tab-separated with two columns, containing the GO term ID (or the label <code>Noise</code> for unrelated genes) and a comma-separated list of the genes drawn from that term and added to the study set:
 <div class="highlight"><pre><span></span><code>GO:0035196  PUS10,NCBP2,AGO1,LIN28B,TNRC6C,...
 GO:0030018  SYNPO2L,PDLIM7,SYNC,NEB,...
