@@ -94,14 +94,14 @@
                     </p>
                     <ul class="output-list">
                         <li>
-                            <strong>Hypergeometric test</strong> &mdash; the standard frequentist overrepresentation analysis, applied per term with multiple-testing correction.
+                            <strong>TfT</strong> &mdash; <em>term-for-term</em>, the standard frequentist overrepresentation analysis in which each GO term is tested independently with Fisher's exact test and multiple-testing correction is applied across terms.
                             <button type="button" class="go-external-link"
-                                    (click)="openExternalLink('https://pubmed.ncbi.nlm.nih.gov/17182697/')">Rivals et al., 2007</button>.
+                                    (click)="openExternalLink('https://pubmed.ncbi.nlm.nih.gov/17182697/')">Rivals et al., 2007</button>
                         </li>
                         <li>
-                            <strong>MGSA</strong> &mdash; Model-Based Gene Set Analysis, a Bayesian model that jointly evaluates all terms and returns a posterior probability of activation per term. See
+                            <strong>MGSA</strong> &mdash; <em>model-based gene set analysis</em>, a Bayesian model in which all GO terms are evaluated jointly and a posterior probability of activation is returned per term.
                             <button type="button" class="go-external-link"
-                                (click)="openExternalLink('https://pubmed.ncbi.nlm.nih.gov/20418340/')">Bauer et al., 2010</button>.
+                                (click)="openExternalLink('https://pubmed.ncbi.nlm.nih.gov/20418340/')">Bauer et al., 2010</button>
                         </li>
                     </ul>
                     <p>

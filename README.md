@@ -4,7 +4,7 @@ Ontologizer is a desktop application for **Gene Ontology overrepresentation anal
 
 Two complementary methods are available:
 
-- **Statistical Testing (Fisher's exact test)** — per-term hypergeometric test with selectable multiple-testing correction (Bonferroni, Bonferroni-Holm, Benjamini-Hochberg, or none).
+- **Statistical Testing (TfT)** — term-for-term Fisher's exact test with selectable multiple-testing correction (Bonferroni, Bonferroni-Holm, Benjamini-Hochberg, or none).
 - **Bayesian Inference (MGSA)** — model-based gene set analysis that evaluates all terms jointly and returns a posterior probability of activation per term, without needing separate MTC.
 
 ## Install
@@ -19,14 +19,11 @@ Pre-built installers for Windows, macOS, and Linux are published on the [Release
 
 The in-app **Help** page covers the file formats, the methods, and the output in more detail.
 
-## Citation
-
-Please cite the Ontologizer paper and the MGSA paper if you use Bayesian inference. BibTeX entries are available inside the app on the **Contact → Citation** tab.
 
 ## Links
 
 - [Documentation](https://p2gx.github.io/ontologizer-gui/) — methods, datasets, developer notes
-- [Rust backend (engine)](https://github.com/P2GX/ontologizer) — TfT and MGSA implementations
+- [Backend](https://github.com/P2GX/ontologizer) — TfT and MGSA implementations
 - [Issue tracker](https://github.com/P2GX/ontologizer-gui/issues)
 
 ## License
