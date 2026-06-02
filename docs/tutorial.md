@@ -13,7 +13,7 @@ When the Ontologizer first starts, it creates a configuration directory in the u
 
 This directory contains a config file that stores the locations of the previously chosen input files (if any) as well as the downloaded GO and GOA files.
 
-## GO input files.
+## Ontology files.
 
 - **go-basic.json**
 
@@ -25,6 +25,37 @@ The GO consortium maintains organism-specific annotation files that connect GO t
 
 NOTE: In June 2026, the naming conventions for the GOA files will change. The Ontologizer will provide an updated automatic downloading facility soon after, but users can manually download any of the annotations files and link them locally.
 
-## Experiment-specific files
+## Gene files
 
-todo
+Ontologizer requires experiment-specific **population gene file** and **study gene file** provided by the user. Both files list one gene symbol per line that must match the `DB_Object_Symbol` (column 3) of the GAF file for the same organism.
+- **Population gene file**
+
+The population set defines the background of genes against which enrichment is assessed. Typically, this comprises all the genes tested in the experiment. 
+For an RNA-seq experiment, this is usually the set of genes that passed expression filtering before differential-expression analysis.
+For a microarray experiment, it is the set of genes represented on the array.
+
+Example (one gene symbol per line):
+
+```text
+A1BG
+A2M
+A4GALT
+AAAS
+AACS
+...
+```
+
+- **Study gene file**
+
+The study set is the subset of the population that is "of interest". In most cases the genes called significant by upstream analysis. 
+The definition of *interest* depends on the experiment.
+
+The study file uses the same format as the population file:
+
+```text
+BRCA1
+TP53
+MYC
+RAD51
+...
+```

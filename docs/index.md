@@ -24,14 +24,14 @@ One of the most important applications of GO is the analysis of lists of differe
 
 Ontologizer 3 implements two complementary approaches to quantify overrepresentation:
 
-| Method                                   | Approach    | Description                                                                                                                                                                                                                                       |
-|:-----------------------------------------|:------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Fisher's Exact Test (FET)**            | Frequentist | Tests each GO term independently for overrepresentation of study-set genes among its annotations, returning an adjusted $p$-value per term. Simple and fast, but the hierarchical structure of the GO leads to many redundant, correlated terms. |
-| **Model-Based Gene Set Analysis (MGSA)** | Bayesian    | Evaluates all GO terms jointly in a Bayesian network, returning a posterior probability of activation per term. The joint model naturally accounts for term overlap and removes the need for multiple-testing correction.                         |
+| Method                                   | Approach    | Description                                                                                                                                                                                                                                                                                     |
+|:-----------------------------------------|:------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Term-for-Tern (TfT)**                  | Frequentist | Tests each GO term independently using a one-sided Fisher's Exact Test, returning an adjusted $p$-value per term. Simple and fast, but due the statistical dependency implied by the hierarchy of GO this approach often yields a lengthy list of significant terms.                            |
+| **Model-Based Gene Set Analysis (MGSA)** | Bayesian    | Evaluates all GO terms jointly in a Bayesian network, returning a posterior probability of activation per term. The joint model naturally accounts for term overlap, removes the need for multiple-testing correction, and yields a parsimonious set of terms that explain the observed genes . |
 
 ### When to use which
 
-Use **FET** for the familiar $p$-value-based view, particularly when results need to be compared against the output of other ORA tools. Use **MGSA** when a parsimonious set of terms that jointly explain the differentially expressed genes is preferred over a long list of frequentist enrichments. On simulated benchmarks, MGSA achieves term-level precision above 80% compared to below 10% for FET, while both methods recover the causal terms reliably.
+Use **TfT** for the familiar $p$-value-based view, particularly when results need to be compared against the output of other ORA tools. Use **MGSA** when a parsimonious set of terms that jointly explain the differentially expressed genes is preferred over a long list of frequentist enrichments.
 
 ---
 
@@ -39,20 +39,20 @@ Use **FET** for the familiar $p$-value-based view, particularly when results nee
 
 Ontologizer 3 is freely available under the MIT licence.
 
-### 💻 Desktop application
+### Desktop application
 
 A graphical interface built with the Tauri framework, offering a native experience on Windows, macOS, and Linux. Pre-built installers (`.msi`, `.exe`, `.dmg`, `.AppImage`, `.deb`, `.rpm`) are distributed via the GitHub Releases page.
 
 * **Source:** [P2GX/ontologizer-gui](https://github.com/P2GX/ontologizer-gui)
 
 
-### 🦀 Rust backend
+### Rust backend
 
 The analysis engine implementing FET and MGSA, also usable as a standalone library for integration into bioinformatics pipelines.
 
 * **Source:** [P2GX/ontologizer](https://github.com/P2GX/ontologizer)
 
-### 🧪 Benchmarking workflow
+### Benchmarking workflow
 
 A Snakemake workflow that reproduces the simulated-data benchmarks reported in the Ontologizer 3 manuscript.
 
