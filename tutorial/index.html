@@ -486,10 +486,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#go-input-files" class="md-nav__link">
+  <a href="#ontology-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GO input files.
+        Ontology files.
       
     </span>
   </a>
@@ -497,10 +497,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#experiment-specific-files" class="md-nav__link">
+  <a href="#gene-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Experiment-specific files
+        Gene files
       
     </span>
   </a>
@@ -593,7 +593,7 @@
 <div class="highlight"><pre><span></span><code>/User/username/.ontologizer
 </code></pre></div>
 <p>This directory contains a config file that stores the locations of the previously chosen input files (if any) as well as the downloaded GO and GOA files.</p>
-<h2 id="go-input-files">GO input files.</h2>
+<h2 id="ontology-files">Ontology files.</h2>
 <ul>
 <li><strong>go-basic.json</strong></li>
 </ul>
@@ -603,8 +603,32 @@
 </ul>
 <p>The GO consortium maintains organism-specific annotation files that connect GO terms to gene (products) of species. For instance, the GOA file for humans is <strong>goa_human.gaf</strong>.</p>
 <p>NOTE: In June 2026, the naming conventions for the GOA files will change. The Ontologizer will provide an updated automatic downloading facility soon after, but users can manually download any of the annotations files and link them locally.</p>
-<h2 id="experiment-specific-files">Experiment-specific files</h2>
-<p>todo</p>
+<h2 id="gene-files">Gene files</h2>
+<p>Ontologizer requires experiment-specific <strong>population gene file</strong> and <strong>study gene file</strong> provided by the user. Both files list one gene symbol per line that must match the <code>DB_Object_Symbol</code> (column 3) of the GAF file for the same organism.
+- <strong>Population gene file</strong></p>
+<p>The population set defines the background of genes against which enrichment is assessed. Typically, this comprises all the genes tested in the experiment. 
+For an RNA-seq experiment, this is usually the set of genes that passed expression filtering before differential-expression analysis.
+For a microarray experiment, it is the set of genes represented on the array.</p>
+<p>Example (one gene symbol per line):</p>
+<div class="highlight"><pre><span></span><code>A1BG
+A2M
+A4GALT
+AAAS
+AACS
+...
+</code></pre></div>
+<ul>
+<li><strong>Study gene file</strong></li>
+</ul>
+<p>The study set is the subset of the population that is "of interest". In most cases the genes called significant by upstream analysis. 
+The definition of <em>interest</em> depends on the experiment.</p>
+<p>The study file uses the same format as the population file:</p>
+<div class="highlight"><pre><span></span><code>BRCA1
+TP53
+MYC
+RAD51
+...
+</code></pre></div>
 
 
 
