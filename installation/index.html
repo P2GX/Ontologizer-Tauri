@@ -9,10 +9,6 @@
       
       
       
-        <link rel="prev" href="../tutorial/">
-      
-      
-        <link rel="next" href="../examples/">
       
       
         
@@ -23,7 +19,7 @@
     
     
       
-        <title>Developers - Ontologizer</title>
+        <title>Installation - Ontologizer</title>
       
     
     
@@ -139,7 +135,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#documentation" class="md-skip">
+        <a href="#installation" class="md-skip">
           Skip to content
         </a>
       
@@ -173,7 +169,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Developers
+              Installation
             
           </span>
         </div>
@@ -329,11 +325,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../developers/" class="md-tabs__link">
         
   
   
@@ -485,35 +479,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Developers
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../developers/" class="md-nav__link">
         
   
   
@@ -529,35 +498,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#documentation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Documentation
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -606,24 +546,121 @@
 
 
 
-  <h1>Developers</h1>
-
-<h2 id="documentation">Documentation</h2>
-<p>These pages are generated with mkdocs.</p>
-<p>To set things up, perform the following steps (substitute name of venv if needed).</p>
-<div class="highlight"><pre><span></span><code>python3 -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install mkdocs
-pip install mkdocs-material
-pip install mkdocs-material[imaging]
-pip install pillow cairosvg
-pip install mkdocs-material-extensions
-pip install mkdocstrings[python]
-</code></pre></div>
-<p>To start a local server, enter:
-<div class="highlight"><pre><span></span><code>mkdocs serve
+<h1 id="installation">Installation</h1>
+<p>Ontologizer is available as prepackaged installers for macOS, Windows, and Linux. Download the latest version from the <a href="https://github.com/p2gx/ontologizer-gui/releases">Releases</a> page.</p>
+<h2 id="installing-on-macos">Installing on macOS</h2>
+<blockquote>
+<p><strong>File to download:</strong> <code>Ontologizer_&lt;version&gt;_aarch64.dmg</code>  </p>
+<p>This is the macOS installer for Apple Silicon (M1/M2/M3/M4 Macs)</p>
+</blockquote>
+<ol>
+<li>Download the <code>.dmg</code> file from the <a href="https://github.com/p2gx/ontologizer-gui/releases">Releases</a> page</li>
+<li>Open the DMG and drag the app into your Applications folder</li>
+<li>When you try to open it, macOS will show the message:<br />
+<em>"'Ontologizer' is an app downloaded from the Internet. Are you sure you want to open it?"</em></li>
+</ol>
+<p>If you confirm, the app will be installed into your `Àpplications``folder and started. From now one you can open Ontologizer like any other application (e.g., using the Spotlight searchbar).</p>
+<h2 id="installing-on-windows">Installing on Windows</h2>
+<blockquote>
+<p><strong>File to download:</strong> <code>Ontologizer_&lt;version&gt;_x64_en-US.msi</code><br />
+Windows installer (MSI format)</p>
+</blockquote>
+<ol>
+<li>Download the <code>.msi</code> installer from the <a href="https://github.com/p2gx/ontologizer-gui/releases">Releases</a> page</li>
+<li>Double-click to start the installer</li>
+<li>If Windows shows a blue SmartScreen dialog saying:<br />
+<em>"Windows protected your PC"</em></li>
+<li>Click <strong>"More info"</strong> → <strong>"Run anyway"</strong></li>
+</ol>
+<blockquote>
+<p><strong>Note:</strong> Windows shows this for unsigned apps from new developers. Once you install and run it, the warning will not reappear.</p>
+</blockquote>
+<h2 id="installing-on-linux">Installing on Linux</h2>
+<h3 id="debianubuntu-recommended">Debian/Ubuntu (recommended)</h3>
+<blockquote>
+<p><strong>File to download:</strong> <code>Ontologizer_&lt;version&gt;_amd64.deb</code><br />
+Debian/Ubuntu package</p>
+</blockquote>
+<ol>
+<li>Download the <code>.deb</code> package from the <a href="https://github.com/p2gx/ontologizer-gui/releases">Releases</a> page</li>
+<li>Install using:
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./Ontologizer_&lt;version&gt;_amd64.deb
+</code></pre></div></li>
+</ol>
+<p>Or using dpkg:
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>dpkg<span class="w"> </span>-i<span class="w"> </span>Ontologizer_&lt;version&gt;_amd64.deb
 </code></pre></div></p>
+<h3 id="other-linux-distributions">Other Linux Distributions</h3>
+<blockquote>
+<p><strong>File to download:</strong> <code>Ontologizer_&lt;version&gt;_amd64.AppImage</code><br />
+Universal Linux application (no installation needed)</p>
+</blockquote>
+<ol>
+<li>Download the <code>.AppImage</code> file from the <a href="https://github.com/p2gx/ontologizer-gio/releases">Releases</a> page</li>
+<li>
+<p>Make it executable:
+<div class="highlight"><pre><span></span><code>chmod<span class="w"> </span>+x<span class="w"> </span>Ontologizer_&lt;version&gt;_amd64.AppImage
+</code></pre></div></p>
+</li>
+<li>
+<p>Run it:
+<div class="highlight"><pre><span></span><code>./Ontologizer_&lt;version&gt;_amd64.AppImage
+</code></pre></div></p>
+</li>
+</ol>
+<p><strong>Note for Arch-based distributions (e.g. EndeavourOS, Manjaro, etc.):</strong> The AppImage may not build/run correctly due to <code>linuxdeploy</code> compatibility issues. Use the <code>.deb</code> package instead (installable via <code>debtap</code>), or build from source and run the binary directly at <code>./src-tauri/target/release/ontologizer-gui</code>.</p>
+<h3 id="troubleshooting-on-linux">Troubleshooting on Linux</h3>
+<h4 id="crash-on-launch-failed-to-create-gbm-buffer-hybrid-gpu-wayland">Crash on launch: <code>Failed to create GBM buffer</code> (hybrid GPU / Wayland)</h4>
+<p>It seems that the Tauri/wry rendering stack on Linux goes through WebKit2GTK, which by default attempts GPU-accelerated compositing via EGL and GBM. On hybrid GPU systems with NVIDIA drivers under Wayland, GBM buffer allocation can fail because the NVIDIA proprietary driver's GBM support is incomplete or incompatible with how WebKit2GTK requests buffers. The workaround is to disable WebKit2GTK GPU compositing:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">WEBKIT_DISABLE_COMPOSITING_MODE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>./src-tauri/target/release/ontologizer-gui
+</code></pre></div>
+<h4 id="crash-during-cohort-verification-no-error-message">Crash during cohort verification (no error message)</h4>
+<p>A crash with no error message has been observed when verifying cohort data prior to Ontologizer export, after tabular data has been pasted successfully. The root cause is under investigation. If you encounter this, please report your steps in the <a href="https://github.com/P2GX/ontologizer-gui/issues">issue tracker</a>.</p>
+<hr />
+<h2 id="building-from-source">Building from Source</h2>
+<p>This will work on any OS.</p>
+<p><div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/P2GX/ontologizer-gui.git
+<span class="nb">cd</span><span class="w"> </span>ntologizer-gui
+npm<span class="w"> </span>install
+npm<span class="w"> </span>run<span class="w"> </span>tauri<span class="w"> </span>build
+</code></pre></div>
+The built installers will appear under:
+<div class="highlight"><pre><span></span><code>src-tauri/target/release/bundle/
+</code></pre></div></p>
+<h2 id="prerequisites">Prerequisites</h2>
+<h3 id="nodejs-at-least-version-18-and-npm-at-least-version-9">Node.js (at least version 18) and npm (at least version 9).</h3>
+<p>You can check if you have them installed via</p>
+<div class="highlight"><pre><span></span><code>node<span class="w"> </span>-v
+npm<span class="w"> </span>-v
+</code></pre></div>
+<p>If necessary, go to <a href="nodejs">https://nodejs.org</a> to install these programs.</p>
+<h3 id="rust-and-cargo">Rust and Cargo</h3>
+<p>See <a href="rustp.rs">https://rustup.rs</a> if needed.</p>
+<h3 id="git">Git</h3>
+<p>If you do not have git installed, replace the cloning step with a download of the archive.</p>
+<h2 id="platform-specific-code">Platform-specific code</h2>
+<p>Please report any dependencies not listed above.</p>
+<h1 id="running-the-app">Running the app</h1>
+<ol>
+<li>
+<p>Clone from GitHub
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/P2GX/ontologizer-gui.git
+<span class="nb">cd</span><span class="w"> </span>ntologizer-gui.
+</code></pre></div></p>
+</li>
+<li>
+<p>Install npm dependencies
+From within the ntologizer-gui directory, enter
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install
+</code></pre></div></p>
+</li>
+<li>
+<p>Running the app
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>tauri<span class="w"> </span>dev
+</code></pre></div></p>
+</li>
+</ol>
+<p>This will run the application.</p>
 
 
 
