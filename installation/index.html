@@ -9,6 +9,10 @@
       
       
       
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../tutorial/">
       
       
         
@@ -287,15 +291,17 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../Installation 'installation.md'" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
   
     
   
-  None
+  Installation
 
       </a>
     </li>
@@ -425,17 +431,44 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../Installation 'installation.md'" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    None
+    Installation
   
 
     
@@ -444,6 +477,198 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installing-on-macos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing on macOS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-on-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing on Windows
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-on-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing on Linux
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing on Linux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debianubuntu-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debian/Ubuntu (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#other-linux-distributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other Linux Distributions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting-on-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting on Linux
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting on Linux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crash-on-launch-failed-to-create-gbm-buffer-hybrid-gpu-wayland" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crash on launch: Failed to create GBM buffer (hybrid GPU / Wayland)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crash-during-cohort-verification-no-error-message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crash during cohort verification (no error message)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building from Source
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodejs-at-least-version-18-and-npm-at-least-version-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node.js (at least version 18) and npm (at least version 9).
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rust-and-cargo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rust and Cargo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Git
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform-specific-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform-specific code
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
