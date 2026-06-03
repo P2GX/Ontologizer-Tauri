@@ -46,7 +46,7 @@ theme:
 
 nav:
 - Home: 'index.md'
-- Installation 'installation.md'
+- Installation: 'installation.md'
 - Tutorial: 'tutorial.md'
 - Developers: 'developers.md'
 - Example datasets: 'examples.md'
