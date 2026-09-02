@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -553,6 +553,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#start-to-finish-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start-to-Finish Example
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Start-to-Finish Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-differential-expression-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Differential Expression analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-install-and-start-ontologizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Install and start Ontologizer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-load-the-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Load the files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-choose-the-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Choose the method
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-inspect-the-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Inspect the results
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tft-vs-mgsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TfT vs MGSA
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -675,6 +758,110 @@ MYC
 RAD51
 ...
 </code></pre></div>
+<h2 id="start-to-finish-example">Start-to-Finish Example</h2>
+<p>There are many ways of creating input files for the Ontologizer. In general, users will have a genomic dataset with a list of all genes to be measured (the population set) and one or more lists of study genes (e.g., differentially expressed genes or one study set for each cluster derived from the data). </p>
+<h3 id="1-differential-expression-analysis">1. Differential Expression analysis</h3>
+<p>In this example, we will assume the user has performed differential expression analysis and has one study set. For users unfamiliar with how to perform DE analysis, we recommend the following articles</p>
+<ul>
+<li><a href="https://pubmed.ncbi.nlm.nih.gov/38510977/">Rosati D, et al. (2024) Differential gene expression analysis pipelines and bioinformatic tools for the identification of specific biomarkers: A review. <em>Comput Struct Biotechnol J</em> <strong>23</strong>:1154-1168</a></li>
+<li><a href="https://pubmed.ncbi.nlm.nih.gov/33926528/">Chung M, et al. (2021) Best practices on the differential expression analysis of multi-species RNA-seq. <em>Genome Biol</em> <strong>2</strong>:121</a></li>
+</ul>
+<p>However differential expression analysis is performed, the results should be used to format a <strong>population set file</strong> and a <strong>study set file</strong> as explained above.</p>
+<h3 id="2-install-and-start-ontologizer">2. Install and start Ontologizer</h3>
+<p>See <a href="../installation/">installation</a> for instructions on how to obtain and install Ontologizer. Start the tool as appropriate for your operating system (e.g., on a MacIntosh, use the Soptlight search to find and start the tool).</p>
+<h3 id="3-load-the-files">3. Load the files</h3>
+<ul>
+<li>The top row of the files page of Ontology (<a href="#fig-ontologizer-files">Figure 1</a>) allows users to obtain or update the <code>go-basic.json</code> and the species-specific annotation files, as explained above.</li>
+<li>The bottom row allows the user to load the <code>population set</code> and <code>study set</code> files.</li>
+</ul>
+<figure id="fig-ontologizer-files">
+<p><img alt="Ontologizer files interface" src="../img/ontologizer-files.png" width="60%" />
+  </p>
+<figcaption>Figure 1: Ontologizer files and loading interface</figcaption>
+</figure>
+<ul>
+<li>
+<p>For the example in this tutorial, we will use a study and population as described further below</p>
+</li>
+<li>
+<p><a href="./assets/downloads/assets/GSE781_study.txt" download>GSE781 study set/a&gt;</p>
+</li>
+<li><a href="./assets/downloads/assets/GSE781_population.txt" download>GSE781 population set/a&gt;</li>
+</ul>
+<h3 id="4-choose-the-method">4. Choose the method</h3>
+<ul>
+<li>To navigate to the Method tab, choose <code>Method</code> in the menu on the left side (<a href="#fig-ontologizer-method">Figure 2</a>)</li>
+<li>Two analysis methods are available. Choose between them by clicking on the corresponding box<ol>
+<li>Statistical Testing. This is the Term-for-Term Fisher Exact Test method. Three methods for multiple-testing correction are provided: Bonferroni (the default), Benajmini-Hochberg (shown in the Figure), Benjamini-Holm, and None (not recommended unless there is a specific motivation for not correcting for multiple testing).</li>
+<li>Bayesian Inference. This is the Model-Based Gene-Set (MGSA) approach. No parameters can be set for this method.</li>
+</ol>
+</li>
+<li>Once you have chosen a method, press <code>Run Analysis</code> to start the corresponding analysis.</li>
+</ul>
+<figure id="fig-ontologizer-method">
+<p><img alt="Ontologizer files interface" src="../img/ontologizer-method.png" width="60%" />
+  </p>
+<figcaption>Figure 2: Ontologizer methods</figcaption>
+</figure>
+<h3 id="5-inspect-the-results">5. Inspect the results</h3>
+<ul>
+<li>
+<p>When the analysis started in step 4 is finished (which should not take longer than a few seconds for the TfT approach, and might take up to a few minutes MGSA, depending on the size of the dataset), the <code>Results tab</code> is opened. In our example, we are showing an analysis of a dataset that is made available in the GSEABenchmarkeR R/Bioconductor package; The dataset is available at <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE781">NCBI GEO</a> as GSE781, which described expression data from renal cell carcinoma (RCC) samples. </p>
+</li>
+<li>
+<p><a href="https://pubmed.ncbi.nlm.nih.gov/32026945/">Geistlinger L, et al. (2021) Toward a gold standard for benchmarking gene set enrichment analysis. <em>Brief Bioinform</em> <strong>22</strong>:545-556</a> - described <code>GSEABenchmarkeR</code></p>
+</li>
+<li>
+<p><a href="https://pubmed.ncbi.nlm.nih.gov/14641932/">Lenburg ME, et al. (2003) Previously unidentified changes in renal cell carcinoma gene expression identified by parametric analysis of microarray data. <em>BMC Cancer</em> <em>3</em>:31</a> - The RCC dataset</p>
+</li>
+<li>
+<p><strong>Summary page</strong>
+A summary page is provided with the file names, gene counts, GO term counts, and major results. In <a href="#fig-ontologizer-summary&quot;&gt;">Figure 3</a>, the summary for a Bayesian analysis is shown; the page for statistical analysis is quite similar.</p>
+</li>
+</ul>
+<figure id="fig-ontologizer-summary">
+<p><img alt="Ontologizer files interface" src="../img/ontologizer-summary.png" width="60%" />
+  </p>
+<figcaption>Figure 3: Ontologizer summary page</figcaption>
+</figure>
+<p><strong>Tabular results</strong></p>
+<p>The results table (<a href="#fig-ontologizer-table">Figure 4</a>) shows
+- <strong>label</strong>: The name or label of the GO term
+- <strong>aspect</strong>  One of the three subontologies of GO: BP: <em>biological process</em>, CC (<em>cellular component</em>), or MF (<em>molecular function</em>)
+- <strong>GO ID</strong>: The Term identifier of the GO term
+- <strong>Study hits</strong>: The number of genes in the study set that are annotated to the GO term or any of its descendents (because of the true path rule, annotations to descendents are also valid for ancestor term)
+_ <strong>Pop. hits</strong>: The number of genes in the population set that are annotated to the GO term or any of its descendents
+- <strong>Adj. P-Value</strong>: The p-value for overrepresentation of the GO term in the study set, adjusted for multiple testing with the chosen mutiple-testing correction method.</p>
+<figure id="fig-ontologizer-table">
+<p><img alt="Ontologizer files interface" src="../img/ontologizer-tft-table.png" width="60%" />
+  </p>
+<figcaption>Figure 3: Ontologizer Results Page (Term-for-term)</figcaption>
+</figure>
+<p>The results of analysis can be downloaded and the gene symbols representing the study hits can be shown by expanding the panel of the corresponding row.</p>
+<p><strong>Graphical display</strong></p>
+<p>The results of analysis can be visualized graphically (<a href="#fig-ontologizer-graphical">Figure 5</a>). It is possible to limit the display to the top 20 or 25 terms if too many terms are significant. Hovering over individual terms reveals term-specific results. This view is intended to be used to explore the overrepresentation results in the context of the hierarchy of the Gene Ontology.</p>
+<figure id="fig-ontologizer-graphical">
+<p><img alt="Ontologizer files interface" src="../img/ontologizer-graph.png" width="60%" />
+  </p>
+<figcaption>Figure 3: Ontologizer Results Page (Term-for-term)</figcaption>
+</figure>
+<p><strong>Bar plot</strong></p>
+<p>The bar plot display shows all significant terms ranked according to p-value (the negative logarithm of the P-value is shown, so that the terms with the smallest, i.e., most significant, P-Values have the highest bars.) Results can also be displayed with respect to gene counts and enrichment ratio (<a href="#fig-ontologizer-bar">Figure 6</a>).</p>
+<figure id="fig-ontologizer-bar">
+<p><img alt="Ontologizer files interface" src="../img/ontologizer-bar.png" width="60%" />
+  </p>
+<figcaption>Figure 3: Ontologizer Bar-Plot Page (Term-for-term)</figcaption>
+</figure>
+<h2 id="tft-vs-mgsa">TfT vs MGSA</h2>
+<p>The traditional, term-for-term Fisher-Exact Test approach tends to reveal many more terms that MGSA. In the above example,
+TfT revealed 371 signficantly overrepresented GO terms, many of which were connected to each other in parent/child or ancestor/descendant relationships. </p>
+<p>A major purpose of GO analysis like this is the support hypothesis generation. So for instance, a scientist revieweing the above results might consider the hypothesis that renal cell carcinoma is related in some way to an abnormality related to the significant GO terms.</p>
+<p>For example, if we search Google or PubMed for "renal cell carcinoma" and "carboxylic acid metabolism" because of the top hit, <a href="https://www.ebi.ac.uk/QuickGO/term/GO:0019752">carboxylic acid metabolic process</a>, we might find the following publication</p>
+<ul>
+<li><a href="https://pubmed.ncbi.nlm.nih.gov/41041304/">Wang Y, et al. (2025) Comprehensive analysis of metabolic patterns in renal cell carcinoma: implications for prognosis and treatment. <em>Front Immunol</em> <strong>16</strong>:1630053</a>.</li>
+</ul>
+<p>In this article, many different metabolic disturbances are discussed, including some that are related to <em>carboxylic acid metabolism</em>. </p>
+<p>It would be difficult to do a search like this for all 371 significant GO terms. A scientist could choose the most interesting ones on the basis of experience of intuition. The Model-Based Gene-Set (MGSA) method was designed to flag the "most important" GO terms [Bauer et al.]</p>
 
 
 
@@ -739,7 +926,7 @@ RAD51
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy", "content.code.select"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
