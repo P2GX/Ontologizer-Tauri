@@ -1,5 +1,7 @@
 # Ontologizer
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20555354.svg)](https://doi.org/10.5281/zenodo.20555354)
+
 Ontologizer is a desktop application for **Gene Ontology overrepresentation analysis**. It is the third edition of the Ontologizer, following the original 2004 and 2008 Java releases, now rebuilt as a [Tauri](https://tauri.app) application with a Rust backend and an Angular frontend.
 
 Two complementary methods are available:
