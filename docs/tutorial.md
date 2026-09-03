@@ -91,15 +91,15 @@ See [installation](installation.md) for instructions on how to obtain and instal
 
 * For the example in this tutorial, we will use a study and population as described further below
 
-- <a href="./assets/downloads/assets/GSE781_study.txt" download>GSE781 study set/a>
-- <a href="./assets/downloads/assets/GSE781_population.txt" download>GSE781 population set/a>
+- <a href="./assets/downloads/assets/GSE781_study.txt" download>GSE781 study set</a>
+- <a href="./assets/downloads/assets/GSE781_population.txt" download>GSE781 population set</a>
 
 ### 4. Choose the method
 
 - To navigate to the Method tab, choose `Method` in the menu on the left side ([Figure 2](#fig-ontologizer-method))
 - Two analysis methods are available. Choose between them by clicking on the corresponding box
-    1. Statistical Testing. This is the Term-for-Term Fisher Exact Test method. Three methods for multiple-testing correction are provided: Bonferroni (the default), Benajmini-Hochberg (shown in the Figure), Benjamini-Holm, and None (not recommended unless there is a specific motivation for not correcting for multiple testing).
-    2. Bayesian Inference. This is the Model-Based Gene-Set (MGSA) approach. No parameters can be set for this method.
+    1. **Statistical Testing**. This is the Term-for-Term Fisher Exact Test method. Three methods for multiple-testing correction are provided: Bonferroni (the default), Benajmini-Hochberg (shown in the Figure), Benjamini-Holm, and None (not recommended unless there is a specific motivation for not correcting for multiple testing).
+    2. **Bayesian Inference**. This is the Model-Based Gene-Set (MGSA) approach. No parameters can be set for this method.
 - Once you have chosen a method, press `Run Analysis` to start the corresponding analysis.
 
 <figure markdown="1" id="fig-ontologizer-method">
@@ -110,9 +110,9 @@ See [installation](installation.md) for instructions on how to obtain and instal
 
 ### 5. Inspect the results
 
-- When the analysis started in step 4 is finished (which should not take longer than a few seconds for the TfT approach, and might take up to a few minutes MGSA, depending on the size of the dataset), the `Results tab` is opened. In our example, we are showing an analysis of a dataset that is made available in the GSEABenchmarkeR R/Bioconductor package; The dataset is available at [NCBI GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE781) as GSE781, which described expression data from renal cell carcinoma (RCC) samples. 
+- When the analysis started in step 4 is finished (which should not take longer than a few seconds for the TfT approach, and might take up to a few minutes MGSA, depending on the size of the dataset), the `Results` tab is opened. In our example, we are showing an analysis of a dataset that is made available in the GSEABenchmarkeR R/Bioconductor package; The dataset is available at [NCBI GEO-GSE781](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE781), which analyzes expression data from renal cell carcinoma (RCC) samples. 
 
-- [Geistlinger L, et al. (2021) Toward a gold standard for benchmarking gene set enrichment analysis. *Brief Bioinform* **22**:545-556](https://pubmed.ncbi.nlm.nih.gov/32026945/) - described `GSEABenchmarkeR`
+- [Geistlinger L, et al. (2021) Toward a gold standard for benchmarking gene set enrichment analysis. *Brief Bioinform* **22**:545-556](https://pubmed.ncbi.nlm.nih.gov/32026945/) - presents `GSEABenchmarkeR`
 - [Lenburg ME, et al. (2003) Previously unidentified changes in renal cell carcinoma gene expression identified by parametric analysis of microarray data. *BMC Cancer* *3*:31](https://pubmed.ncbi.nlm.nih.gov/14641932/) - The RCC dataset
 
 
@@ -127,6 +127,7 @@ A summary page is provided with the file names, gene counts, GO term counts, and
 **Tabular results**
 
 The results table ([Figure 4](#fig-ontologizer-table)) shows
+
 - **label**: The name or label of the GO term
 - **aspect**  One of the three subontologies of GO: BP: *biological process*, CC (*cellular component*), or MF (*molecular function*)
 - **GO ID**: The Term identifier of the GO term
@@ -161,7 +162,7 @@ The bar plot display shows all significant terms ranked according to p-value (th
   <figcaption>Figure 3: Ontologizer Bar-Plot Page (Term-for-term)</figcaption>
 </figure>
 
-
+- Users may also consider creating a prompt containing the name of the overrepresented GO term as well as the list of gene symbols (which can be copied from the Ontologizer page or from the output spreadsheet) and asking a large language model to provide links to the scientific literature that are relevant to understanding the experiment.
 
 ## TfT vs MGSA
 
@@ -176,4 +177,4 @@ For example, if we search Google or PubMed for "renal cell carcinoma" and "carbo
 
 In this article, many different metabolic disturbances are discussed, including some that are related to *carboxylic acid metabolism*. 
 
-It would be difficult to do a search like this for all 371 significant GO terms. A scientist could choose the most interesting ones on the basis of experience of intuition. The Model-Based Gene-Set (MGSA) method was designed to flag the "most important" GO terms [Bauer et al.]
+It would be difficult to do a search like this for all 371 significant GO terms. A scientist could choose the most interesting ones on the basis of experience of intuition. The Model-Based Gene-Set (MGSA) method was designed to flag the "most important" GO terms ([Bauer et al. 2011, Bioinformatics](https://pubmed.ncbi.nlm.nih.gov/20172960/).
