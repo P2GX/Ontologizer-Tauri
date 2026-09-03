@@ -162,7 +162,7 @@ The bar plot display shows all significant terms ranked according to p-value (th
   <figcaption>Figure 3: Ontologizer Bar-Plot Page (Term-for-term)</figcaption>
 </figure>
 
-
+- Users may also consider creating a prompt containing the name of the overrepresented GO term as well as the list of gene symbols (which can be copied from the Ontologizer page or from the output spreadsheet) and asking a large language model to provide links to the scientific literature that are relevant to understanding the experiment.
 
 ## TfT vs MGSA
 
