@@ -28,6 +28,7 @@ NOTE: In June 2026, the naming conventions for the GOA files will change. The On
 ## Gene files
 
 Ontologizer requires experiment-specific **population gene file** and **study gene file** provided by the user. Both files list one gene symbol per line that must match the `DB_Object_Symbol` (column 3) of the GAF file for the same organism.
+
 - **Population gene file**
 
 The population set defines the background of genes against which enrichment is assessed. Typically, this comprises all the genes tested in the experiment. 
@@ -80,9 +81,10 @@ See [installation](installation.md) for instructions on how to obtain and instal
 
 ### 3. Load the files
 
-- The top row of the files page of Ontology ([Figure 1](#fig-ontologizer-files)) allows users to obtain or update the `go-basic.json` and the species-specific annotation files, as explained above.
+- The top row of the files page of Ontologizer ([Figure 1](#fig-ontologizer-files)) allows users to obtain or update the `go-basic.json` and the species-specific annotation files, as explained above.
 - The bottom row allows the user to load the `population set` and `study set` files.
-
+- Once you have specified all the files, press `Process Files` and proceed to the Methods page.
+- 
 <figure markdown="1" id="fig-ontologizer-files">
   ![Ontologizer files interface](./img/ontologizer-files.png){ width="60%" }
   <figcaption>Figure 1: Ontologizer files and loading interface</figcaption>
@@ -137,7 +139,7 @@ _ **Pop. hits**: The number of genes in the population set that are annotated to
 
 <figure markdown="1" id="fig-ontologizer-table">
   ![Ontologizer files interface](./img/ontologizer-tft-table.png){ width="60%" }
-  <figcaption>Figure 3: Ontologizer Results Page (Term-for-term)</figcaption>
+  <figcaption>Figure 4: Ontologizer Results Page (Term-for-term)</figcaption>
 </figure>
 
 The results of analysis can be downloaded and the gene symbols representing the study hits can be shown by expanding the panel of the corresponding row.
@@ -148,7 +150,7 @@ The results of analysis can be visualized graphically ([Figure 5](#fig-ontologiz
 
 <figure markdown="1" id="fig-ontologizer-graphical">
   ![Ontologizer files interface](./img/ontologizer-graph.png){ width="60%" }
-  <figcaption>Figure 3: Ontologizer Results Page (Term-for-term)</figcaption>
+  <figcaption>Figure 5: Ontologizer Results Page (Term-for-term)</figcaption>
 </figure>
 
 
@@ -159,7 +161,7 @@ The bar plot display shows all significant terms ranked according to p-value (th
 
 <figure markdown="1" id="fig-ontologizer-bar">
   ![Ontologizer files interface](./img/ontologizer-bar.png){ width="60%" }
-  <figcaption>Figure 3: Ontologizer Bar-Plot Page (Term-for-term)</figcaption>
+  <figcaption>Figure 6: Ontologizer Bar-Plot Page (Term-for-term)</figcaption>
 </figure>
 
 - Users may also consider creating a prompt containing the name of the overrepresented GO term as well as the list of gene symbols (which can be copied from the Ontologizer page or from the output spreadsheet) and asking a large language model to provide links to the scientific literature that are relevant to understanding the experiment.
